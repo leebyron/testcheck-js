@@ -1,15 +1,27 @@
 {
   "name": "testcheck",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Property testing for JavaScript",
-  "main": "target/testcheck.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "homepage": "https://github.com/leebyron/testcheck-js",
+  "author": {
+    "name": "Lee Byron",
+    "url": "https://github.com/leebyron"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/leebyron/doublecheck-js"
   },
+  "bugs": {
+    "url": "https://github.com/leebyron/testcheck-js/issues"
+  },
+  "main": "dist/testcheck.js",
+  "engines": {
+    "node": "^0.8.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "keywords": [
     "test",
     "quickcheck",
@@ -18,10 +30,5 @@
     "generative",
     "test"
   ],
-  "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/leebyron/doublecheck-js/issues"
-  },
-  "homepage": "https://github.com/leebyron/doublecheck-js"
+  "license": "BSD"
 }

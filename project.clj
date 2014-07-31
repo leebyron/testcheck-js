@@ -17,7 +17,7 @@
         :source-paths ["src"],
         :id "release",
         :compiler {
-          :output-to "target/testcheck.js",
+          :output-to "dist/testcheck.js",
           :libs [""]
           :optimizations :advanced
           :output-wrapper false
