@@ -1,5 +1,5 @@
 var util = require('util');
-var tc = require('./target/testcheck.js').testcheck;
+var tc = require('./').testcheck;
 
 console.log(tc);
 

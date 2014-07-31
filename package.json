@@ -30,5 +30,8 @@
     "generative",
     "test"
   ],
+  "scripts": {
+    "build": "lein do clean, cljsbuild once"
+  },
   "license": "BSD"
 }
