@@ -1,7 +1,8 @@
 var util = require('util');
-var tc = require('./').testcheck;
+var testcheck = require('./');
+var tc = testcheck.testcheck;
 
-console.log(tc);
+console.log(testcheck.cemerick);
 
 // console.log(
 //   tc.quickCheck(

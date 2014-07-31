@@ -35,12 +35,16 @@
 (def ^:export genNotEmpty (partial gen/such-that (comp not-empty js->clj)))
 (def ^:export genMapped gen/fmap)
 (def ^:export genBind gen/bind)
+(def ^:export genSized gen/sized)
+(def ^:export genResize gen/resize)
+(def ^:export genNoShrink gen/no-shrink)
+(def ^:export genAlwaysShrink gen/shrink-2)
 
 
 ;; Simple Generators
 
-(def ^:export genValue gen/return)
-(def ^:export genOneOfValues gen/elements)
+(def ^:export genReturn gen/return)
+(def ^:export genReturnOneOf gen/elements)
 (def ^:export genOneOf gen/one-of)
 (def ^:export genOneOfWeighted gen/frequency)
 (defn ^:export genNested
@@ -73,6 +77,7 @@
 
 
 ;; JS Primitives
+
 ;; TODO: Floating-point Number
 ;; TODO: UTF8 strings
 ;; TODO: Weights on genPrimitive
@@ -83,10 +88,10 @@
 (def ^:export genBoolean gen/boolean)
 
 (def ^:export genInt gen/int)
-(def ^:export genPositiveInt gen/pos-int)
-(def ^:export genNegativeInt gen/neg-int)
-(def ^:export genStrictlyPositiveInt gen/s-pos-int)
-(def ^:export genStrictlyNegativeInt gen/s-neg-int)
+(def ^:export genPosInt gen/pos-int)
+(def ^:export genNegInt gen/neg-int)
+(def ^:export genStrictPosInt gen/s-pos-int)
+(def ^:export genStrictNegInt gen/s-neg-int)
 (def ^:export genIntWithin gen/choose)
 
 (def ^:export genChar gen/char)
