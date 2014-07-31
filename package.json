@@ -1,8 +1,8 @@
 {
-  "name": "doublecheck",
+  "name": "testcheck",
   "version": "0.0.0",
-  "description": "Generative testing for JavaScript",
-  "main": "index.js",
+  "description": "Property testing for JavaScript",
+  "main": "target/testcheck.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
