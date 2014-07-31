@@ -29,10 +29,12 @@
 (def ^:export sample (comp to-array gen/sample))
 
 
-;; Filters and Predicates
+;; Generator Builders
 
 (def ^:export genSuchThat gen/such-that)
 (def ^:export genNotEmpty (partial gen/such-that (comp not-empty js->clj)))
+(def ^:export genMapped gen/fmap)
+(def ^:export genBind gen/bind)
 
 
 ;; Simple Generators
@@ -49,7 +51,7 @@
 ;; Tuples and Maps
 
 (def ^:export genTuple (comp (partial gen/fmap to-array) gen/tuple))
-(defn ^:export genMap
+(defn ^:export genRecord
   [obj]
   (let [seq (js->clj obj)
         ks (keys seq)

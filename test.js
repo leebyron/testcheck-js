@@ -32,7 +32,7 @@ console.log(tc.sample(tc.genPrimitive))
 
 console.log(util.inspect(
   tc.check(
-    1000,
+    10,
     tc.forAll(
       [
         tc.genInt
