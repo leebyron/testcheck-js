@@ -3,6 +3,7 @@
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]))
 
+
 ;; Private helpers
 
 (defn- gen-nested-or-val
@@ -18,8 +19,12 @@
 (defn- to-object
   [from-seq]
   (let [obj (js-obj)]
-    (doall (map #(aset obj (name (first %)) (second %)) from-seq))
+    (doall (map #(aset obj (first %) (second %)) from-seq))
     obj))
+
+(defn gen-obj
+  [key-gen val-gen]
+  (gen/fmap to-object (gen/vector (gen/tuple key-gen val-gen))))
 
 
 ;; API
@@ -52,25 +57,28 @@
   (collection-gen (gen-nested-or-val collection-gen val-gen)))
 
 
-;; Tuples and Maps
-
-(def ^:export genTuple (comp (partial gen/fmap to-array) gen/tuple))
-(defn ^:export genRecord
-  [obj]
-  (let [seq (js->clj obj)
-        ks (keys seq)
-        vs (vals seq)]
-    (gen/fmap to-object
-      (gen/fmap (partial zipmap ks)
-                (apply gen/tuple vs)))))
-
-
 ;; Array and Object
 
-(def ^:export genArray (comp (partial gen/fmap to-array) gen/vector))
+(defn ^:export genArray
+  ([val-gen min-elements max-elements] (gen/fmap to-array (gen/vector val-gen min-elements max-elements)))
+  ([val-gen num-elements] (gen/fmap to-array (gen/vector val-gen num-elements)))
+  ([val-gen-or-arr] (gen/fmap to-array
+    (if (js/Array.isArray val-gen-or-arr)
+      (apply gen/tuple val-gen-or-arr)
+      (gen/vector val-gen-or-arr)))))
+
 (defn ^:export genObject
-  ([val-gen] (genObject gen/string val-gen))
-  ([key-gen val-gen] (gen/fmap to-object (gen/map key-gen val-gen))))
+  ([key-gen val-gen] (gen/fmap clj->js (gen-obj key-gen val-gen)))
+  ([val-gen-or-obj]
+    (if (= js/Object (.-constructor val-gen-or-obj))
+      (let [seq (js->clj val-gen-or-obj)
+        ks (keys seq)
+        vs (vals seq)]
+        (gen/fmap clj->js
+          (gen/fmap (partial zipmap ks)
+                    (apply gen/tuple vs))))
+      (gen-obj (gen/resize 16 gen/string-alpha-numeric) val-gen-or-obj))))
+
 (defn ^:export genArrayOrObject
   [val-gen]
   (gen/one-of [(genArray val-gen) (genObject val-gen)]))
@@ -80,6 +88,7 @@
 
 ;; TODO: Floating-point Number
 ;; TODO: UTF8 strings
+;; TODO: More performant string generation?
 ;; TODO: Weights on genPrimitive
 
 (def ^:export genNaN (gen/return js/NaN))

@@ -30,12 +30,11 @@
     "quickcheck",
     "doublecheck",
     "testcheck",
-    "generative",
-    "test"
+    "generative"
   ],
   "scripts": {
     "test": "jasmine-node spec/",
-    "build": "lein do clean, cljsbuild once"
+    "build": "./resources/build.sh"
   },
   "license": "BSD"
 }
