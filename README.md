@@ -31,7 +31,7 @@ Then require it into your testing environment and start testing.
 
 ```javascript
 var tc = require('testcheck');
-var result = tc.check(100, tc.forAll([tc.genInt], (x) => x - x === 0));
+var result = tc.check(tc.forAll([tc.genInt], (x) => x - x === 0));
 ```
 
 
@@ -99,19 +99,19 @@ Finally, we check our properties using our test case generator (in this case,
 up to 100 different tests before giving up).
 
 ```javascript
-var result = tc.check(100, tc.forAll(
+var result = tc.check(tc.forAll(
   [tc.genInt],    // the test case generator
   function (x) {  // the property to test
     return x - x === 0;
   }
-));
+), {numTests: 100});
 ```
 
 `check` runs through random cases looking for failure, and when it doesn't find
 any failures, it returns:
 
 ```javascript
-{ result: true, 'num-tests': 1000, seed: 1406779597155 }
+{ result: true, 'num-tests': 100, seed: 1406779597155 }
 ```
 
 
