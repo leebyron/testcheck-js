@@ -2,11 +2,13 @@ var util = require('util');
 var tc = require('./');
 
 
+console.log(tc.sample(tc.genPrimitive, {maxSize:100000}));
+
+
 console.log(util.inspect(
 
 
   tc.check(
-    1000,
     tc.forAll(
       [
         tc.genObject({
@@ -14,9 +16,10 @@ console.log(util.inspect(
         })
       ],
       function(val) {
-        return val.numbers[1] < 42;
+        return val.numbers[1] < 1;
       }
-    )
+    ),
+    {numTests:undefined, maxSize:undefined, seed: undefined}
   )
 
   ,{depth:10}

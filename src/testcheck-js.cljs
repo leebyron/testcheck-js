@@ -22,16 +22,36 @@
     (doall (map #(aset obj (first %) (second %)) from-seq))
     obj))
 
-(defn gen-obj
+(defn- gen-obj
   [key-gen val-gen]
   (gen/fmap to-object (gen/vector (gen/tuple key-gen val-gen))))
 
 
 ;; API
 
-(def ^:export check (comp clj->js tc/quick-check))
 (def ^:export forAll prop/for-all*)
-(def ^:export sample (comp to-array gen/sample))
+
+(defn ^:export check
+  [property options]
+  (let [opt (or options (js-obj))
+        num-tests (or (aget opt "numTests") 100)
+        max-size (aget opt "maxSize")
+        seed (aget opt "seed")]
+    (clj->js
+      (tc/quick-check num-tests property :max-size max-size :seed seed))))
+
+(defn ^:export sample
+  [generator options]
+  (let [opt (or options (js-obj))
+        num-samples (or (aget opt "numSamples") 10)
+        seed (aget opt "seed")
+        max-size (or (aget opt "maxSize") 200)
+        r (if seed (gen/random seed) (gen/random))]
+    (to-array
+      (take num-samples
+        (map
+          (comp gen/rose-root (partial gen/call-gen generator r))
+          (gen/make-size-range-seq max-size))))))
 
 
 ;; Generator Builders
@@ -89,7 +109,6 @@
 ;; TODO: Floating-point Number
 ;; TODO: UTF8 strings
 ;; TODO: More performant string generation?
-;; TODO: Weights on genPrimitive
 
 (def ^:export genNaN (gen/return js/NaN))
 (def ^:export genUndefined (gen/return js/undefined))
@@ -114,15 +133,13 @@
 (def ^:export genAlphaNumericString gen/string-alpha-numeric)
 
 (def ^:export genPrimitive
-  (gen/one-of [genNaN genUndefined genNull gen/boolean gen/int gen/string]))
-(def ^:export genPrintablePrimitive
-  (gen/one-of [genNaN genUndefined genNull gen/boolean gen/int gen/string-ascii]))
+  (gen/frequency [[1 genNaN] [2 genUndefined] [3 genNull] [10 gen/boolean] [50 gen/int] [50 gen/string]]))
 
 
 ;; JSON
 
 (def ^:export genJSONPrimitive
-  (gen/one-of [genNull gen/boolean gen/int gen/string]))
+  (gen/frequency [[1 genNull] [2 gen/boolean] [10 gen/int] [10 gen/string]]))
 (def ^:export genJSONValue (gen-nested-or-val genArrayOrObject genJSONPrimitive))
 (def ^:export genJSON (genObject genJSONValue))
 
