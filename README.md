@@ -272,4 +272,4 @@ Contribution
 
 Use [Github issues](https://github.com/leebyron/testcheck-js/issues) for requests.
 
-We actively welcome pull requests.
+Pull requests actively welcomed.
