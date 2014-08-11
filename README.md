@@ -276,4 +276,4 @@ Contribution
 
 Use [Github issues](https://github.com/leebyron/testcheck-js/issues) for requests.
 
-Pull requests actively welcomed.
+Pull requests actively welcomed. Learn how to [contribute](./CONTRIBUTING.md).

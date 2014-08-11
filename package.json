@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/leebyron/doublecheck-js"
+    "url": "https://github.com/leebyron/testcheck-js"
   },
   "bugs": {
     "url": "https://github.com/leebyron/testcheck-js/issues"
@@ -23,10 +23,13 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "keywords": [
     "test",
+    "unit test",
+    "property test",
     "quickcheck",
     "doublecheck",
     "testcheck",
