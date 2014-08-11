@@ -1,5 +1,5 @@
-Property testing for plain-ol JS
-================================
+Generative property testing for JavaScript
+==========================================
 
 `testcheck-js` is a library for generative testing of program properties.
 
