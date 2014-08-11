@@ -35,7 +35,7 @@ var gen = testcheck.gen;
 var result = testcheck.check(testcheck.property(
   [gen.int],
   (x) => x - x === 0)
-);
+));
 ```
 
 ### Typescript
