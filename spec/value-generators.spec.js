@@ -113,7 +113,7 @@ describe('value generator', function () {
   var ALPHA_NUM_RX = /^[a-zA-Z0-9]*$/;
 
   it('generates alphanum strings', function () {
-    var strs = tc.sample(tc.genAlphaNumericString, {times:100});
+    var strs = tc.sample(tc.genAlphaNumString, {times:100});
     expect(strs.length).toBe(100);
     expect(strs).toAllPass(function (value) {
       return typeof value === 'string' && ALPHA_NUM_RX.test(value);
@@ -179,7 +179,7 @@ describe('value generator', function () {
   });
 
   it('generates objects with alphanum keys', function () {
-    var strs = tc.sample(tc.genObject(tc.genAlphaNumericString, tc.genNull), {times: 50});
+    var strs = tc.sample(tc.genObject(tc.genAlphaNumString, tc.genNull), {times: 50});
     expect(strs.length).toBe(50);
     expect(strs).toAllPass(function (value) {
       var keys = Object.keys(value);

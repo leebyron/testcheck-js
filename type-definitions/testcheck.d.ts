@@ -356,14 +356,9 @@ declare module 'testcheck' {
   export var genAsciiChar: Generator<string>;
 
   /**
-   * Generates ascii characters matching /a-zA-Z/
-   */
-  export var genAlphaChar: Generator<string>;
-
-  /**
    * Generates ascii characters matching /a-zA-Z0-9/
    */
-  export var genAlphaNumericChar: Generator<string>;
+  export var genAlphaNumChar: Generator<string>;
 
   /**
    * Generates strings. Note: strings of arbitrary characters may result in
@@ -377,14 +372,9 @@ declare module 'testcheck' {
   export var genAsciiString: Generator<string>;
 
   /**
-   * Generates strings of [a-zA-Z]*
-   */
-  export var genAlphaString: Generator<string>;
-
-  /**
    * Generates strings of [a-zA-Z0-9]*
    */
-  export var genAlphaNumericString: Generator<string>;
+  export var genAlphaNumString: Generator<string>;
 
 
   // JSON

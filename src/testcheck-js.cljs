@@ -124,13 +124,11 @@
 
 (def ^:export genChar gen/char)
 (def ^:export genAsciiChar gen/char-ascii)
-(def ^:export genAlphaChar gen/char-alpha)
-(def ^:export genAlphaNumericChar gen/char-alpha-numeric)
+(def ^:export genAlphaNumChar gen/char-alpha-numeric)
 
 (def ^:export genString gen/string)
 (def ^:export genAsciiString gen/string-ascii)
-(def ^:export genAlphaString gen/string-alpha)
-(def ^:export genAlphaNumericString gen/string-alpha-numeric)
+(def ^:export genAlphaNumString gen/string-alpha-numeric)
 
 
 ;; JSON
