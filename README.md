@@ -210,6 +210,16 @@ a corner case.
 >
 > — Dijkstra, 1969
 
+### Sampling Test Data
+
+Visualizing the data `check` generates may help diagnose the quality of a test.
+Use `sample` to get a look at what a generator produces:
+
+```javascript
+tc.sample(tc.genInt)
+// [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
+```
+
 ### The Size of Test Data
 
 Test data generators have an implicit `size` property, which could be used to
