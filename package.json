@@ -1,0 +1,40 @@
+{
+  "name": "jasmine-check",
+  "version": "0.0.0",
+  "description": "Write generative property tests within jasmine",
+  "homepage": "https://github.com/leebyron/jasmine-check",
+  "author": {
+    "name": "Lee Byron",
+    "url": "https://github.com/leebyron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leebyron/jasmine-check"
+  },
+  "bugs": {
+    "url": "https://github.com/leebyron/jasmine-check/issues"
+  },
+  "main": "jasmine-check.js",
+  "dependencies": {
+    "testcheck": "^0.1.0"
+  },
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  },
+  "files": [
+    "jasmine-check.js",
+    "README.md"
+  ],
+  "keywords": [
+    "jasmine",
+    "quickcheck",
+    "testcheck",
+    "generative",
+    "property",
+    "test"
+  ],
+  "scripts": {
+    "test": "jasmine-node spec/"
+  },
+  "license": "BSD"
+}
