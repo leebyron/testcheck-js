@@ -13,9 +13,9 @@ test case is found.
 
 `testcheck-js` is based on Clojure's [test.check](https://github.com/clojure/test.check)
 which is inspired by Haskell's [QuickCheck](https://hackage.haskell.org/package/QuickCheck).
-It's made possible by (double-check)[https://github.com/cemerick/double-check/],
-the ClojureScript port of test.check. Gracious thanks goes to all of the hard
-work enabling this project to exist.
+It's made possible by [double-check](https://github.com/cemerick/double-check/),
+the ClojureScript port of test.check. Many gracious thanks goes to all of the
+brilliance and hard work enabling this project to exist.
 
 
 Getting started
