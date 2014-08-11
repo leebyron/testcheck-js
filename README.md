@@ -108,9 +108,10 @@ gen.array(gen.int)
 ```
 
 There are a wide variety of value generators, we've only scratched the surface.
-We can generate random JSON with `genJSON`, pick amongst a set of values with
-`genOneOfValues`, nested arrays with ints `genNested(genArray, genInt)` and
-much more.
+We can generate random JSON with `gen.JSON`, pick amongst a set of values with
+`gen.returnOneOf`, nested arrays with ints `gen.nested(gen.array, gen.int)` and
+much more. You can even define your own generators with `gen.map`, `gen.bind`
+and `gen.sized`.
 
 
 Checking the properties
@@ -236,7 +237,7 @@ you expect.
 
 ### Data relationships
 
-Let's test an assumption that should clearly be wrong: a string [`split`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split)
+Let's test an assumption that should clearly be wrong: a string [split](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split)
 by another string always returns an array of length 1.
 
 ```javascript
