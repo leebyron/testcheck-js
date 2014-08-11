@@ -1,4 +1,4 @@
-rm dist/testcheck.js
+rm dist/*
 lein do clean, cljsbuild once
 sed -e '/CLOSURE_OUTPUT/ {
   r dist/testcheck.js

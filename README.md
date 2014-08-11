@@ -30,8 +30,12 @@ npm install testcheck
 Then require it into your testing environment and start testing.
 
 ```javascript
-var tc = require('testcheck');
-var result = tc.check(tc.property([tc.genInt], (x) => x - x === 0));
+var testcheck = require('testcheck');
+var gen = testcheck.gen;
+var result = testcheck.check(testcheck.property(
+  [gen.int],
+  (x) => x - x === 0)
+);
 ```
 
 ### Typescript
@@ -41,7 +45,7 @@ a definition file.
 
 ```javascript
 ///<reference path='node_modules/testcheck/dist/testcheck.d.ts'/>
-var tc = require('testcheck');
+var testcheck = require('testcheck');
 ```
 
 
@@ -95,13 +99,13 @@ by describing the types of values for each argument.
 For testing our first property, we need numbers:
 
 ```javascript
-tc.genInt
+gen.int
 ```
 
 For the second, we need arrays of numbers
 
 ```javascript
-tc.genArray(tc.genInt)
+gen.array(gen.int)
 ```
 
 There are a wide variety of value generators, we've only scratched the surface.
@@ -117,9 +121,9 @@ Finally, we check our properties using our test case generator (in this case,
 up to 1000 different tests before concluding).
 
 ```javascript
-var result = tc.check(
-  tc.property(
-    [tc.genInt],    // the arguments generator
+var result = testcheck.check(
+  testcheck.property(
+    [gen.int],    // the arguments generator
     function (x) {  // the property function to test
       return x - x === 0;
     }
@@ -143,8 +147,8 @@ Let's try another property: the sum of two integers is the same or larger than
 either of the integers alone.
 
 ```javascript
-tc.check(tc.property(
-  [tc.genInt, tc.genInt],
+testcheck.check(testcheck.property(
+  [gen.int, gen.int],
   function (a, b) {
     return a + b >= a && a + b >= b;
   }
@@ -186,8 +190,8 @@ the original failing test did. Now we know that we can either improve our
 property or make the test data more specific:
 
 ```javascript
-tc.check(tc.property(
-  [tc.genPosInt, tc.genPosInt],
+testcheck.check(testcheck.property(
+  [gen.posInt, gen.posInt],
   function (a, b) {
     return a + b >= a && a + b >= b;
   }
@@ -216,7 +220,7 @@ Visualizing the data `check` generates may help diagnose the quality of a test.
 Use `sample` to get a look at what a generator produces:
 
 ```javascript
-tc.sample(tc.genInt)
+testcheck.sample(gen.int)
 // [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
 ```
 
@@ -237,8 +241,8 @@ Let's test an assumption that should clearly be wrong: a string [`split`](https:
 by another string always returns an array of length 1.
 
 ```javascript
-tc.check(tc.property(
-  [tc.genNotEmpty(tc.genString), tc.genNotEmpty(tc.genString)],
+testcheck.check(testcheck.property(
+  [gen.notEmpty(gen.string), gen.notEmpty(gen.string)],
   function (str, separator) {
     return str.split(separator).length === 1;
   }
@@ -254,8 +258,8 @@ We could change the test to be aware of this relationship such that the
 `separator` is always contained within the `str`.
 
 ```javascript
-tc.check(tc.property(
-  [tc.genNotEmpty(tc.genString), tc.genPosInt, tc.genStrictPosInt],
+testcheck.check(testcheck.property(
+  [gen.notEmpty(gen.string), gen.posInt, gen.strictPosInt],
   function (str, start, length) {
     var separator = str.substr(start % str.length, length);
     return str.split(separator).length === 1;

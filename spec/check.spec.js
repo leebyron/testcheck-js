@@ -1,16 +1,20 @@
 describe('check', function () {
 
-  var tc = require('../');
+  var testcheck = require('../');
+  var gen = testcheck.gen;
 
   it('checks true properties', function () {
 
     var seedVal = 1234567890;
     var calls = 0;
 
-    var result = tc.check(tc.property([tc.genPosInt], function (intValue) {
-      calls++;
-      return intValue >= 0;
-    }), { times: 100, seed: seedVal });
+    var result = testcheck.check(testcheck.property(
+      [gen.posInt],
+      function (intValue) {
+        calls++;
+        return intValue >= 0;
+      }
+    ), { times: 100, seed: seedVal });
 
     expect(calls).toBe(100);
     expect(result.result).toBe(true);
@@ -24,10 +28,13 @@ describe('check', function () {
     var seedVal = 1234567890;
     var calls = 0;
 
-    var result = tc.check(tc.property([tc.genPosInt], function (intValue) {
-      calls++;
-      return intValue >= 0 && intValue < 42;
-    }), { times: 100, seed: seedVal });
+    var result = testcheck.check(testcheck.property(
+      [gen.posInt],
+      function (intValue) {
+        calls++;
+        return intValue >= 0 && intValue < 42;
+      }
+    ), { times: 100, seed: seedVal });
 
     expect(calls).toBeLessThan(100);
     expect(calls).toBe(result['num-tests'] + result.shrunk['total-nodes-visited']);
