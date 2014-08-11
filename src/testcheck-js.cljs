@@ -33,7 +33,7 @@
   [property options]
   (let [opt (or options (js-obj))
         num-tests (or (aget opt "times") 100)
-        max-size (aget opt "maxSize")
+        max-size (or (aget opt "maxSize") 200)
         seed (aget opt "seed")]
     (clj->js
       (tc/quick-check num-tests property :max-size max-size :seed seed))))

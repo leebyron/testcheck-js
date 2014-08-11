@@ -1,28 +1,66 @@
 declare module 'testcheck' {
 
+  /**
+   * Optional arguments to `check` and `sample`.
+   */
   export interface Options {
+
+    // Number of times to run `check` or `sample`.
     times?: number;
+
+    // The maximum "size" to provide to sized generators. Default: 200
     maxSize?: number;
+
+    // The seed to use for the random number generator. Default: Random
     seed?: number;
   }
 
+  /**
+   * The result of running `check`.
+   */
   export interface Result {
+
+    // True of the check passed.
     result: boolean;
+
+    // The number of generated checks ran.
     'num-tests': number;
+
+    // The seed used for this check.
     seed?: number;
+
+    // The arguments generated when and if this check failed.
+    fail?: Array<any>;
+
+    // The size used when and if this check failed
     'failing-size'?: number;
-    fail?: any;
+
+    /**
+     * When a check fails, the failing arguments shrink to find the smallest
+     * value that fails.
+     */
     shrunk?: {
-      'total-nodes-visited': number;
-      depth: number;
+      // True if the check passed, otherwise false.
       result: boolean;
-      smallest: any;
+
+      // The smallest arguments with this result.
+      smallest: Array<any>;
+
+      // The depth of the shrunk result.
+      depth: number;
+
+      // The number of nodes shrunk to result in this smallest failing value.
+      'total-nodes-visited': number;
     }
   }
 
-  export interface Generator<T> {
-    // Generator is an opaque type. It has no public methods or properties.
-  }
+  /**
+   * Generators of values.
+   *
+   * Generator is an opaque type. It has no public methods or properties.
+   */
+  export interface Generator<T> {}
+
 
   /**
    * Given a property to check, return the result of the check.
