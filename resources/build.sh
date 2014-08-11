@@ -5,3 +5,4 @@ sed -e '/CLOSURE_OUTPUT/ {
   d
 }' resources/universal-module.js > dist/testcheck.js.tmp
 mv dist/testcheck.js.tmp dist/testcheck.js
+cp type-definitions/testcheck.d.ts dist/

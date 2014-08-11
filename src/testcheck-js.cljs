@@ -29,23 +29,23 @@
 
 ;; API
 
-(def ^:export forAll prop/for-all*)
-
 (defn ^:export check
   [property options]
   (let [opt (or options (js-obj))
-        num-tests (or (aget opt "numTests") 100)
+        num-tests (or (aget opt "times") 100)
         max-size (aget opt "maxSize")
         seed (aget opt "seed")]
     (clj->js
       (tc/quick-check num-tests property :max-size max-size :seed seed))))
 
+(def ^:export property prop/for-all*)
+
 (defn ^:export sample
   [generator options]
   (let [opt (or options (js-obj))
-        num-samples (or (aget opt "numSamples") 10)
-        seed (aget opt "seed")
+        num-samples (or (aget opt "times") 10)
         max-size (or (aget opt "maxSize") 200)
+        seed (aget opt "seed")
         r (if seed (gen/random seed) (gen/random))]
     (to-array
       (take num-samples
@@ -58,7 +58,7 @@
 
 (def ^:export genSuchThat gen/such-that)
 (def ^:export genNotEmpty (partial gen/such-that (comp not-empty js->clj)))
-(def ^:export genMapped gen/fmap)
+(def ^:export genMap gen/fmap)
 (def ^:export genBind gen/bind)
 (def ^:export genSized gen/sized)
 (def ^:export genResize gen/resize)
@@ -132,9 +132,6 @@
 (def ^:export genAlphaString gen/string-alpha)
 (def ^:export genAlphaNumericString gen/string-alpha-numeric)
 
-(def ^:export genPrimitive
-  (gen/frequency [[1 genNaN] [2 genUndefined] [3 genNull] [10 gen/boolean] [50 gen/int] [50 gen/string]]))
-
 
 ;; JSON
 
@@ -144,6 +141,9 @@
 (def ^:export genJSON (genObject genJSONValue))
 
 
-;; Any JS value, potentially nested
+;; JS values, potentially nested
+
+(def ^:export genPrimitive
+  (gen/frequency [[1 genNaN] [2 genUndefined] [3 genNull] [10 gen/boolean] [50 gen/int] [50 gen/string]]))
 
 (def ^:export genAny (gen-nested-or-val genArrayOrObject genPrimitive))
