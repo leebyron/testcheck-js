@@ -83,7 +83,7 @@ declare module 'testcheck' {
    * arguments of the property function. The property function should return
    * true if the property is upheld, or false if it fails.
    *
-   *     var numGoUp = property([gen.int, genPosInt], (a, b) => a + b > a);
+   *     var numGoUp = property([gen.int, gen.posInt], (a, b) => a + b > a);
    *     check(numGoUp, {times: 1000});
    *
    */
@@ -117,7 +117,7 @@ declare module 'testcheck' {
      * the given `predicate`.
      *
      * Care is needed to ensure there is a high chance the predicate will pass.
-     * By default, `genSuchThat` will try 10 times to generate a satisfactory
+     * By default, `suchThat` will try 10 times to generate a satisfactory
      * value. If no value adheres to the predicate, an exception will throw. You
      * can pass an optional third argument to change the number of times tried.
      * Note that each retry will increase the size of the generator.
@@ -140,7 +140,7 @@ declare module 'testcheck' {
     /**
      * Creates a new Generator which is the mapped result of another generator.
      *
-     *     var genSquares = genMap(n => n * n, genPosInt);
+     *     var genSquares = gen.map(n => n * n, gen.posInt);
      *
      */
     map: <T, S>(
@@ -155,7 +155,7 @@ declare module 'testcheck' {
      * For example, to create a Generator which first generates an array of
      * integers, and then chooses a random element from that array:
      *
-     *     genBind(genNotEmpty(gen.array(gen.int))), genReturnOneOf)
+     *     gen.bind(gen.notEmpty(gen.array(gen.int))), gen.returnOneOf)
      *
      */
     bind: <T, S>(
@@ -169,7 +169,7 @@ declare module 'testcheck' {
      *
      * For example, `gen.int` is shrinkable because it is implemented as:
      *
-     *     var gen.int = genSized(size => gen.intWithin(-size, size))
+     *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
      *
      */
     sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
@@ -224,7 +224,7 @@ declare module 'testcheck' {
     oneOf: <T>(generators: Generator<T>[]) => Generator<T>;
 
     /**
-     * Similar to `genOneOf`, except provides probablistic "weights" to
+     * Similar to `oneOf`, except provides probablistic "weights" to
      * each generator.
      *
      *     var numOrRarelyBool = gen.oneOf([99, gen.int], [1, gen.boolean])
