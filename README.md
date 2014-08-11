@@ -168,9 +168,9 @@ it returns:
 
 Something is wrong. Either:
 
-  1) Our assumption is wrong (e.g. bug in our software).
-  2) The test code is wrong.
-  3) The generated test data is too broad.
+  1. Our assumption is wrong (e.g. bug in our software).
+  2. The test code is wrong.
+  3. The generated test data is too broad.
 
 In this case, our problem is that our generated data is too broad for our
 assumption. What's going on?
