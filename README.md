@@ -40,8 +40,7 @@ var result = testcheck.check(testcheck.property(
 
 ### Typescript
 
-If you write your tests in Typescript, you can get full types by including
-a definition file.
+If you write your tests in Typescript, include the testcheck type definitions.
 
 ```javascript
 ///<reference path='node_modules/testcheck/dist/testcheck.d.ts'/>
