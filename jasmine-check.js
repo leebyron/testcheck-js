@@ -23,6 +23,10 @@ function check(it, jasmine, specName, options, argGens, propertyFn) {
 
   var jasmineEnv = jasmine.getEnv();
 
+  if (jasmineEnv.version().major !== 1 || jasmineEnv.version().minor !== 3) {
+    throw new Error('jasmine-check currently only supports jasmine v1.3.x');
+  }
+
   return jasmineEnv[it](specName, function() {
     var currentSpec = jasmineEnv.currentSpec;
 
