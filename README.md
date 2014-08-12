@@ -1,12 +1,21 @@
 Generative property testing for JavaScript
 ==========================================
 
-`testcheck-js` is a library for generative testing of program properties.
+`testcheck-js` is a library for generative testing of program properties,
+ala QuickCheck.
 
 By providing a specification of the JavaScript program in the form of
 properties, the properties can be tested to remain true for a large number of
 randomly generated cases. In the case of a test failure, the smallest possible
 test case is found.
+
+
+### Use Jasmine?
+
+`testcheck-js` is a testing utility and not a full test running solution. If you
+use [Jasmine](http://jasmine.github.io/) then check out
+[`jasmine-check`](https://github.com/leebyron/jasmine-check/), a testcheck
+Jasmine plugin.
 
 
 ### Atop the shoulders of giants
@@ -32,6 +41,7 @@ Then require it into your testing environment and start testing.
 ```javascript
 var testcheck = require('testcheck');
 var gen = testcheck.gen;
+
 var result = testcheck.check(testcheck.property(
   [gen.int],
   (x) => x - x === 0)
