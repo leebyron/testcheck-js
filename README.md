@@ -2,9 +2,9 @@ Generative property testing for Jasmine
 =======================================
 
 `jasmine-check` adds the generative testing power of [`testcheck-js`](https://github.com/leebyron/testcheck-js)
-to Jasmine. This allows some of your Jasmine tests to accept arguments and
-ensure your tests pass not just under your contrived test cases but also pass
-for hundreds of randomly generated test cases.
+to [Jasmine](http://jasmine.github.io/). This allows some of your Jasmine tests
+to accept arguments and ensure your tests pass not just under your contrived
+test cases but also pass for hundreds of randomly generated test cases.
 
 
 Getting started
@@ -46,5 +46,5 @@ check out [`testcheck-js`](https://github.com/leebyron/testcheck-js).
 Notes
 -----
 
-`jasmine-check` is currently designed against the `1.3.x` version of Jasmine
-used in [`jasmine-node`](https://github.com/mhevery/jasmine-node).
+`jasmine-check` is currently only supported for use with [`jasmine-node`](https://github.com/mhevery/jasmine-node)
+and against the `1.3.x` version of Jasmine.
