@@ -47,6 +47,28 @@ the smallest failing value is found which can better help explain edge cases
 with your test and produce consistent results, despite being initially fueled
 by randomness.
 
+### Options
+
+If a test is taking a long time, needs to generate larger values, or should be
+run with a consistent random seed, you can alter the behavior with `options`:
+
+```js
+{
+  times: number;   // the number of test cases to run. Default: 100
+  maxSize: number; // the maximum "size" of the test data. Default: 200
+  seed: number;    // defaults to a random value from 1 to 2^32-1.
+}
+```
+
+To use these options with your check, include an options object after
+the description:
+
+```js
+check.it('runs 10 times', {times: 10}, [gen.strictPosInt], function(x) {
+  expect(x).toBeGreaterThan(0);
+});
+```
+
 To learn more about property testing, or to learn about the available value
 generators, check out [`testcheck-js`](https://github.com/leebyron/testcheck-js).
 
