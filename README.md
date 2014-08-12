@@ -16,11 +16,12 @@ Install `jasmine-check` using npm.
 npm install jasmine-check
 ```
 
-Then include and install `jasmine-check` in a spec.
+Then include and install `jasmine-check` before your test suite.
 
 ```javascript
 require('jasmine-check').install();
 ```
+
 
 Example
 -------
@@ -38,9 +39,16 @@ describe('MySpec', function () {
 });
 ```
 
-The `gen` global object is provided directly by `testcheck-js`. To learn more
-about property testing, or to learn about the available value generators,
-check out [`testcheck-js`](https://github.com/leebyron/testcheck-js).
+The `gen` global object is provided directly by `testcheck-js` and defines what
+type of random values to generate. The test will be run numerous times with
+different random values, ensuring all expectations are met for every run. If a
+test expectation fails, then the test will re-run with "smaller" values until
+the smallest failing value is found which can better help explain edge cases
+with your test and produce consistent results, despite being initially fueled
+by randomness.
+
+To learn more about property testing, or to learn about the available value
+generators, check out [`testcheck-js`](https://github.com/leebyron/testcheck-js).
 
 
 Notes
