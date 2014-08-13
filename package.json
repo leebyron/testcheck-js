@@ -1,0 +1,19 @@
+{
+  "name": "mocha-testcheck",
+  "version": "0.1.0",
+  "description": "Generative property testing for Mocha",
+  "main": "mocha-check.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mocha",
+    "quickcheck",
+    "testcheck",
+    "generative",
+    "property",
+    "test"
+  ],
+  "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
+  "license": "BSD"
+}
