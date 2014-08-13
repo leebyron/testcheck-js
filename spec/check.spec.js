@@ -11,6 +11,10 @@ describe('check', function () {
     expect(y).toEqual(jasmine.any(String))
   })
 
+  it('can use check as a spec wrapper', check([gen.strictPosInt], function(x) {
+    expect(x).toBeGreaterThan(0);
+  }))
+
   check.it('generates with options', {times: 100}, [gen.strictPosInt], function(x) {
     expect(x).toBeGreaterThan(0);
   })

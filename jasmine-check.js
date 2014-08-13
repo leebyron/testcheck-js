@@ -5,29 +5,38 @@ function install(globalObj) {
   if (!globalObj || !globalObj.jasmine) {
     throw new Error('Make sure install is called after jasmine is available.');
   }
-  var jasmine = globalObj.jasmine;
+
+  jasmine = globalObj.jasmine;
+  jasmineEnv = jasmine.getEnv();
+  if (jasmineEnv.version().major !== 1 || jasmineEnv.version().minor !== 3) {
+    throw new Error('jasmine-check currently only supports jasmine v1.3.x');
+  }
+
+  check.it = checkIt(globalObj.it);
+  check.iit = check.it.only = checkIt(globalObj.iit);
+  check.xit = check.it.skip = checkIt(globalObj.xit);
+
   globalObj.gen = testcheck.gen;
-  globalObj.check = {
-    it: check.curry('it', jasmine),
-    xit: check.curry('xit', jasmine),
-    iit: check.curry('iit', jasmine),
-  };
+  globalObj.check = check;
 }
 
-function check(it, jasmine, specName, options, argGens, propertyFn) {
+var jasmine, jasmineEnv;
+
+function checkIt(it) {
+  return function(specName, options, argGens, propertyFn) {
+    return it.call(this, specName, check(options, argGens, propertyFn));
+  }
+}
+
+function check(options, argGens, propertyFn) {
   if (!propertyFn) {
     propertyFn = argGens;
     argGens = options;
     options = {};
   }
 
-  var jasmineEnv = jasmine.getEnv();
-
-  if (jasmineEnv.version().major !== 1 || jasmineEnv.version().minor !== 3) {
-    throw new Error('jasmine-check currently only supports jasmine v1.3.x');
-  }
-
-  return jasmineEnv[it](specName, function() {
+  // Return test function which runs testcheck and throws if it fails.
+  return function() {
     var currentSpec = jasmineEnv.currentSpec;
 
     // Intercept match results
@@ -78,19 +87,7 @@ function check(it, jasmine, specName, options, argGens, propertyFn) {
       }
       currentSpec._super_addMatcherResult(matchResult);
     });
-  });
-}
-
-// utils
-
-var slice = Array.prototype.slice;
-
-check.curry = function () {
-  var fn = this;
-  var curriedArgs = slice.call(arguments);
-  return function() {
-    return fn.apply(this, curriedArgs.concat(slice.call(arguments)));
-  };
+  }
 }
 
 exports.install = install;
