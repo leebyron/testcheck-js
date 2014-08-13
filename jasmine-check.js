@@ -88,7 +88,9 @@ function check(options, argGens, propertyFn) {
 }
 
 function printValues(values) {
-  return '( ' + values.map(function (v) { return JSON.stringify(v); }).join(', ') + ' )';
+  return '( ' + values.map(function (v) {
+    return JSON.stringify(v);
+  }).join(', ') + ' )';
 }
 
 exports.install = install;
