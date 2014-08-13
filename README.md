@@ -10,12 +10,19 @@ randomly generated cases. In the case of a test failure, the smallest possible
 test case is found.
 
 
-### Use Jasmine?
+### Use Jasmine or Mocha?
 
-`testcheck-js` is a testing utility and not a full test running solution. If you
+`testcheck-js` is a testing utility and not a full test running solution.
+
+If you
 use [Jasmine](http://jasmine.github.io/) then check out
 [`jasmine-check`](https://github.com/leebyron/jasmine-check/), a testcheck
 Jasmine plugin.
+
+If you
+use [Mocha](http://visionmedia.github.io/mocha/) then check out
+[`mocha-check`](https://github.com/leebyron/mocha-check/), a testcheck
+Mocha plugin.
 
 
 ### Atop the shoulders of giants
