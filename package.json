@@ -1,6 +1,6 @@
 {
   "name": "mocha-testcheck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generative property tests for Mocha",
   "homepage": "https://github.com/leebyron/mocha-check",
   "author": {
