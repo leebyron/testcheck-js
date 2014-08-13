@@ -1,11 +1,31 @@
 {
   "name": "mocha-testcheck",
   "version": "0.1.0",
-  "description": "Generative property testing for Mocha",
-  "main": "mocha-check.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Generative property tests for Mocha",
+  "homepage": "https://github.com/leebyron/mocha-check",
+  "author": {
+    "name": "Lee Byron",
+    "url": "https://github.com/leebyron"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leebyron/mocha-check"
+  },
+  "bugs": {
+    "url": "https://github.com/leebyron/mocha-check/issues"
+  },
+  "main": "mocha-check.js",
+  "dependencies": {
+    "testcheck": "^0.1.0"
+  },
+  "devDependencies": {
+    "mocha": "^1.21"
+  },
+  "files": [
+    "mocha-check.js",
+    "README.md",
+    "LICENSE"
+  ],
   "keywords": [
     "mocha",
     "quickcheck",
@@ -14,6 +34,8 @@
     "property",
     "test"
   ],
-  "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
+  "scripts": {
+    "test": "mocha"
+  },
   "license": "BSD"
 }
