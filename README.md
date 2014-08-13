@@ -1,5 +1,5 @@
 Generative property testing for Mocha
-=======================================
+=====================================
 
 `mocha-check` adds the generative testing power of [`testcheck-js`](https://github.com/leebyron/testcheck-js)
 to [Mocha](http://visionmedia.github.io/mocha/). This allows some of your Mocha tests
@@ -32,7 +32,7 @@ var assert = require('assert');
 
 describe('MySpec', function () {
 
-  check.it('accepts an int and a string', [gen.int, gen.string], function(x, y) {
+  check.it('accepts an int and a string', [gen.int, gen.string], function (x, y) {
     assert(typeof x === 'number');
     assert(typeof y === 'string');
   });
@@ -65,10 +65,75 @@ To use these options with your check, include an options object after
 the description:
 
 ```js
-check.it('runs 10 times', {times: 10}, [gen.strictPosInt], function(x) {
+check.it('runs 10 times', {times: 10}, [gen.strictPosInt], function (x) {
   assert(x > 0);
 });
 ```
 
 To learn more about property testing, or to learn about the available value
 generators, check out [`testcheck-js`](https://github.com/leebyron/testcheck-js).
+
+
+Mocha test interfaces
+---------------------
+
+`mocha-check` supports all of Mocha's [testing interfaces](http://visionmedia.github.io/mocha/#interfaces).
+
+### BDD
+
+```javascript
+require('mocha-check').install();
+var assert = require('assert');
+
+describe('MySpec', function () {
+  check.it('accepts an int', [gen.int], function (x) {
+    assert(typeof x === 'number');
+  });
+});
+```
+
+### TDD
+
+```javascript
+require('mocha-check').install();
+var assert = require('assert');
+
+suite('MySpec', function () {
+  test.it('accepts an int', [gen.int], function (x) {
+    assert(typeof x === 'number');
+  });
+});
+```
+
+### Exports
+
+```javascript
+require('mocha-check').install();
+var assert = require('assert');
+
+module.exports = {
+  'MySpec': {
+    'accepts an int': check([gen.int], function (x) {
+      assert(typeof x === 'number');
+    })
+  }
+};
+```
+
+### Require
+
+This interface is useful if you want to avoid global variables in your tests.
+
+```javascript
+var describe = require('mocha').describe
+var assertions = require('mocha').assertions
+var check = require('mocha-check').check;
+var gen = require('mocha-check').gen;
+var assert = require('assert');
+
+describe('MySpec', function() {
+  assertions('accepts an int', check([gen.int], function (x) {
+    assert(typeof x === 'number');
+  });
+});
+```
