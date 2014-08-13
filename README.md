@@ -10,16 +10,16 @@ test cases but also pass for hundreds of randomly generated test cases.
 Getting started
 ---------------
 
-Install `mocha-check` using npm.
+Install `mocha-testcheck` using npm.
 
 ```shell
 npm install mocha-testcheck
 ```
 
-Then include and install `mocha-check` before your test suite.
+Then include and install `mocha-testcheck` before your test suite.
 
 ```javascript
-require('mocha-check').install();
+require('mocha-testcheck').install();
 ```
 
 
@@ -27,7 +27,7 @@ Example
 -------
 
 ```javascript
-require('mocha-check').install();
+require('mocha-testcheck').install();
 var assert = require('assert');
 
 describe('MySpec', function () {
@@ -77,12 +77,12 @@ generators, check out [`testcheck-js`](https://github.com/leebyron/testcheck-js)
 Mocha test interfaces
 ---------------------
 
-`mocha-check` supports all of Mocha's [testing interfaces](http://visionmedia.github.io/mocha/#interfaces).
+`mocha-testcheck` supports all of Mocha's [testing interfaces](http://visionmedia.github.io/mocha/#interfaces).
 
 ### BDD
 
 ```javascript
-require('mocha-check').install();
+require('mocha-testcheck').install();
 var assert = require('assert');
 
 describe('MySpec', function () {
@@ -95,7 +95,7 @@ describe('MySpec', function () {
 ### TDD
 
 ```javascript
-require('mocha-check').install();
+require('mocha-testcheck').install();
 var assert = require('assert');
 
 suite('MySpec', function () {
@@ -108,7 +108,7 @@ suite('MySpec', function () {
 ### Exports
 
 ```javascript
-require('mocha-check').install();
+require('mocha-testcheck').install();
 var assert = require('assert');
 
 module.exports = {
@@ -127,8 +127,8 @@ This interface is useful if you want to avoid global variables in your tests.
 ```javascript
 var describe = require('mocha').describe
 var assertions = require('mocha').assertions
-var check = require('mocha-check').check;
-var gen = require('mocha-check').gen;
+var check = require('mocha-testcheck').check;
+var gen = require('mocha-testcheck').gen;
 var assert = require('assert');
 
 describe('MySpec', function() {
