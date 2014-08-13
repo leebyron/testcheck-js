@@ -7,8 +7,8 @@ describe('check', function () {
   })
 
   check.it('generates', [gen.int, gen.string], function(x, y) {
-    expect(x).toEqual(jasmine.any(Number))
-    expect(y).toEqual(jasmine.any(String))
+    expect(x).toEqual(jasmine.any(Number));
+    expect(y).toEqual(jasmine.any(String));
   })
 
   it('can use check as a spec wrapper', check([gen.strictPosInt], function(x) {

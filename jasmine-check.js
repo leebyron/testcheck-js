@@ -40,9 +40,7 @@ function check(options, argGens, propertyFn) {
     var currentSpec = jasmineEnv.currentSpec;
 
     // Intercept match results
-    var matchFailed = false;
-    var matchResults = [];
-    var failingMatchResults = [];
+    var matchFailed, matchResults, failingMatchResults;
 
     currentSpec._super_addMatcherResult = currentSpec.addMatcherResult;
     currentSpec.addMatcherResult = function(result) {
@@ -62,32 +60,35 @@ function check(options, argGens, propertyFn) {
     // Build property
     var thisArg = this;
     var property = testcheck.property(argGens, function() {
+      matchFailed = false;
+      matchResults = [];
       try {
         propertyFn.apply(thisArg, arguments);
       } catch (error) {
         currentSpec.fail(error);
       }
-      var returnPassed = !matchFailed;
       if (matchFailed) {
         failingMatchResults = matchResults;
       }
-      matchFailed = false;
-      matchResults = [];
-      return returnPassed;
+      return !matchFailed;
     });
 
     // Run testcheck
     var checkResult = testcheck.check(property, options);
+    if (checkResult.result === false) {
+      currentSpec.description += ' ' + printValues(checkResult.shrunk.smallest);
+      currentSpec.check = checkResult;
+    }
 
     // Report results
     (failingMatchResults || matchResults).forEach(function (matchResult) {
-      if (checkResult.result === false) {
-        matchResult.message +=
-          ' Checked with: ' + JSON.stringify(checkResult.shrunk.smallest);
-      }
       currentSpec._super_addMatcherResult(matchResult);
     });
   }
+}
+
+function printValues(values) {
+  return '( ' + values.map(function (v) { return JSON.stringify(v); }).join(', ') + ' )';
 }
 
 exports.install = install;
