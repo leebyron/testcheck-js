@@ -37,7 +37,7 @@
 (def ^{:export gen.sized} genSized gen/sized)
 (def ^{:export gen.resize} genResize gen/resize)
 (def ^{:export gen.noShrink} genNoShrink gen/no-shrink)
-(def ^{:export gen.alwaysShrink} genAlwaysShrink gen/shrink-2)
+(def ^{:export gen.shrink} genShrink gen/shrink-2)
 
 
 ;; Simple Generators

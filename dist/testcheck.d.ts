@@ -192,7 +192,7 @@ declare module 'testcheck' {
      * consider shrinking, even if the property passes (up to one
      * additional level).
      */
-    alwaysShrink: <T>(generator: Generator<T>) => Generator<T>;
+    shrink: <T>(generator: Generator<T>) => Generator<T>;
 
 
     // Simple Generators
