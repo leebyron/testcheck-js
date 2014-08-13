@@ -52,7 +52,7 @@ function check(options, argGens, propertyFn) {
     currentSpec.fail = function(e) {
       this.addMatcherResult(new jasmine.ExpectationResult({
         passed: false,
-        message: e ? jasmine.util.formatException(e) + '.' : 'Exception.',
+        message: e ? jasmine.util.formatException(e) : 'Exception.',
         trace: { stack: e.stack }
       }));
     };
