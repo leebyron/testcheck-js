@@ -49,11 +49,17 @@ function check(options, argGens, propertyFn) {
 
     // Report results
     if (checkResult.result === false) {
-      lastError.message +=
-        ' Checked with: ' + JSON.stringify(checkResult.shrunk.smallest);
+      lastError.check = checkResult;
+      lastError.message += ' ' + printValues(checkResult.shrunk.smallest);
       throw lastError;
     }
   }
+}
+
+function printValues(values) {
+  return '( ' + values.map(function (v) {
+    return JSON.stringify(v);
+  }).join(', ') + ' )';
 }
 
 exports.install = install;
