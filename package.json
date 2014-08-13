@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/leebyron/mocha-check"
+    "url": "git://github.com/leebyron/mocha-check"
   },
   "bugs": {
     "url": "https://github.com/leebyron/mocha-check/issues"
