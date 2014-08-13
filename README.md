@@ -99,7 +99,7 @@ require('mocha-testcheck').install();
 var assert = require('assert');
 
 suite('MySpec', function () {
-  test.it('accepts an int', [gen.int], function (x) {
+  check.test('accepts an int', [gen.int], function (x) {
     assert(typeof x === 'number');
   });
 });
