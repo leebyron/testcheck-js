@@ -31,7 +31,7 @@ require('jasmine-check').install();
 
 describe('MySpec', function () {
 
-  check.it('accepts an int and a string', [gen.int, gen.string], function(x, y) {
+  check.it('accepts an int and a string', [gen.int, gen.string], function (x, y) {
     expect(x).toEqual(jasmine.any(Number));
     expect(y).toEqual(jasmine.any(String));
   });
@@ -64,7 +64,7 @@ To use these options with your check, include an options object after
 the description:
 
 ```js
-check.it('runs 10 times', {times: 10}, [gen.strictPosInt], function(x) {
+check.it('runs 10 times', {times: 10}, [gen.strictPosInt], function (x) {
   expect(x).toBeGreaterThan(0);
 });
 ```

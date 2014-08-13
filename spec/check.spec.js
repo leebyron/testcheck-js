@@ -6,16 +6,16 @@ describe('check', function () {
     expect(typeof check.it === 'function').toBe(true);
   })
 
-  check.it('generates', [gen.int, gen.string], function(x, y) {
+  check.it('generates', [gen.int, gen.string], function (x, y) {
     expect(x).toEqual(jasmine.any(Number));
     expect(y).toEqual(jasmine.any(String));
   })
 
-  it('can use check as a spec wrapper', check([gen.strictPosInt], function(x) {
+  it('can use check as a spec wrapper', check([gen.strictPosInt], function (x) {
     expect(x).toBeGreaterThan(0);
   }))
 
-  check.it('generates with options', {times: 100}, [gen.strictPosInt], function(x) {
+  check.it('generates with options', {times: 100}, [gen.strictPosInt], function (x) {
     expect(x).toBeGreaterThan(0);
   })
 
