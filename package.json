@@ -1,6 +1,6 @@
 {
   "name": "testcheck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Property testing for JavaScript",
   "homepage": "https://github.com/leebyron/testcheck-js",
   "author": {
