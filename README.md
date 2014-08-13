@@ -77,4 +77,4 @@ Notes
 -----
 
 `jasmine-check` is currently only supported for use with [`jasmine-node`](https://github.com/mhevery/jasmine-node)
-and against the `1.3.x` version of Jasmine.
+and against the `1.3.x` version of Jasmine. This will change soon!

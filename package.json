@@ -1,7 +1,7 @@
 {
   "name": "jasmine-check",
-  "version": "0.0.0",
-  "description": "Write generative property tests within jasmine",
+  "version": "0.1.0",
+  "description": "Generative property tests for Jasmine",
   "homepage": "https://github.com/leebyron/jasmine-check",
   "author": {
     "name": "Lee Byron",
@@ -23,7 +23,8 @@
   },
   "files": [
     "jasmine-check.js",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "keywords": [
     "jasmine",
