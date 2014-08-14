@@ -71,10 +71,3 @@ check.it('runs 10 times', {times: 10}, [gen.strictPosInt], function (x) {
 
 To learn more about property testing, or to learn about the available value
 generators, check out [`testcheck-js`](https://github.com/leebyron/testcheck-js).
-
-
-Notes
------
-
-`jasmine-check` is currently only supported for use with [`jasmine-node`](https://github.com/mhevery/jasmine-node)
-and against the `1.3.x` version of Jasmine. This will change soon!
