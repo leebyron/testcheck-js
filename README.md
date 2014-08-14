@@ -61,7 +61,7 @@ If you write your tests in Typescript, include the testcheck type definitions.
 
 ```javascript
 ///<reference path='node_modules/testcheck/dist/testcheck.d.ts'/>
-var testcheck = require('testcheck');
+import testcheck = require('testcheck');
 ```
 
 
