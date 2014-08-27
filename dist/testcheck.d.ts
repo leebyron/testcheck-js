@@ -209,7 +209,7 @@ declare module 'testcheck' {
     /**
      * Creates a Generator which will always generate one of the provided values.
      *
-     *     var alphabetSoup = gen.returnOneOf('a', 'b', 'c');
+     *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c']);
      *
      */
     returnOneOf: <T>(values: T[]) => Generator<T>;
@@ -218,7 +218,7 @@ declare module 'testcheck' {
      * Creates a Generator which will generate values from one of the
      * provided generators.
      *
-     *     var numOrBool = gen.oneOf(gen.int, gen.boolean)
+     *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
      *
      */
     oneOf: <T>(generators: Generator<T>[]) => Generator<T>;
@@ -227,10 +227,10 @@ declare module 'testcheck' {
      * Similar to `oneOf`, except provides probablistic "weights" to
      * each generator.
      *
-     *     var numOrRarelyBool = gen.oneOf([99, gen.int], [1, gen.boolean])
+     *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
      */
     oneOfWeighted: <T>(
-      ...generators: Array</*number, Generator<T>*/any>[]
+      generators: Array</*number, Generator<T>*/any>[]
     ) => Generator<T>;
 
     /**

@@ -46,6 +46,11 @@
 (def ^{:export gen.returnOneOf} genReturnOneOf gen/elements)
 (def ^{:export gen.oneOf} genOneOf gen/one-of)
 (def ^{:export gen.oneOfWeighted} genOneOfWeighted gen/frequency)
+(defn ^{:export gen.returnOneOfWeighted} genReturnOneOfWeighted
+  [pairs]
+  (gen/frequency (map vector
+    (map first pairs)
+    (map (comp gen/return second) pairs))))
 (defn ^{:export gen.nested} genNested
   [collection-gen val-gen]
   (collection-gen (gen-nested-or-val collection-gen val-gen)))

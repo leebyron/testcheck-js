@@ -202,6 +202,16 @@ describe('value generator', function () {
     });
   });
 
+  it('generates nested collections', function () {
+    var vals = testcheck.sample(gen.nested(gen.array, gen.int), {times:20});
+    expect(vals.length).toBe(20);
+    function isNestedArrayOfInt(arrayOrInt) {
+      return typeof arrayOrInt === 'number' ||
+        (arrayOrInt.every && arrayOrInt.every(isNestedArrayOfInt));
+    }
+    expect(vals).toAllPass(isNestedArrayOfInt);
+  });
+
   it('generates json primitives', function () {
     var vals = testcheck.sample(gen.JSONPrimitive, {times:100});
     expect(vals.length).toBe(100);
