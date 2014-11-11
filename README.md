@@ -1,5 +1,7 @@
-Generative property testing for JavaScript
-==========================================
+TestCheck [![Build Status](https://travis-ci.org/leebyron/testcheck-js.svg)](https://travis-ci.org/leebyron/testcheck-js)
+=========
+
+Generative property testing for JavaScript.
 
 `testcheck-js` is a library for generative testing of program properties,
 ala QuickCheck.
