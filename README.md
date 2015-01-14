@@ -51,10 +51,12 @@ Then require it into your testing environment and start testing.
 var testcheck = require('testcheck');
 var gen = testcheck.gen;
 
-var result = testcheck.check(testcheck.property(
-  [gen.int],
-  (x) => x - x === 0)
-));
+var result = testcheck.check(
+  testcheck.property(
+    [gen.int],
+    x => x - x === 0
+  )
+);
 ```
 
 ### Typescript
