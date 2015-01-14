@@ -19,7 +19,7 @@
     "jasmine-node": "^1.14.5"
   },
   "engines": {
-    "node": "^0.8.0"
+    "node": ">=0.8.0"
   },
   "files": [
     "dist",
