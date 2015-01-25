@@ -39,5 +39,8 @@
     "test": "jasmine-node spec/",
     "build": "./resources/build.sh"
   },
-  "license": "BSD"
+  "license": "BSD",
+  "typescript": {
+    "definition": "dist/testcheck.d.ts"
+  }
 }
