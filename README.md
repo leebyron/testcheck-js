@@ -68,6 +68,18 @@ If you write your tests in Typescript, include the testcheck type definitions.
 import testcheck = require('testcheck');
 ```
 
+### Flow
+
+To use the included [Flow](http://flowtype.org/) type definitions, add the following `[ignore]` and `[libs]` configuration to your project's `.flowconfig`.
+
+```
+[ignore]
+.*/node_modules/testcheck/.*
+
+[libs]
+node_modules/testcheck/dist/testcheck.flow.js
+```
+
 
 API
 ---
