@@ -24,4 +24,14 @@ describe('check', function () {
     assert(typeof x === 'number');
   })
 
+  it('outputs well formed shrunk data', function () {
+    try {
+      check.it('will fail with this assertion', { times: 1 }, [gen.return(NaN)], function (x) {
+        assert(x === 'this fails')
+      }).fn()
+    } catch(e) {
+      assert(e.message.indexOf('( NaN )') > -1);
+    }
+  })
+
 });

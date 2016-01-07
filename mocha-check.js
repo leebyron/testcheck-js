@@ -1,4 +1,5 @@
 var testcheck = require('testcheck');
+var javascriptStringify = require('javascript-stringify');
 
 function install(globalObj) {
   globalObj = globalObj || global || window;
@@ -58,7 +59,7 @@ function check(options, argGens, propertyFn) {
 
 function printValues(values) {
   return '( ' + values.map(function (v) {
-    return JSON.stringify(v);
+    return javascriptStringify(v);
   }).join(', ') + ' )';
 }
 
