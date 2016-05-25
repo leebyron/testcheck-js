@@ -16,9 +16,9 @@ function install(globalObj) {
   check.it = checkIt(globalObj.it);
   check.xit = check.it.skip = checkIt(globalObj.xit);
 
-  var iit = globalObj.iit || globalObj.it.only;
+  var iit = globalObj.iit || globalObj.it.only || globalObj.fit;
   if (iit) {
-    check.iit = check.it.only = checkIt(globalObj.iit);
+    check.iit = check.it.only = check.fit = checkIt(iit);
   }
 
   globalObj.gen = testcheck.gen;
