@@ -1,6 +1,6 @@
 {
   "name": "jasmine-check",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Generative property tests for Jasmine",
   "homepage": "https://github.com/leebyron/jasmine-check",
   "author": {
