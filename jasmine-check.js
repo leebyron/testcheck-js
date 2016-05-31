@@ -48,7 +48,11 @@ function checkIt(it) {
         spec.addMatcherResult.bind(spec) :
         spec.addExpectationResult.bind(spec, false);
 
-      spec.addExpectationResult = function(passed, data) {
+      var existingSpecFail = spec.fail;
+      var existingAddExpectationResult = spec.addExpectationResult;
+      var existingAddMatcherResult = spec.addMatcherResult;
+
+      var checkAddExpectationResult = function(passed, data) {
         if (passed) {
           return;
         }
@@ -56,18 +60,19 @@ function checkIt(it) {
         matchResults.push(data);
       };
 
-      spec.addMatcherResult = function(result) {
+      var checkAddMatcherResult = function(result) {
         matchResults.push(result);
         if (!result.passed()) {
           matchFailed = true;
         }
       };
 
-      spec.fail = logException;
-
       // Build property
       var thisArg = this;
       var property = testcheck.property(argGens, function() {
+        spec.fail = logException;
+        spec.addExpectationResult = checkAddExpectationResult;
+        spec.addMatcherResult = checkAddMatcherResult;
         matchFailed = false;
         matchResults = [];
         try {
@@ -78,6 +83,9 @@ function checkIt(it) {
         if (matchFailed) {
           failingMatchResults = matchResults;
         }
+        spec.fail = existingSpecFail;
+        spec.addExpectationResult = existingAddExpectationResult;
+        spec.addMatcherResult = existingAddMatcherResult;
         return !matchFailed;
       });
 
