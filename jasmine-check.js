@@ -40,7 +40,9 @@ function checkIt(it) {
 
     function checkRunner() {
       // Intercept match results
-      var matchFailed, matchResults, failingMatchResults;
+      var matchFailed = false;
+      var matchResults = [];
+      var failingMatchResults;
 
       var addResult = spec.addMatcherResult ?
         spec.addMatcherResult.bind(spec) :
