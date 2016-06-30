@@ -199,22 +199,6 @@ declare module 'testcheck' {
     // -----------------
 
     /**
-     * Creates a Generator which will always generate the provided value.
-     *
-     *     var alwaysThree = gen.return(3);
-     *
-     */
-    return: <T>(value: T) => Generator<T>;
-
-    /**
-     * Creates a Generator which will always generate one of the provided values.
-     *
-     *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c']);
-     *
-     */
-    returnOneOf: <T>(values: T[]) => Generator<T>;
-
-    /**
      * Creates a Generator which will generate values from one of the
      * provided generators.
      *
@@ -234,18 +218,30 @@ declare module 'testcheck' {
     ) => Generator<T>;
 
     /**
-     * Given a function which takes a generator and returns a generator (such as
-     * `gen.array` or `gen.object`), and a Generator to use as values, creates
-     * potentially nested values.
+     * Creates a Generator which will always generate the provided value.
      *
-     *     gen.nested(gen.array, gen.int)
-     *     // [ [ 0, [ -2 ], 1, [] ]
+     *     var alwaysThree = gen.return(3)
      *
      */
-    nested: <C, T>(
-      collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
-      valueGen: Generator<T>
-    ) => Generator<C>;
+    return: <T>(value: T) => Generator<T>;
+
+    /**
+     * Creates a Generator which will always generate one of the provided values.
+     *
+     *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c'])
+     *
+     */
+    returnOneOf: <T>(values: T[]) => Generator<T>;
+
+    /**
+     * Similar to `oneOf`, except provides probablistic "weights" to
+     * each generator.
+     *
+     *     var fizzBuzz = gen.oneOf([[1, 'fizz'], [5, 'buzz']])
+     */
+    returnOneOfWeighted: <T>(
+      generators: Array</*number, T*/any>[]
+    ) => Generator<T>;
 
 
     // Collections: Arrays and Objects
@@ -310,6 +306,20 @@ declare module 'testcheck' {
     arrayOrObject: <T>(
       valueGen: Generator<T>
     ) => Generator<{[key: string]: T; [key: number]: T}>;
+
+    /**
+     * Given a function which takes a generator and returns a generator (such as
+     * `gen.array` or `gen.object`), and a Generator to use as values, creates
+     * potentially nested values.
+     *
+     *     gen.nested(gen.array, gen.int)
+     *     // [ [ 0, [ -2 ], 1, [] ]
+     *
+     */
+    nested: <C, T>(
+      collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
+      valueGen: Generator<T>
+    ) => Generator<C>;
 
 
     // JS Primitives
