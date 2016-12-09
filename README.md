@@ -61,11 +61,10 @@ var result = testcheck.check(
 
 ### Typescript
 
-If you write your tests in Typescript, include the testcheck type definitions.
+If you write your tests in Typescript, you should be able to import from the package itself.
 
-```javascript
-///<reference path='node_modules/testcheck/dist/testcheck.d.ts'/>
-import testcheck = require('testcheck');
+```typescript
+import * as testcheck from 'testcheck';
 ```
 
 

@@ -42,5 +42,6 @@
   "license": "BSD",
   "typescript": {
     "definition": "dist/testcheck.d.ts"
-  }
+  },
+  "typings": "./dist/testcheck.d.ts"
 }
