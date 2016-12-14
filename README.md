@@ -67,6 +67,18 @@ If you write your tests in Typescript, you should be able to import from the pac
 import * as testcheck from 'testcheck';
 ```
 
+### Flow
+
+To use the included [Flow](http://flowtype.org/) type definitions, add the following `[ignore]` and `[libs]` configuration to your project's `.flowconfig`.
+
+```
+[ignore]
+.*/node_modules/testcheck/.*
+
+[libs]
+node_modules/testcheck/dist/testcheck.flow.js
+```
+
 
 API
 ---
