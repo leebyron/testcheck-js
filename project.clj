@@ -4,12 +4,12 @@
   :source-paths ["src"]
 
   :dependencies [
-    [org.clojure/clojure "1.6.0"]
-    [org.clojure/clojurescript "0.0-2268"]
+    [org.clojure/clojure "1.8.0"]
+    [org.clojure/clojurescript "1.9.93"]
     [com.cemerick/double-check "0.5.7"]]
 
   :plugins [
-    [lein-cljsbuild "1.0.3"]]
+    [lein-cljsbuild "1.1.3"]]
 
   :cljsbuild {
     :builds [{
