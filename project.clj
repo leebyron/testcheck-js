@@ -5,7 +5,7 @@
 
   :dependencies [
     [org.clojure/clojure "1.8.0"]
-    [org.clojure/clojurescript "1.9.93"]
+    [org.clojure/clojurescript "1.9.293"]
     [com.cemerick/double-check "0.5.7"]]
 
   :plugins [
