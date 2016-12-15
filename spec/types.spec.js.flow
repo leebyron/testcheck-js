@@ -1,0 +1,59 @@
+// @flow
+
+const { check, property, gen } = require('../')
+
+check(
+  property(
+    [ gen.boolean ],
+    value =>
+      // $ExpectError The operand of an arithmetic operation must be a number.
+      value * 2 === 2
+  )
+)
+
+check(
+  property(
+    [ gen.array([ gen.string, gen.int ]) ],
+    ([ aString, anInt ]) => {
+      // $ExpectError cannot multiply a number and string
+      return aString * anInt === 'abc123'
+    }
+  )
+)
+
+// TODO: failing
+// check(
+//   property(
+//     [ gen.number, gen.array([ gen.string, gen.int ]) ],
+//     (number, array) =>
+//       // However numbers can be multiplied
+//       number * array[1] === 123
+//   )
+// )
+
+// check(
+//   property(
+//     [ gen.string, gen.array([ gen.string, gen.int ]) ],
+//     (string, array) =>
+//       // As can strings
+//       string + array[0] === 'abc'
+//   )
+// )
+
+check(
+  property(
+    [ gen.string ],
+    string => string + string === 'abcabc'
+  ),
+  // Ok to provide options to check
+  { times: 1000 }
+)
+
+check(
+  property(
+    [ gen.string ],
+    string => string + string === 'abcabc'
+  ),
+  // $ExpectError catches mistyped options
+  { numTimes: 1000 }
+)
