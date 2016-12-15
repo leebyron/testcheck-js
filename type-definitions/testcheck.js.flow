@@ -11,7 +11,7 @@ export type Options = {
   maxSize?: number,
 
   // The seed to use for the random number generator. Default: Random
-  seed?: number
+  seed?: number,
 };
 
 /**
@@ -22,16 +22,16 @@ export type Result = {
   result: boolean,
 
   // The number of generated checks ran.
-  numTests: number;
+  numTests: number,
 
   // The seed used for this check.
-  seed?: number;
+  seed?: number,
 
   // The arguments generated when and if this check failed.
-  fail?: Array<any>;
+  fail?: Array<any>,
 
   // The size used when and if this check failed
-  failingSize?: number;
+  failingSize?: number,
 
   /**
    * When a check fails, the failing arguments shrink to find the smallest
@@ -39,16 +39,16 @@ export type Result = {
    */
   shrunk?: {
     // True if the check passed, otherwise false.
-    result: boolean;
+    result: boolean,
 
     // The smallest arguments with this result.
-    smallest: Array<any>;
+    smallest: Array<any>,
 
     // The depth of the shrunk result.
-    depth: number;
+    depth: number,
 
     // The number of nodes shrunk to result in this smallest failing value.
-    totalNodesVisited: number;
+    totalNodesVisited: number,
   }
 };
 
@@ -88,15 +88,39 @@ declare export function check(
  *     check(numGoUp, {times: 1000});
  *
  */
-declare export function property<A,B,C,D>(
-  gens: [
-    Generator<A>,
-    Generator<B>,
-    Generator<C>,
-    Generator<D>
-  ],
-  f: (a: A, b: B, c: C, d: D) => boolean
-): Generator<boolean>;
+declare export var property: {
+  <A>(
+    gens: [
+      Generator<A>
+    ],
+    f: (a: A) => boolean
+  ): Generator<boolean>;
+  <A,B>(
+    gens: [
+      Generator<A>,
+      Generator<B>
+    ],
+    f: (a: A, b: B) => boolean
+  ): Generator<boolean>;
+  <A,B,C>(
+    gens: [
+      Generator<A>,
+      Generator<B>,
+      Generator<C>
+    ],
+    f: (a: A, b: B, c: C) => boolean
+  ): Generator<boolean>;
+  <A,B,C,D>(
+    gens: [
+      Generator<A>,
+      Generator<B>,
+      Generator<C>,
+      Generator<D>
+    ],
+    f: (a: A, b: B, c: C, d: D) => boolean
+  ): Generator<boolean>;
+
+}
 
 /**
  * Handy tool for checking the output of your generators. Given a generator,
@@ -222,6 +246,16 @@ declare export var gen: {
   returnOneOf: <T>(values: T[]) => Generator<T>;
 
   /**
+   * Similar to `returnOneOf`, except provides probablistic "weights" to
+   * each value.
+   *
+   *     var numOrRarelyBool = gen.returnOneOf([[99, 'foo'], [1, 'bar']])
+   */
+  returnOneOfWeighted: <T>(
+    generators: [number, T][]
+  ) => Generator<T>;
+
+  /**
    * Creates a Generator which will generate values from one of the
    * provided generators.
    *
@@ -280,12 +314,7 @@ declare export var gen: {
    *
    */
   array: {
-    <A,B,C,D>(genTuple: [
-      Generator<A>,
-      Generator<B>,
-      Generator<C>,
-      Generator<D>
-    ], ..._: void[]): Generator<[A,B,C,D]>;
+    <Elem, T:Iterable<Elem>>(tupleGens: T): Generator<$TupleMap<T,<T>(Generator<T>) => T>>;
     <T>(valueGen: Generator<T>, lengthOrMin?: number, max?:number): Generator<Array<T>>;
   };
 

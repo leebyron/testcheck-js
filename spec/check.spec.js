@@ -1,3 +1,10 @@
+// @flow
+
+/*:: declare function describe(name: string, fn: () => void): void; */
+/*:: declare function it(name: string, fn: () => void): void; */
+/*:: declare function expect(val: any): any; */
+/*:: declare var jasmine: any; */
+
 describe('check', function () {
 
   var testcheck = require('../');
@@ -37,13 +44,16 @@ describe('check', function () {
     ), { times: 100, seed: seedVal });
 
     expect(calls).toBeLessThan(100);
-    expect(calls).toBe(result.numTests + result.shrunk.totalNodesVisited);
-    expect(result.result).toBe(false);
-    expect(result.fail).toEqual(jasmine.any(Array))
-    expect(result.fail.length).toBe(1);
-    expect(result.shrunk).toEqual(jasmine.any(Object));
-    expect(result.shrunk.smallest).toEqual([42]);
-
+    const shrunk = result.shrunk
+    const fail = result.fail
+    expect(shrunk).toEqual(jasmine.any(Object));
+    expect(fail).toEqual(jasmine.any(Array))
+    if (shrunk != null && fail != null) { // flow
+      expect(calls).toBe(result.numTests + shrunk.totalNodesVisited);
+      expect(result.result).toBe(false);
+      expect(fail.length).toBe(1);
+      expect(shrunk.smallest).toEqual([42]);
+    }
   });
 
 });

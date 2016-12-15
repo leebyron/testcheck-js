@@ -1,3 +1,9 @@
+/*:: declare function describe(name: string, fn: () => void): void; */
+/*:: declare function it(name: string, fn: () => void): void; */
+/*:: declare function expect(val: any): any; */
+/*:: declare function beforeEach(): void; */
+/*:: declare var jasmine: any; */
+
 describe('gen builders', function () {
 
   var testcheck = require('../');
