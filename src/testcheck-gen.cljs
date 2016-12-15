@@ -87,7 +87,6 @@
 
 ;; JS Primitives
 
-;; TODO: Floating-point Number
 ;; TODO: UTF8 strings
 ;; TODO: More performant string generation?
 
@@ -96,6 +95,13 @@
 (def genNull (gen/return nil))
 (js/goog.exportSymbol "gen.null", genNull)
 (js/goog.exportSymbol "gen.boolean", gen/boolean)
+
+(js/goog.exportSymbol "gen.number", gen/double)
+(def ^{:export gen.posNumber} genPosDouble (gen/double* {:min 0, :NaN? false}))
+(def ^{:export gen.negNumber} genNegDouble (gen/double* {:max 0, :NaN? false}))
+(defn ^{:export gen.numberWithin} genNumberWithin
+  [from, to]
+  (gen/double* {:min from, :max to, :NaN? false}))
 
 (js/goog.exportSymbol "gen.int", gen/int)
 (def ^{:export gen.posInt} genPosInt gen/pos-int)
@@ -118,6 +124,7 @@
 (def ^{:export gen.JSONPrimitive} genJSONPrimitive
   (gen/frequency [[1 genNull]
                   [2 gen/boolean]
+                  [3 (gen/double* {:infinite? false, :NaN? false})]
                   [10 gen/int]
                   [10 gen/string]]))
 (def ^{:export gen.JSONValue} genJSONValue
@@ -128,12 +135,12 @@
 ;; JS values, potentially nested
 
 (def ^{:export gen.primitive} genPrimitive
-  (gen/frequency [[1 genNaN]
-                  [2 genUndefined]
-                  [3 genNull]
-                  [10 gen/boolean]
-                  [50 gen/int]
-                  [50 gen/string]]))
+  (gen/frequency [[1 genUndefined]
+                  [2 genNull]
+                  [4 gen/boolean]
+                  [6 gen/double]
+                  [20 gen/int]
+                  [20 gen/string]]))
 
 (def ^{:export gen.any} genAny
   (gen-nested-or-val genArrayOrObject genPrimitive))

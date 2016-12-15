@@ -54,11 +54,43 @@ describe('value generator', function () {
     });
   });
 
-  it('generates ints', function () {
-    var vals = testcheck.sample(gen.int, 100);
+  it('generates numbers', function () {
+    var vals = testcheck.sample(gen.number, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
-      return Math.floor(value) === value && !isNaN(value);
+      return typeof value === 'number'
+    });
+  });
+
+  it('generates numbers', function () {
+    var vals = testcheck.sample(gen.number, 100);
+    expect(vals.length).toBe(100);
+    expect(vals).toAllPass(function (value) {
+      return typeof value === 'number'
+    });
+  });
+
+  it('generates positive numbers', function () {
+    var vals = testcheck.sample(gen.posNumber, 100);
+    expect(vals.length).toBe(100);
+    expect(vals).toAllPass(function (value) {
+      return typeof value === 'number' && value >= 0
+    });
+  });
+
+  it('generates negative numbers', function () {
+    var vals = testcheck.sample(gen.negNumber, 100);
+    expect(vals.length).toBe(100);
+    expect(vals).toAllPass(function (value) {
+      return typeof value === 'number' && value <= 0
+    });
+  });
+
+  it('generates numbers in a range', function () {
+    var vals = testcheck.sample(gen.numberWithin(-100, 100), 100);
+    expect(vals.length).toBe(100);
+    expect(vals).toAllPass(function (value) {
+      return typeof value === 'number' && value >= -100 && value <= 100
     });
   });
 

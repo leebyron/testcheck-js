@@ -329,6 +329,26 @@ declare module 'testcheck' {
     boolean: Generator<boolean>;
 
     /**
+     * Generates floating point numbers (including +Infinity, -Infinity, and NaN)
+     */
+    number: Generator<number>;
+
+    /**
+     * Only positive numbers (0 though +Infinity)
+     */
+    posNumber: Generator<number>;
+
+    /**
+     * Only negative numbers (0 though -Infinity)
+     */
+    negNumber: Generator<number>;
+
+    /**
+     * Generates a floating point number within the provided (inclusive) range.
+     */
+    numberWithin: (min: number, max: number) => Generator<number>;
+
+    /**
      * A sized, shrinkable generator producing integers.
      */
     int: Generator<number>;
