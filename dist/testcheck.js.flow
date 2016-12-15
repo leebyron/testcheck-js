@@ -1,25 +1,25 @@
+/* @flow */
+
 /**
  * Optional arguments to `check`.
  */
-export interface Options {
-
+export type Options = {
   // Number of times to run `check`.
-  times?: number;
+  times?: number,
 
   // The maximum "size" to provide to sized generators. Default: 200
-  maxSize?: number;
+  maxSize?: number,
 
   // The seed to use for the random number generator. Default: Random
-  seed?: number;
-}
+  seed?: number
+};
 
 /**
  * The result of running `check`.
  */
-export interface Result {
-
+export type Result = {
   // True of the check passed.
-  result: boolean;
+  result: boolean,
 
   // The number of generated checks ran.
   numTests: number;
@@ -50,15 +50,15 @@ export interface Result {
     // The number of nodes shrunk to result in this smallest failing value.
     totalNodesVisited: number;
   }
-}
+};
 
 /**
  * Generators of values.
  *
  * Generator is an opaque type. It has no public methods or properties.
  */
-export interface Generator<T> {}
-
+class testcheck$Generator<T> {}
+export type Generator<T> = Class<testcheck$Generator<T>>;
 
 /**
  * Given a property to check, return the result of the check.
@@ -72,7 +72,10 @@ export interface Generator<T> {}
  *     {times: 100, maxSize: 200, seed: <Random>}
  *
  */
-export function check(property: Generator<boolean>, options?: Options): Result;
+export function check(
+  prop: Generator<boolean>,
+  options?: Options
+): Result;
 
 /**
  * Creates a "property" as needed by `check`.
@@ -85,9 +88,14 @@ export function check(property: Generator<boolean>, options?: Options): Result;
  *     check(numGoUp, {times: 1000});
  *
  */
-export function property(
-  argGens: Array<Generator<any>>,
-  propertyFn: (...args: any[]) => boolean
+export function property<A,B,C,D>(
+  gens: [
+    Generator<A>,
+    Generator<B>,
+    Generator<C>,
+    Generator<D>
+  ],
+  f: (a: A, b: B, c: C, d: D) => boolean
 ): Generator<boolean>;
 
 /**
@@ -100,14 +108,15 @@ export function property(
  * By default 10 samples are provided unless otherwise specified.
  *
  */
-export function sample<T>(gen: Generator<T>, times?: number = 10): Array<T>;
-
+export function sample<T>(
+  gen: Generator<T>,
+  times?: number
+): Array<T>;
 
 // Generator Builders
 // ------------------
 
 export const gen: {
-
   /**
    * Creates a new Generator which ensures that all values Generated adhere to
    * the given `predicate`.
@@ -190,9 +199,24 @@ export const gen: {
    */
   shrink: <T>(generator: Generator<T>) => Generator<T>;
 
-
   // Simple Generators
   // -----------------
+
+  /**
+   * Creates a Generator which will always generate the provided value.
+   *
+   *     var alwaysThree = gen.return(3);
+   *
+   */
+  return: <T>(value: T) => Generator<T>;
+
+  /**
+   * Creates a Generator which will always generate one of the provided values.
+   *
+   *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c']);
+   *
+   */
+  returnOneOf: <T>(values: T[]) => Generator<T>;
 
   /**
    * Creates a Generator which will generate values from one of the
@@ -210,35 +234,22 @@ export const gen: {
    *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
    */
   oneOfWeighted: <T>(
-    generators: Array</*number, Generator<T>*/any>[]
+    generators: [number, Generator<T>][]
   ) => Generator<T>;
 
   /**
-   * Creates a Generator which will always generate the provided value.
+   * Given a function which takes a generator and returns a generator (such as
+   * `gen.array` or `gen.object`), and a Generator to use as values, creates
+   * potentially nested values.
    *
-   *     var alwaysThree = gen.return(3)
-   *
-   */
-  return: <T>(value: T) => Generator<T>;
-
-  /**
-   * Creates a Generator which will always generate one of the provided values.
-   *
-   *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c'])
+   *     gen.nested(gen.array, gen.int)
+   *     // [ [ 0, [ -2 ], 1, [] ]
    *
    */
-  returnOneOf: <T>(values: T[]) => Generator<T>;
-
-  /**
-   * Similar to `oneOf`, except provides probablistic "weights" to
-   * each generator.
-   *
-   *     var fizzBuzz = gen.oneOf([[1, 'fizz'], [5, 'buzz']])
-   */
-  returnOneOfWeighted: <T>(
-    generators: Array</*number, T*/any>[]
-  ) => Generator<T>;
-
+  nested: <C, T>(
+    collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
+    valueGen: Generator<T>
+  ) => Generator<C>;
 
   // Collections: Arrays and Objects
   // -------------------------------
@@ -266,11 +277,14 @@ export const gen: {
    *
    */
   array: {
-    <T>(valueGen: Generator<T>): Generator<Array<T>>;
-    <T>(valueGen: Generator<T>, length: number): Generator<Array<T>>;
-    <T>(valueGen: Generator<T>, min: number, max: number): Generator<Array<T>>;
-    (genTuple: Array<Generator<any>>): Generator<Array<any>>;
-  }
+    <A,B,C,D>(genTuple: [
+      Generator<A>,
+      Generator<B>,
+      Generator<C>,
+      Generator<D>
+    ], ..._: void[]): Generator<[A,B,C,D]>;
+    <T>(valueGen: Generator<T>, lengthOrMin?: number, max?:number): Generator<Array<T>>;
+  };
 
   /**
    * Generates Objects of values. There are a few forms `gen.object` can be used:
@@ -291,39 +305,24 @@ export const gen: {
    *
    */
   object: {
-    <T>(valueGen: Generator<T>): Generator<{[key: string]: T}>;
-    <T>(keyGen: Generator<string>, valueGen: Generator<T>): Generator<{[key: string]: T}>;
+    <V>(valueGen: Generator<V>, _: void): Generator<{[key: string]: V}>;
+    <K,V>(keyGen: Generator<K>, valueGen: Generator<V>): Generator<{[key: K]: V}>;
     (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
-  }
+  };
 
   /**
    * Generates either an Array or an Object with values of the provided kind.
    */
   arrayOrObject: <T>(
     valueGen: Generator<T>
-  ) => Generator<{[key: string]: T; [key: number]: T}>;
-
-  /**
-   * Given a function which takes a generator and returns a generator (such as
-   * `gen.array` or `gen.object`), and a Generator to use as values, creates
-   * potentially nested values.
-   *
-   *     gen.nested(gen.array, gen.int)
-   *     // [ [ 0, [ -2 ], 1, [] ]
-   *
-   */
-  nested: <C, T>(
-    collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
-    valueGen: Generator<T>
-  ) => Generator<C>;
-
+  ) => Generator<{[key: string]: T} | T[]>;
 
   // JS Primitives
   // -------------
 
   NaN: Generator<number>;
   undefined: Generator<void>;
-  null: Generator<void>;
+  null: Generator<null>;
   boolean: Generator<boolean>;
 
   /**
@@ -409,7 +408,6 @@ export const gen: {
    */
   alphaNumString: Generator<string>;
 
-
   // JSON
 
   /**
@@ -427,7 +425,6 @@ export const gen: {
    */
   JSON: Generator<{[key: string]: any}>;
 
-
   // JS
   // --
 
@@ -441,5 +438,4 @@ export const gen: {
    * Generates any JS value (possibly nested).
    */
   any: Generator<any>;
-
 }

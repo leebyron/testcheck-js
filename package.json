@@ -15,6 +15,7 @@
     "url": "https://github.com/leebyron/testcheck-js/issues"
   },
   "main": "dist/testcheck.js",
+  "types": "dist/testcheck.d.ts",
   "devDependencies": {
     "jasmine-node": "^1.14.5"
   },
