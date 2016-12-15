@@ -1,4 +1,5 @@
 var testcheck = require('testcheck');
+var util = require('util');
 var jasmine;
 var isJasmineV1;
 
@@ -130,9 +131,7 @@ function logException(e) {
 }
 
 function printValues(values) {
-  return '( ' + values.map(function (v) {
-    return JSON.stringify(v);
-  }).join(', ') + ' )';
+  return util.inspect(values, { depth: null, colors: true });
 }
 
 exports.install = install;
