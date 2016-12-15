@@ -78,7 +78,7 @@
         (gen/fmap clj->js
           (gen/fmap (partial zipmap ks)
                     (apply gen/tuple vs))))
-      (gen-obj (gen/resize 16 gen/string-alphanumeric) val-gen-or-obj))))
+      (gen-obj (gen/not-empty gen/string-alphanumeric) val-gen-or-obj))))
 
 (defn ^{:export gen.arrayOrObject} genArrayOrObject
   [val-gen]
@@ -93,8 +93,7 @@
 
 (def ^{:export gen.NaN} genNaN (gen/return js/NaN))
 (def ^{:export gen.undefined} genUndefined (gen/return js/undefined))
-(def genNull (gen/return nil))
-(js/goog.exportSymbol "gen.null", genNull)
+(def ^{:export gen.null} genNull (gen/return nil))
 (js/goog.exportSymbol "gen.boolean", gen/boolean)
 
 (js/goog.exportSymbol "gen.int", gen/int)
