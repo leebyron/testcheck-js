@@ -13,6 +13,10 @@ fileset@~0.1.5:
     glob "3.x"
     minimatch "0.x"
 
+flow-bin@^0.37.0:
+  version "0.37.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.37.0.tgz#456ebbd472d20d2d970560cea0a6b3c648878307"
+
 gaze@~0.3.2:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-0.3.4.tgz#5f94bdda0afe53bc710969bcd6f282548d60c279"

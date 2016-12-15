@@ -116,7 +116,7 @@ declare export function sample<T>(
 // Generator Builders
 // ------------------
 
-declare export const gen: {
+declare export var gen: {
   /**
    * Creates a new Generator which ensures that all values Generated adhere to
    * the given `predicate`.

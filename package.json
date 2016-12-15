@@ -17,7 +17,8 @@
   "main": "dist/testcheck.js",
   "types": "dist/testcheck.d.ts",
   "devDependencies": {
-    "jasmine-node": "^1.14.5"
+    "jasmine-node": "^1.14.5",
+    "flow-bin": "^0.37.0"
   },
   "engines": {
     "node": ">=0.8.0"
@@ -37,7 +38,9 @@
     "generative"
   ],
   "scripts": {
-    "test": "jasmine-node spec/",
+    "test": "npm run testonly && npm run check",
+    "testonly": "jasmine-node spec/",
+    "check": "flow check",
     "build": "./resources/build.sh"
   },
   "license": "BSD"
