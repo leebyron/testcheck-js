@@ -6,277 +6,276 @@
 /*:: declare function beforeEach(): void; */
 /*:: declare var jasmine: any; */
 
-describe('value generator', function () {
+const { sample, gen } = require('../')
 
-  var testcheck = require('../');
-  var gen = testcheck.gen;
+describe('value generator', () => {
 
   beforeEach(function () {
     this.addMatchers({
       toAllPass: function(predicate) {
-        var failedValue;
-        var pass = this.actual.every(function (value) {
+        let failedValue
+        const pass = this.actual.every(function (value) {
           if (predicate(value)) {
-            return true;
+            return true
           } else {
-            failedValue = value;
+            failedValue = value
           }
-        });
+        })
         this.message = function() {
-          return 'Expected ' + JSON.stringify(failedValue) + ' to pass ' + predicate;
-        };
-        return pass;
+          return 'Expected ' + JSON.stringify(failedValue) + ' to pass ' + predicate
+        }
+        return pass
       }
     })
-  });
+  })
 
-  it('generates NaN', function () {
-    var vals = testcheck.sample(gen.NaN, 100);
-    expect(vals.length).toBe(100);
+  it('generates NaN', () => {
+    const vals = sample(gen.NaN, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return isNaN(value) && value !== value;
-    });
-  });
+      return isNaN(value) && value !== value
+    })
+  })
 
-  it('generates undefined', function () {
-    var vals = testcheck.sample(gen.undefined, 100);
-    expect(vals.length).toBe(100);
+  it('generates undefined', () => {
+    const vals = sample(gen.undefined, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return value === undefined && value === value;
-    });
-  });
+      return value === undefined && value === value
+    })
+  })
 
-  it('generates null', function () {
-    var vals = testcheck.sample(gen.null, 100);
-    expect(vals.length).toBe(100);
+  it('generates null', () => {
+    const vals = sample(gen.null, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return value === null && value === value;
-    });
-  });
+      return value === null && value === value
+    })
+  })
 
-  it('generates booleans', function () {
-    var vals = testcheck.sample(gen.boolean, 100);
-    expect(vals.length).toBe(100);
+  it('generates booleans', () => {
+    const vals = sample(gen.boolean, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return (value === true || value === false) && value === value;
-    });
-  });
+      return (value === true || value === false) && value === value
+    })
+  })
 
-  it('generates numbers', function () {
-    var vals = testcheck.sample(gen.number, 100);
-    expect(vals.length).toBe(100);
-    expect(vals).toAllPass(function (value) {
-      return typeof value === 'number'
-    });
-  });
-
-  it('generates numbers', function () {
-    var vals = testcheck.sample(gen.number, 100);
-    expect(vals.length).toBe(100);
+  it('generates numbers', () => {
+    const vals = sample(gen.number, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return typeof value === 'number'
-    });
-  });
+    })
+  })
 
-  it('generates positive numbers', function () {
-    var vals = testcheck.sample(gen.posNumber, 100);
-    expect(vals.length).toBe(100);
+  it('generates numbers', () => {
+    const vals = sample(gen.number, 100)
+    expect(vals.length).toBe(100)
+    expect(vals).toAllPass(function (value) {
+      return typeof value === 'number'
+    })
+  })
+
+  it('generates positive numbers', () => {
+    const vals = sample(gen.posNumber, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return typeof value === 'number' && value >= 0
-    });
-  });
+    })
+  })
 
-  it('generates negative numbers', function () {
-    var vals = testcheck.sample(gen.negNumber, 100);
-    expect(vals.length).toBe(100);
+  it('generates negative numbers', () => {
+    const vals = sample(gen.negNumber, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return typeof value === 'number' && value <= 0
-    });
-  });
+    })
+  })
 
-  it('generates numbers in a range', function () {
-    var vals = testcheck.sample(gen.numberWithin(-100, 100), 100);
-    expect(vals.length).toBe(100);
+  it('generates numbers in a range', () => {
+    const vals = sample(gen.numberWithin(-100, 100), 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return typeof value === 'number' && value >= -100 && value <= 100
-    });
-  });
+    })
+  })
 
-  it('generates positive ints', function () {
-    var vals = testcheck.sample(gen.posInt, 100);
-    expect(vals.length).toBe(100);
+  it('generates positive ints', () => {
+    const vals = sample(gen.posInt, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return Math.floor(value) === value && !isNaN(value) && value >= 0;
-    });
-  });
+      return Math.floor(value) === value && !isNaN(value) && value >= 0
+    })
+  })
 
-  it('generates negative ints', function () {
-    var vals = testcheck.sample(gen.negInt, 100);
-    expect(vals.length).toBe(100);
+  it('generates negative ints', () => {
+    const vals = sample(gen.negInt, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return Math.floor(value) === value && !isNaN(value) && value <= 0;
-    });
-  });
+      return Math.floor(value) === value && !isNaN(value) && value <= 0
+    })
+  })
 
-  it('generates strictly positive ints', function () {
-    var vals = testcheck.sample(gen.strictPosInt, 100);
-    expect(vals.length).toBe(100);
+  it('generates strictly positive ints', () => {
+    const vals = sample(gen.strictPosInt, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return Math.floor(value) === value && !isNaN(value) && value > 0;
-    });
-  });
+      return Math.floor(value) === value && !isNaN(value) && value > 0
+    })
+  })
 
-  it('generates strictly negative ints', function () {
-    var vals = testcheck.sample(gen.strictNegInt, 100);
-    expect(vals.length).toBe(100);
+  it('generates strictly negative ints', () => {
+    const vals = sample(gen.strictNegInt, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return Math.floor(value) === value && !isNaN(value) && value < 0;
-    });
-  });
+      return Math.floor(value) === value && !isNaN(value) && value < 0
+    })
+  })
 
-  it('generates ints in a range', function () {
-    var vals = testcheck.sample(gen.intWithin(100, 200), 100);
-    expect(vals.length).toBe(100);
+  it('generates ints in a range', () => {
+    const vals = sample(gen.intWithin(100, 200), 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value) &&
-        value >= 100 && value <= 200;
-    });
-  });
+        value >= 100 && value <= 200
+    })
+  })
 
-  it('generates strings', function () {
-    var vals = testcheck.sample(gen.string, 100);
-    expect(vals.length).toBe(100);
+  it('generates strings', () => {
+    const vals = sample(gen.string, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return typeof value === 'string' && JSON.parse(JSON.stringify(value)) === value;
-    });
-  });
+      return typeof value === 'string' && JSON.parse(JSON.stringify(value)) === value
+    })
+  })
 
-  var ALPHA_NUM_RX = /^[a-zA-Z0-9]*$/;
+  const ALPHA_NUM_RX = /^[a-zA-Z0-9]*$/
 
-  it('generates alphanum strings', function () {
-    var vals = testcheck.sample(gen.alphaNumString, 100);
-    expect(vals.length).toBe(100);
+  it('generates alphanum strings', () => {
+    const vals = sample(gen.alphaNumString, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return typeof value === 'string' && ALPHA_NUM_RX.test(value);
-    });
-  });
+      return typeof value === 'string' && ALPHA_NUM_RX.test(value)
+    })
+  })
 
-  it('generates JS primitives', function () {
-    var vals = testcheck.sample(gen.primitive, 100);
-    expect(vals.length).toBe(100);
+  it('generates JS primitives', () => {
+    const vals = sample(gen.primitive, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      return !Array.isArray(value) && !(value && value.constructor === Object);
-    });
-  });
+      return !Array.isArray(value) && !(value && value.constructor === Object)
+    })
+  })
 
-  it('generates arrays', function () {
-    var vals = testcheck.sample(gen.array(gen.null), 100);
-    expect(vals.length).toBe(100);
-    expect(vals).toAllPass(function (value) {
-      return Array.isArray(value) &&
-        value.length >= 0 && value.every(function (x) { return x === null; });
-    });
-  });
-
-  it('generates arrays of a certain length', function () {
-    var vals = testcheck.sample(gen.array(gen.null, 3), 100);
-    expect(vals.length).toBe(100);
+  it('generates arrays', () => {
+    const vals = sample(gen.array(gen.null), 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
-        value.length === 3 && value.every(function (x) { return x === null; });
-    });
-  });
+        value.length >= 0 && value.every(function (x) { return x === null; })
+    })
+  })
 
-  it('generates arrays within a length range', function () {
-    var vals = testcheck.sample(gen.array(gen.null, 3, 5), 100);
-    expect(vals.length).toBe(100);
+  it('generates arrays of a certain length', () => {
+    const vals = sample(gen.array(gen.null, 3), 100)
+    expect(vals.length).toBe(100)
+    expect(vals).toAllPass(function (value) {
+      return Array.isArray(value) &&
+        value.length === 3 && value.every(function (x) { return x === null; })
+    })
+  })
+
+  it('generates arrays within a length range', () => {
+    const vals = sample(gen.array(gen.null, 3, 5), 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
         value.length >= 3 && value.length <= 5 &&
-        value.every(function (x) { return x === null; });
-    });
-  });
+        value.every(function (x) { return x === null; })
+    })
+  })
 
-  it('generates arrays from a specific definition', function () {
-    var vals = testcheck.sample(gen.array([gen.return(true), gen.return(false)]), 100);
-    expect(vals.length).toBe(100);
+  it('generates arrays from a specific definition', () => {
+    const vals = sample(gen.array([gen.return(true), gen.return(false)]), 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
         value.length === 2 && value[0] === true && value[1] === false
-    });
-  });
+    })
+  })
 
-  it('generates objects', function () {
-    var vals = testcheck.sample(gen.object(gen.null), 50);
-    expect(vals.length).toBe(50);
+  it('generates objects', () => {
+    const vals = sample(gen.object(gen.null), 50)
+    expect(vals.length).toBe(50)
     expect(vals).toAllPass(function (value) {
-      var keys = Object.keys(value);
+      const keys = Object.keys(value)
       return value.constructor === Object &&
         keys.length >= 0 &&
         keys.every(function (key) {
-          return typeof key === 'string' && value[key] === null;
-        });
-    });
-  });
+          return typeof key === 'string' && value[key] === null
+        })
+    })
+  })
 
-  it('generates objects with alphanum keys', function () {
-    var vals = testcheck.sample(gen.object(gen.alphaNumString, gen.null), 50);
-    expect(vals.length).toBe(50);
+  it('generates objects with alphanum keys', () => {
+    const vals = sample(gen.object(gen.alphaNumString, gen.null), 50)
+    expect(vals.length).toBe(50)
     expect(vals).toAllPass(function (value) {
-      var keys = Object.keys(value);
+      const keys = Object.keys(value)
       return value.constructor === Object &&
         keys.length >= 0 &&
         keys.every(function (key) {
-          return typeof key === 'string' && ALPHA_NUM_RX.test(key) && value[key] === null;
-        });
-    });
-  });
+          return typeof key === 'string' && ALPHA_NUM_RX.test(key) && value[key] === null
+        })
+    })
+  })
 
-  it('generates objects from a specific definition', function () {
-    var vals = testcheck.sample(gen.object({t: gen.return(true), f: gen.return(false)}), 100);
-    expect(vals.length).toBe(100);
+  it('generates objects from a specific definition', () => {
+    const vals = sample(gen.object({t: gen.return(true), f: gen.return(false)}), 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      var keys = Object.keys(value);
+      const keys = Object.keys(value)
       return value.constructor === Object &&
-        keys.length === 2 && value.t === true && value.f === false;
-    });
-  });
+        keys.length === 2 && value.t === true && value.f === false
+    })
+  })
 
-  it('generates nested collections', function () {
-    var vals = testcheck.sample(gen.nested(gen.array, gen.int), 20);
-    expect(vals.length).toBe(20);
+  it('generates nested collections', () => {
+    const vals = sample(gen.nested(gen.array, gen.int), 20)
+    expect(vals.length).toBe(20)
     function isNestedArrayOfInt(arrayOrInt) {
       return typeof arrayOrInt === 'number' ||
-        (arrayOrInt.every && arrayOrInt.every(isNestedArrayOfInt));
+        (arrayOrInt.every && arrayOrInt.every(isNestedArrayOfInt))
     }
-    expect(vals).toAllPass(isNestedArrayOfInt);
-  });
+    expect(vals).toAllPass(isNestedArrayOfInt)
+  })
 
-  it('generates json primitives', function () {
-    var vals = testcheck.sample(gen.JSONPrimitive, 100);
-    expect(vals.length).toBe(100);
+  it('generates json primitives', () => {
+    const vals = sample(gen.JSONPrimitive, 100)
+    expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
-      var jsonStr = JSON.stringify(value);
-      return JSON.stringify(JSON.parse(jsonStr)) === jsonStr;
-    });
-  });
+      const jsonStr = JSON.stringify(value)
+      return JSON.stringify(JSON.parse(jsonStr)) === jsonStr
+    })
+  })
 
-  it('generates json values', function () {
-    var vals = testcheck.sample(gen.JSONValue, 10);
-    expect(vals.length).toBe(10);
+  it('generates json values', () => {
+    const vals = sample(gen.JSONValue, 10)
+    expect(vals.length).toBe(10)
     expect(vals).toAllPass(function (value) {
-      var jsonStr = JSON.stringify(value);
-      return JSON.stringify(JSON.parse(jsonStr)) === jsonStr;
-    });
-  });
+      const jsonStr = JSON.stringify(value)
+      return JSON.stringify(JSON.parse(jsonStr)) === jsonStr
+    })
+  })
 
-  it('generates json objects', function () {
-    var vals = testcheck.sample(gen.JSON, 10);
-    expect(vals.length).toBe(10);
+  it('generates json objects', () => {
+    const vals = sample(gen.JSON, 10)
+    expect(vals.length).toBe(10)
     expect(vals).toAllPass(function (value) {
-      var jsonStr = JSON.stringify(value);
-      return JSON.stringify(JSON.parse(jsonStr)) === jsonStr;
-    });
-  });
+      const jsonStr = JSON.stringify(value)
+      return JSON.stringify(JSON.parse(jsonStr)) === jsonStr
+    })
+  })
 
-});
+})

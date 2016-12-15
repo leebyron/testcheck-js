@@ -5,55 +5,54 @@
 /*:: declare function expect(val: any): any; */
 /*:: declare var jasmine: any; */
 
-describe('check', function () {
+const { check, property, gen } = require('../')
 
-  var testcheck = require('../');
-  var gen = testcheck.gen;
+describe('check', () => {
 
-  it('checks true properties', function () {
+  it('checks true properties', () => {
 
-    var seedVal = 1234567890;
-    var calls = 0;
+    const seedVal = 1234567890
+    let calls = 0
 
-    var result = testcheck.check(testcheck.property(
+    const result = check(property(
       [gen.posInt],
       function (intValue) {
-        calls++;
-        return intValue >= 0;
+        calls++
+        return intValue >= 0
       }
-    ), { times: 100, seed: seedVal });
+    ), { times: 100, seed: seedVal })
 
-    expect(calls).toBe(100);
-    expect(result.result).toBe(true);
-    expect(result.numTests).toBe(100);
-    expect(result.seed).toBe(seedVal);
+    expect(calls).toBe(100)
+    expect(result.result).toBe(true)
+    expect(result.numTests).toBe(100)
+    expect(result.seed).toBe(seedVal)
 
-  });
+  })
 
-  it('checks false properties', function () {
+  it('checks false properties', () => {
 
-    var seedVal = 1234567890;
-    var calls = 0;
+    const seedVal = 1234567890
+    let calls = 0
 
-    var result = testcheck.check(testcheck.property(
+    const result = check(property(
       [gen.posInt],
       function (intValue) {
-        calls++;
-        return intValue >= 0 && intValue < 42;
+        calls++
+        return intValue >= 0 && intValue < 42
       }
-    ), { times: 100, seed: seedVal });
+    ), { times: 100, seed: seedVal })
 
-    expect(calls).toBeLessThan(100);
+    expect(calls).toBeLessThan(100)
     const shrunk = result.shrunk
     const fail = result.fail
-    expect(shrunk).toEqual(jasmine.any(Object));
+    expect(shrunk).toEqual(jasmine.any(Object))
     expect(fail).toEqual(jasmine.any(Array))
     if (shrunk != null && fail != null) { // flow
-      expect(calls).toBe(result.numTests + shrunk.totalNodesVisited);
-      expect(result.result).toBe(false);
-      expect(fail.length).toBe(1);
-      expect(shrunk.smallest).toEqual([42]);
+      expect(calls).toBe(result.numTests + shrunk.totalNodesVisited)
+      expect(result.result).toBe(false)
+      expect(fail.length).toBe(1)
+      expect(shrunk.smallest).toEqual([42])
     }
-  });
+  })
 
-});
+})
