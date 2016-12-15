@@ -93,7 +93,8 @@
 
 (def ^{:export gen.NaN} genNaN (gen/return js/NaN))
 (def ^{:export gen.undefined} genUndefined (gen/return js/undefined))
-(def ^{:export gen.null} genNull (gen/return nil))
+(def genNull (gen/return nil))
+(js/goog.exportSymbol "gen.null", genNull)
 (js/goog.exportSymbol "gen.boolean", gen/boolean)
 
 (js/goog.exportSymbol "gen.int", gen/int)
