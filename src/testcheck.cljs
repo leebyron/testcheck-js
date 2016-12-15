@@ -10,19 +10,17 @@
   (let [opt (or options (js-obj))
         num-tests (or (aget opt "times") 100)
         max-size (or (aget opt "maxSize") 200)
-        seed (aget opt "seed")]
-
-; (update-in m [:foo :deep] clojure.set/rename-keys {:baz :periwinkle}))
-
-    (clj->js
-      (update
-        (rename-keys
-          (tc/quick-check num-tests property :max-size max-size :seed seed)
-          {:failing-size :failingSize
-           :num-tests :numTests})
-        :shrunk
-        rename-keys
-        {:total-nodes-visited :totalNodesVisited}))))
+        seed (aget opt "seed")
+        result (tc/quick-check num-tests property :max-size max-size :seed seed)
+        resultRenamed (rename-keys result {:failing-size :failingSize :num-tests :numTests})
+        resultRenamedDeep (if (contains? resultRenamed :shrunk)
+                            (update
+                              resultRenamed
+                              :shrunk
+                              rename-keys
+                              {:total-nodes-visited :totalNodesVisited})
+                            resultRenamed)]
+    (clj->js resultRenamedDeep)))
 
 (def ^{:export property} property prop/for-all*)
 
