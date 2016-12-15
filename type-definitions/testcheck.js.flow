@@ -57,7 +57,7 @@ export type Result = {
  *
  * Generator is an opaque type. It has no public methods or properties.
  */
-declare class testcheck$Generator<T> {}
+declare class testcheck$Generator<+T> {}
 export type Generator<T> = Class<testcheck$Generator<T>>;
 
 /**

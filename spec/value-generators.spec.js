@@ -1,3 +1,11 @@
+// @flow
+
+/*:: declare function describe(name: string, fn: () => void): void; */
+/*:: declare function it(name: string, fn: () => void): void; */
+/*:: declare function expect(val: any): any; */
+/*:: declare function beforeEach(): void; */
+/*:: declare var jasmine: any; */
+
 describe('value generator', function () {
 
   var testcheck = require('../');
