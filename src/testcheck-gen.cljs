@@ -74,13 +74,13 @@
     (gen/fmap clj->js (gen-obj key-gen val-gen)))
   ([val-gen-or-obj]
     (if (= js/Object (.-constructor val-gen-or-obj))
-      (let [seq (js->clj val-gen-or-obj)
+      (let [seq (into {} (for [k (js-keys val-gen-or-obj)] [k (aget val-gen-or-obj k)]))
         ks (keys seq)
         vs (vals seq)]
         (gen/fmap clj->js
           (gen/fmap (partial zipmap ks)
                     (apply gen/tuple vs))))
-      (gen-obj (gen/resize 16 gen/string-alpha-numeric) val-gen-or-obj))))
+      (gen-obj (gen/resize 16 gen/string-alphanumeric) val-gen-or-obj))))
 
 (defn ^{:export gen.arrayOrObject} genArrayOrObject
   [val-gen]
@@ -108,11 +108,11 @@
 
 (js/goog.exportSymbol "gen.char", gen/char)
 (def ^{:export gen.asciiChar} genAsciiChar gen/char-ascii)
-(def ^{:export gen.alphaNumChar} genAlphaNumChar gen/char-alpha-numeric)
+(def ^{:export gen.alphaNumChar} genAlphaNumChar gen/char-alphanumeric)
 
 (def ^{:export gen.string} genString gen/string)
 (def ^{:export gen.asciiString} genAsciiString gen/string-ascii)
-(def ^{:export gen.alphaNumString} genAlphaNumString gen/string-alpha-numeric)
+(def ^{:export gen.alphaNumString} genAlphaNumString gen/string-alphanumeric)
 
 
 ;; JSON

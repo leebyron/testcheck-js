@@ -23,7 +23,7 @@ describe('value generator', function () {
   });
 
   it('generates NaN', function () {
-    var vals = testcheck.sample(gen.NaN, {times:100});
+    var vals = testcheck.sample(gen.NaN, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return isNaN(value) && value !== value;
@@ -31,7 +31,7 @@ describe('value generator', function () {
   });
 
   it('generates undefined', function () {
-    var vals = testcheck.sample(gen.undefined, {times:100});
+    var vals = testcheck.sample(gen.undefined, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return value === undefined && value === value;
@@ -39,7 +39,7 @@ describe('value generator', function () {
   });
 
   it('generates null', function () {
-    var vals = testcheck.sample(gen.null, {times:100});
+    var vals = testcheck.sample(gen.null, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return value === null && value === value;
@@ -47,7 +47,7 @@ describe('value generator', function () {
   });
 
   it('generates booleans', function () {
-    var vals = testcheck.sample(gen.boolean, {times:100});
+    var vals = testcheck.sample(gen.boolean, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return (value === true || value === false) && value === value;
@@ -55,7 +55,7 @@ describe('value generator', function () {
   });
 
   it('generates ints', function () {
-    var vals = testcheck.sample(gen.int, {times:100});
+    var vals = testcheck.sample(gen.int, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value);
@@ -63,7 +63,7 @@ describe('value generator', function () {
   });
 
   it('generates positive ints', function () {
-    var vals = testcheck.sample(gen.posInt, {times:100});
+    var vals = testcheck.sample(gen.posInt, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value) && value >= 0;
@@ -71,7 +71,7 @@ describe('value generator', function () {
   });
 
   it('generates negative ints', function () {
-    var vals = testcheck.sample(gen.negInt, {times:100});
+    var vals = testcheck.sample(gen.negInt, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value) && value <= 0;
@@ -79,7 +79,7 @@ describe('value generator', function () {
   });
 
   it('generates strictly positive ints', function () {
-    var vals = testcheck.sample(gen.strictPosInt, {times:100});
+    var vals = testcheck.sample(gen.strictPosInt, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value) && value > 0;
@@ -87,7 +87,7 @@ describe('value generator', function () {
   });
 
   it('generates strictly negative ints', function () {
-    var vals = testcheck.sample(gen.strictNegInt, {times:100});
+    var vals = testcheck.sample(gen.strictNegInt, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value) && value < 0;
@@ -95,7 +95,7 @@ describe('value generator', function () {
   });
 
   it('generates ints in a range', function () {
-    var vals = testcheck.sample(gen.intWithin(100, 200), {times:100});
+    var vals = testcheck.sample(gen.intWithin(100, 200), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value) &&
@@ -104,7 +104,7 @@ describe('value generator', function () {
   });
 
   it('generates strings', function () {
-    var vals = testcheck.sample(gen.string, {times:100});
+    var vals = testcheck.sample(gen.string, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return typeof value === 'string' && JSON.parse(JSON.stringify(value)) === value;
@@ -114,7 +114,7 @@ describe('value generator', function () {
   var ALPHA_NUM_RX = /^[a-zA-Z0-9]*$/;
 
   it('generates alphanum strings', function () {
-    var vals = testcheck.sample(gen.alphaNumString, {times:100});
+    var vals = testcheck.sample(gen.alphaNumString, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return typeof value === 'string' && ALPHA_NUM_RX.test(value);
@@ -122,7 +122,7 @@ describe('value generator', function () {
   });
 
   it('generates JS primitives', function () {
-    var vals = testcheck.sample(gen.primitive, {times:100});
+    var vals = testcheck.sample(gen.primitive, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return !Array.isArray(value) && !(value && value.constructor === Object);
@@ -130,7 +130,7 @@ describe('value generator', function () {
   });
 
   it('generates arrays', function () {
-    var vals = testcheck.sample(gen.array(gen.null), {times:100});
+    var vals = testcheck.sample(gen.array(gen.null), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -139,7 +139,7 @@ describe('value generator', function () {
   });
 
   it('generates arrays of a certain length', function () {
-    var vals = testcheck.sample(gen.array(gen.null, 3), {times:100});
+    var vals = testcheck.sample(gen.array(gen.null, 3), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -148,7 +148,7 @@ describe('value generator', function () {
   });
 
   it('generates arrays within a length range', function () {
-    var vals = testcheck.sample(gen.array(gen.null, 3, 5), {times:100});
+    var vals = testcheck.sample(gen.array(gen.null, 3, 5), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -158,7 +158,7 @@ describe('value generator', function () {
   });
 
   it('generates arrays from a specific definition', function () {
-    var vals = testcheck.sample(gen.array([gen.return(true), gen.return(false)]), {times:100});
+    var vals = testcheck.sample(gen.array([gen.return(true), gen.return(false)]), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -167,7 +167,7 @@ describe('value generator', function () {
   });
 
   it('generates objects', function () {
-    var vals = testcheck.sample(gen.object(gen.null), {times: 50});
+    var vals = testcheck.sample(gen.object(gen.null), 50);
     expect(vals.length).toBe(50);
     expect(vals).toAllPass(function (value) {
       var keys = Object.keys(value);
@@ -180,7 +180,7 @@ describe('value generator', function () {
   });
 
   it('generates objects with alphanum keys', function () {
-    var vals = testcheck.sample(gen.object(gen.alphaNumString, gen.null), {times: 50});
+    var vals = testcheck.sample(gen.object(gen.alphaNumString, gen.null), 50);
     expect(vals.length).toBe(50);
     expect(vals).toAllPass(function (value) {
       var keys = Object.keys(value);
@@ -193,7 +193,7 @@ describe('value generator', function () {
   });
 
   it('generates objects from a specific definition', function () {
-    var vals = testcheck.sample(gen.object({t: gen.return(true), f: gen.return(false)}), {times:100});
+    var vals = testcheck.sample(gen.object({t: gen.return(true), f: gen.return(false)}), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       var keys = Object.keys(value);
@@ -203,7 +203,7 @@ describe('value generator', function () {
   });
 
   it('generates nested collections', function () {
-    var vals = testcheck.sample(gen.nested(gen.array, gen.int), {times:20});
+    var vals = testcheck.sample(gen.nested(gen.array, gen.int), 20);
     expect(vals.length).toBe(20);
     function isNestedArrayOfInt(arrayOrInt) {
       return typeof arrayOrInt === 'number' ||
@@ -213,7 +213,7 @@ describe('value generator', function () {
   });
 
   it('generates json primitives', function () {
-    var vals = testcheck.sample(gen.JSONPrimitive, {times:100});
+    var vals = testcheck.sample(gen.JSONPrimitive, 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       var jsonStr = JSON.stringify(value);
@@ -222,7 +222,7 @@ describe('value generator', function () {
   });
 
   it('generates json values', function () {
-    var vals = testcheck.sample(gen.JSONValue, {times:10});
+    var vals = testcheck.sample(gen.JSONValue, 10);
     expect(vals.length).toBe(10);
     expect(vals).toAllPass(function (value) {
       var jsonStr = JSON.stringify(value);
@@ -231,7 +231,7 @@ describe('value generator', function () {
   });
 
   it('generates json objects', function () {
-    var vals = testcheck.sample(gen.JSON, {times:10});
+    var vals = testcheck.sample(gen.JSON, 10);
     expect(vals.length).toBe(10);
     expect(vals).toAllPass(function (value) {
       var jsonStr = JSON.stringify(value);
