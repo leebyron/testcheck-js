@@ -20,9 +20,6 @@
     "jasmine-node": "^1.14.5",
     "flow-bin": "^0.37.0"
   },
-  "engines": {
-    "node": ">=0.8.0"
-  },
   "files": [
     "dist",
     "README.md",
