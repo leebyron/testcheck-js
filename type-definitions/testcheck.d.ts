@@ -24,7 +24,7 @@ declare module 'testcheck' {
     result: boolean;
 
     // The number of generated checks ran.
-    'num-tests': number;
+    numTests: number;
 
     // The seed used for this check.
     seed?: number;
@@ -33,7 +33,7 @@ declare module 'testcheck' {
     fail?: Array<any>;
 
     // The size used when and if this check failed
-    'failing-size'?: number;
+    failingSize?: number;
 
     /**
      * When a check fails, the failing arguments shrink to find the smallest
@@ -50,7 +50,7 @@ declare module 'testcheck' {
       depth: number;
 
       // The number of nodes shrunk to result in this smallest failing value.
-      'total-nodes-visited': number;
+      totalNodesVisited: number;
     }
   }
 

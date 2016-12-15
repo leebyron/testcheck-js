@@ -1,6 +1,7 @@
 (require '[clojure.test.check :as tc])
 (require '[clojure.test.check.generators :as gen])
 (require '[clojure.test.check.properties :as prop])
+(use '[clojure.set :only (rename-keys)])
 
 ;; API
 
@@ -10,8 +11,18 @@
         num-tests (or (aget opt "times") 100)
         max-size (or (aget opt "maxSize") 200)
         seed (aget opt "seed")]
+
+; (update-in m [:foo :deep] clojure.set/rename-keys {:baz :periwinkle}))
+
     (clj->js
-      (tc/quick-check num-tests property :max-size max-size :seed seed))))
+      (update
+        (rename-keys
+          (tc/quick-check num-tests property :max-size max-size :seed seed)
+          {:failing-size :failingSize
+           :num-tests :numTests})
+        :shrunk
+        rename-keys
+        {:total-nodes-visited :totalNodesVisited}))))
 
 (def ^{:export property} property prop/for-all*)
 

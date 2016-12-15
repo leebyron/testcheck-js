@@ -20,7 +20,7 @@ type testcheck$Result = {
   result: boolean,
 
   // The number of generated checks ran.
-  'num-tests': number;
+  numTests: number;
 
   // The seed used for this check.
   seed?: number;
@@ -29,7 +29,7 @@ type testcheck$Result = {
   fail?: Array<any>;
 
   // The size used when and if this check failed
-  'failing-size'?: number;
+  failingSize?: number;
 
   /**
    * When a check fails, the failing arguments shrink to find the smallest
@@ -46,7 +46,7 @@ type testcheck$Result = {
     depth: number;
 
     // The number of nodes shrunk to result in this smallest failing value.
-    'total-nodes-visited': number;
+    totalNodesVisited: number;
   }
 }
 
@@ -326,22 +326,23 @@ declare module "testcheck" {
     boolean: Generator<boolean>;
 
     /**
-     * Generates floating point numbers (including +Infinity, -Infinity, and NaN)
+     * Generates floating point numbers (including +Infinity, -Infinity, and NaN).
      */
     number: Generator<number>;
 
     /**
-     * Only positive numbers (0 though +Infinity)
+     * Only positive numbers (0 though +Infinity), does not generate NaN.
      */
     posNumber: Generator<number>;
 
     /**
-     * Only negative numbers (0 though -Infinity)
+     * Only negative numbers (0 though -Infinity), does not generate NaN.
      */
     negNumber: Generator<number>;
 
     /**
      * Generates a floating point number within the provided (inclusive) range.
+     * Does not generate NaN or +-Infinity.
      */
     numberWithin: (min: number, max: number) => Generator<number>;
 

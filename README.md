@@ -168,7 +168,7 @@ var result = testcheck.check(
 any failures, it returns:
 
 ```javascript
-{ result: true, 'num-tests': 1000, seed: 1406779597155 }
+{ result: true, numTests: 1000, seed: 1406779597155 }
 ```
 
 
@@ -192,11 +192,11 @@ it returns:
 
 ```javascript
 { result: false,
-  'failing-size': 2,
-  'num-tests': 3,
+  failingSize: 2,
+  numTests: 3,
   fail: [ 2, -1 ],
   shrunk:
-   { 'total-nodes-visited': 2,
+   { totalNodesVisited: 2,
      depth: 1,
      result: false,
      smallest: [ 0, -1 ] } }

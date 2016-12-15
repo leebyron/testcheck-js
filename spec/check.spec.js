@@ -18,7 +18,7 @@ describe('check', function () {
 
     expect(calls).toBe(100);
     expect(result.result).toBe(true);
-    expect(result['num-tests']).toBe(100);
+    expect(result.numTests).toBe(100);
     expect(result.seed).toBe(seedVal);
 
   });
@@ -37,7 +37,7 @@ describe('check', function () {
     ), { times: 100, seed: seedVal });
 
     expect(calls).toBeLessThan(100);
-    expect(calls).toBe(result['num-tests'] + result.shrunk['total-nodes-visited']);
+    expect(calls).toBe(result.numTests + result.shrunk.totalNodesVisited);
     expect(result.result).toBe(false);
     expect(result.fail).toEqual(jasmine.any(Array))
     expect(result.fail.length).toBe(1);
