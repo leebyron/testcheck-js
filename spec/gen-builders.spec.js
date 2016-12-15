@@ -27,7 +27,7 @@ describe('gen builders', function () {
   });
 
   it('generates an exact value', function () {
-    var vals = testcheck.sample(gen.return('wow'), {times:100});
+    var vals = testcheck.sample(gen.return('wow'), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return value === 'wow';
@@ -35,7 +35,7 @@ describe('gen builders', function () {
   });
 
   it('generates one of a collection of values', function () {
-    var vals = testcheck.sample(gen.returnOneOf(['foo', 'bar', 'baz']), {times:100});
+    var vals = testcheck.sample(gen.returnOneOf(['foo', 'bar', 'baz']), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       return value === 'foo' || value === 'bar' || value === 'baz';
@@ -43,7 +43,7 @@ describe('gen builders', function () {
   });
 
   it('generates one of other generators', function () {
-    var vals = testcheck.sample(gen.oneOf([gen.int, gen.boolean]), {times:100});
+    var vals = testcheck.sample(gen.oneOf([gen.int, gen.boolean]), 100);
     expect(vals.length).toBe(100);
     expect(vals).toAllPass(function (value) {
       var type = typeof value;
@@ -52,7 +52,7 @@ describe('gen builders', function () {
   });
 
   it('generates one of other generators in a weighted fashion', function () {
-    var vals = testcheck.sample(gen.returnOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), {times:10000});
+    var vals = testcheck.sample(gen.returnOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), 10000);
     expect(vals.length).toBe(10000);
     expect(vals).toAllPass(function (value) {
       var type = typeof value;
@@ -67,7 +67,7 @@ describe('gen builders', function () {
   });
 
   it('generates one of other generators in a weighted fashion', function () {
-    var vals = testcheck.sample(gen.oneOfWeighted([[2, gen.int], [1, gen.boolean]]), {times:10000});
+    var vals = testcheck.sample(gen.oneOfWeighted([[2, gen.int], [1, gen.boolean]]), 10000);
     expect(vals.length).toBe(10000);
     expect(vals).toAllPass(function (value) {
       var type = typeof value;

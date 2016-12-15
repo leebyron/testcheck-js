@@ -1,8 +1,8 @@
 /**
- * Optional arguments to `check` and `sample`.
+ * Optional arguments to `check`.
  */
 type testcheck$Options = {
-  // Number of times to run `check` or `sample`.
+  // Number of times to run `check`.
   times?: number,
 
   // The maximum "size" to provide to sized generators. Default: 200
@@ -102,17 +102,15 @@ declare module "testcheck" {
    * Handy tool for checking the output of your generators. Given a generator,
    * it returns an array of the results of the generator.
    *
-   *     var results = sample(gen.int, { seed: 123 });
+   *     var results = sample(gen.int);
    *     // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
    *
-   * If no options are provided, they default to:
-   *
-   *     {times: 10, maxSize: 200, seed: <Random>}
+   * By default 10 samples are provided unless otherwise specified.
    *
    */
   declare function sample<T>(
     gen: Generator<T>,
-    options?: testcheck$Options
+    times?: number
   ): Array<T>;
 
   // Generator Builders

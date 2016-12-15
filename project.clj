@@ -6,10 +6,10 @@
   :dependencies [
     [org.clojure/clojure "1.8.0"]
     [org.clojure/clojurescript "1.9.293"]
-    [com.cemerick/double-check "0.5.7"]]
+    [org.clojure/test.check "0.9.0"]]
 
   :plugins [
-    [lein-cljsbuild "1.1.3"]]
+    [lein-cljsbuild "1.1.5"]]
 
   :cljsbuild {
     :builds [{

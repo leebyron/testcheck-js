@@ -18,14 +18,6 @@
 (def ^{:export property} property prop/for-all*)
 
 (defn ^{:export sample} sample
-  [generator options]
-  (let [opt (or options (js-obj))
-        num-samples (or (aget opt "times") 10)
-        max-size (or (aget opt "maxSize") 200)
-        seed (aget opt "seed")
-        r (if seed (gen/random seed) (gen/random))]
-    (to-array
-      (take num-samples
-        (map
-          (comp gen/rose-root (partial gen/call-gen generator r))
-          (gen/make-size-range-seq max-size))))))
+  [generator times]
+  (to-array
+    (gen/sample generator times)))
