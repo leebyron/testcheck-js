@@ -1,6 +1,4 @@
-(ns testcheck.gen
-  (:require [clojure.test.check.generators :as gen]))
-
+(require '[clojure.test.check.generators :as gen])
 
 ;; Private helpers
 
