@@ -26,6 +26,11 @@ describe('gen builders', function () {
     })
   });
 
+  it('sample defaults to 10', function () {
+    var vals = testcheck.sample(gen.int);
+    expect(vals.length).toBe(10);
+  });
+
   it('generates an exact value', function () {
     var vals = testcheck.sample(gen.return('wow'), 100);
     expect(vals.length).toBe(100);

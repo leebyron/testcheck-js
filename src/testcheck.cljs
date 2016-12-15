@@ -17,5 +17,6 @@
 
 (defn ^{:export sample} sample
   [generator times]
-  (to-array
-    (gen/sample generator times)))
+  (let [num-samples (or times 10)]
+    (to-array
+      (gen/sample generator num-samples))))
