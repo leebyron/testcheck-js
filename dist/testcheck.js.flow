@@ -145,12 +145,12 @@ export const gen: {
   /**
    * Creates a new Generator which is the mapped result of another generator.
    *
-   *     var genSquares = gen.map(n => n * n, gen.posInt);
+   *     var genSquares = gen.map(gen.posInt, n => n * n);
    *
    */
   map: <T, S>(
-    mapper: (value: T) => S,
-    generator: Generator<T>
+    generator: Generator<T>,
+    mapper: (value: T) => S
   ) => Generator<S>;
 
   /**
@@ -158,9 +158,12 @@ export const gen: {
    * `binder` function which should return a new Generator. This allows you to
    * create new Generators that depend on the values of other Generators.
    * For example, to create a Generator which first generates an array of
-   * integers, and then chooses a random element from that array:
+   * integers, and then returns both that array and a sampled value from it:
    *
-   *     gen.bind(gen.notEmpty(gen.array(gen.int))), gen.returnOneOf)
+   *     var genListAndItem = gen.bind(
+   *       gen.notEmpty(gen.array(gen.int)),
+   *       list => gen.array([ gen.return(list), gen.returnOneOf(list) ])
+   *     );
    *
    */
   bind: <T, S>(

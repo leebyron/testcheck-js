@@ -30,7 +30,7 @@
 (def ^{:export gen.suchThat} genSuchThat gen/such-that)
 (def ^{:export gen.notEmpty} genNotEmpty
   (partial gen/such-that (comp not-empty js->clj)))
-(def ^{:export gen.map} genMap gen/fmap)
+(defn ^{:export gen.map} genMap [gen f] (gen/fmap f gen))
 (def ^{:export gen.bind} genBind gen/bind)
 (def ^{:export gen.sized} genSized gen/sized)
 (def ^{:export gen.resize} genResize gen/resize)

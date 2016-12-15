@@ -83,4 +83,25 @@ describe('gen builders', function () {
     expect(intCount / boolCount).toBeApprx(2);
   });
 
+  it('maps a generator value', function () {
+    var genSquares = gen.map(gen.posInt, n => n * n);
+    var vals = testcheck.sample(genSquares, 100)
+    expect(vals).toAllPass(function (value) {
+      return typeof value === 'number' && Number.isInteger(Math.sqrt(value))
+    });
+  });
+
+  it('bind creates a new generator from an existing one', function () {
+    var genListAndItem = gen.bind(
+      gen.notEmpty(gen.array(gen.int)),
+      list => gen.array([ gen.return(list), gen.returnOneOf(list) ])
+    );
+    var vals = testcheck.sample(genListAndItem, 100)
+    expect(vals).toAllPass(function (pair) {
+      var list = pair[0]
+      var item = pair[1]
+      return Array.isArray(list) && typeof item === 'number' && list.indexOf(item) !== -1;
+    });
+  })
+
 });
