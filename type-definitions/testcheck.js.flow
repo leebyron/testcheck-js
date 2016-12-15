@@ -57,7 +57,7 @@ export type Result = {
  *
  * Generator is an opaque type. It has no public methods or properties.
  */
-class testcheck$Generator<T> {}
+declare class testcheck$Generator<T> {}
 export type Generator<T> = Class<testcheck$Generator<T>>;
 
 /**
@@ -72,7 +72,7 @@ export type Generator<T> = Class<testcheck$Generator<T>>;
  *     {times: 100, maxSize: 200, seed: <Random>}
  *
  */
-export function check(
+declare export function check(
   prop: Generator<boolean>,
   options?: Options
 ): Result;
@@ -88,7 +88,7 @@ export function check(
  *     check(numGoUp, {times: 1000});
  *
  */
-export function property<A,B,C,D>(
+declare export function property<A,B,C,D>(
   gens: [
     Generator<A>,
     Generator<B>,
@@ -108,7 +108,7 @@ export function property<A,B,C,D>(
  * By default 10 samples are provided unless otherwise specified.
  *
  */
-export function sample<T>(
+declare export function sample<T>(
   gen: Generator<T>,
   times?: number
 ): Array<T>;
@@ -116,7 +116,7 @@ export function sample<T>(
 // Generator Builders
 // ------------------
 
-export const gen: {
+declare export const gen: {
   /**
    * Creates a new Generator which ensures that all values Generated adhere to
    * the given `predicate`.
