@@ -41,43 +41,28 @@ Getting started
 
 Install `testcheck` using npm
 
-```shell
+```sh
 npm install testcheck
 ```
 
 Then require it into your testing environment and start testing.
 
-```javascript
-var testcheck = require('testcheck');
-var gen = testcheck.gen;
+```js
+const { gen, check, property, sample } = require('testcheck');
 
-var result = testcheck.check(
-  testcheck.property(
+const result = check(
+  property(
     [gen.int],
     x => x - x === 0
   )
-);
+)
 ```
 
-### Typescript
+### Type definitions
 
-If you write your tests in Typescript, you should be able to import from the package itself.
-
-```typescript
-import * as testcheck from 'testcheck';
-```
-
-### Flow
-
-To use the included [Flow](http://flowtype.org/) type definitions, add the following `[ignore]` and `[libs]` configuration to your project's `.flowconfig`.
-
-```
-[ignore]
-.*/node_modules/testcheck/.*
-
-[libs]
-node_modules/testcheck/dist/testcheck.flow.js
-```
+This module includes type definitions for [Flow type](http://flowtype.org/) and
+[Typescript](https://www.typescriptlang.org/). Simply require or import this
+module and enjoy type suggestions and corrections.
 
 
 API
@@ -95,9 +80,9 @@ might also call these properties "assumptions" or "expectations".
 For example, say we wanted to test the assumption that any number subtracted
 from itself will be `0`, we could define this property as:
 
-```javascript
+```js
 function (x) {
-  return x - x === 0;
+  return x - x === 0
 }
 ```
 
@@ -105,10 +90,10 @@ Or as another example, let's determine that sorting an array is stable and
 [idempotent](http://en.wikipedia.org/wiki/Idempotence), which is to say that
 sorting a sorted array shouldn't do anything. We could write:
 
-```javascript
+```js
 function (arr) {
-  var arrCopy = arr.slice();
-  return deepEqual(arrCopy.sort(), arr.sort().sort());
+  var arrCopy = arr.slice()
+  return deepEqual(arrCopy.sort(), arr.sort().sort())
 }
 ```
 
@@ -129,13 +114,13 @@ by describing the types of values for each argument.
 
 For testing our first property, we need numbers:
 
-```javascript
+```js
 gen.int
 ```
 
 For the second, we need arrays of numbers
 
-```javascript
+```js
 gen.array(gen.int)
 ```
 
@@ -152,22 +137,22 @@ Checking the properties
 Finally, we check our properties using our test case generator (in this case,
 up to 1000 different tests before concluding).
 
-```javascript
-var result = testcheck.check(
-  testcheck.property(
+```js
+const result = check(
+  property(
     [gen.int],    // the arguments generator
     function (x) {  // the property function to test
       return x - x === 0;
     }
   ),
   { times: 1000 }
-);
+)
 ```
 
 `check` runs through random cases looking for failure, and when it doesn't find
 any failures, it returns:
 
-```javascript
+```js
 { result: true, numTests: 1000, seed: 1406779597155 }
 ```
 
@@ -178,19 +163,21 @@ Smallest failing test
 Let's try another property: the sum of two integers is the same or larger than
 either of the integers alone.
 
-```javascript
-testcheck.check(testcheck.property(
-  [gen.int, gen.int],
-  function (a, b) {
-    return a + b >= a && a + b >= b;
-  }
-));
+```js
+check(
+  property(
+    [gen.int, gen.int],
+    function (a, b) {
+      return a + b >= a && a + b >= b;
+    }
+  )
+)
 ```
 
 `check` runs through random cases again. This time it found a failing case, so
 it returns:
 
-```javascript
+```js
 { result: false,
   failingSize: 2,
   numTests: 3,
@@ -221,8 +208,8 @@ will not be larger. This shrunken test case illustrated this much better than
 the original failing test did. Now we know that we can either improve our
 property or make the test data more specific:
 
-```javascript
-testcheck.check(testcheck.property(
+```js
+check(property(
   [gen.posInt, gen.posInt],
   function (a, b) {
     return a + b >= a && a + b >= b;
@@ -251,8 +238,8 @@ a corner case.
 Visualizing the data `check` generates may help diagnose the quality of a test.
 Use `sample` to get a look at what a generator produces:
 
-```javascript
-testcheck.sample(gen.int)
+```js
+sample(gen.int)
 // [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
 ```
 
@@ -272,8 +259,8 @@ you expect.
 Let's test an assumption that should clearly be wrong: a string [split](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split)
 by another string always returns an array of length 1.
 
-```javascript
-testcheck.check(testcheck.property(
+```js
+check(property(
   [gen.notEmpty(gen.string), gen.notEmpty(gen.string)],
   function (str, separator) {
     return str.split(separator).length === 1;
@@ -289,8 +276,8 @@ be found within the first random string.
 We could change the test to be aware of this relationship such that the
 `separator` is always contained within the `str`.
 
-```javascript
-testcheck.check(testcheck.property(
+```js
+check(property(
   [gen.notEmpty(gen.string), gen.posInt, gen.strictPosInt],
   function (str, start, length) {
     var separator = str.substr(start % str.length, length);
