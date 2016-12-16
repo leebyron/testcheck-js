@@ -16,7 +16,6 @@
   },
   "main": "mocha-check.js",
   "dependencies": {
-    "javascript-stringify": "^1.0.1",
     "testcheck": "^0.1.0"
   },
   "devDependencies": {

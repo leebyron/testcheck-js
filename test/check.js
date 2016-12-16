@@ -30,7 +30,7 @@ describe('check', function () {
         assert(x === 'this fails')
       }).fn()
     } catch(e) {
-      assert(e.message.indexOf('( NaN )') > -1);
+      assert(e.message.indexOf('NaN') > -1);
     }
   })
 

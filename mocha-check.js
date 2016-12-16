@@ -1,5 +1,5 @@
 var testcheck = require('testcheck');
-var javascriptStringify = require('javascript-stringify');
+var util = require('util');
 
 function install(globalObj) {
   globalObj = globalObj || global || window;
@@ -58,9 +58,7 @@ function check(options, argGens, propertyFn) {
 }
 
 function printValues(values) {
-  return '( ' + values.map(function (v) {
-    return javascriptStringify(v);
-  }).join(', ') + ' )';
+  return util.inspect(values, { depth: null, colors: true });
 }
 
 exports.install = install;
