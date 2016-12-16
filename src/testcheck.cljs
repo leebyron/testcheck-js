@@ -51,7 +51,7 @@
 (defn- to-object
   [from-seq]
   (let [obj (js-obj)]
-    (doall (map #(aset obj (first %) (second %)) from-seq))
+    (doseq [[k v] from-seq] (aset obj k v))
     obj))
 
 (defn- gen-obj
