@@ -1,4 +1,5 @@
 var testcheck = require('testcheck');
+var util = require('util');
 
 function install(globalObj) {
   globalObj = globalObj || global || window;
@@ -57,9 +58,7 @@ function check(options, argGens, propertyFn) {
 }
 
 function printValues(values) {
-  return '( ' + values.map(function (v) {
-    return JSON.stringify(v);
-  }).join(', ') + ' )';
+  return util.inspect(values, { depth: null, colors: true });
 }
 
 exports.install = install;
