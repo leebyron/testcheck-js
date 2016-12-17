@@ -27,7 +27,7 @@ describe('gen builders', () => {
         return pass
       },
       toBeApprx: function(value, epsilon) {
-        epsilon = epsilon || 0.333
+        epsilon = epsilon || (value / 10)
         return Math.abs(this.actual - value) < epsilon
       }
     })
