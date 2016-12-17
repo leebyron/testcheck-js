@@ -89,6 +89,26 @@ declare export class Generator<+T> {
   then<U>(fn: (value: T) => Generator<U> | U): Generator<U>;
 
   /**
+   * Creates a new Generator which grows at a different scale.
+   *
+   * Generators start by producing very "small" values (closer to 0) at first,
+   * and produce larger values in later iterations of a test as a result of a
+   * "size" value which grows with each generation. Typically "size" grows
+   * linearly, but .scale() can alter a size to grow at different rates.
+   *
+   * For example, to generate "big" numbers that grow super-linearly (cubicly):
+   *
+   *      var bigInts = gen.int.scale(n => n * n * n)
+   *      bigInts.sample()
+   *      // [ 0, 1, 5, 0, -59, -56, -160, 261, 409, -34 ]
+   *
+   * Note: When shrinking a failing test, "size" gets smaller. If the scale
+   * function returns a value that's not dependent on it's input, then the
+   * resulting Generator will not shrink.
+   */
+  scale(fn: (size: number) => number): Generator<T>;
+
+  /**
    * Handy tool for checking the output of this generator.
    * Returns an array of the results of the generator.
    *
@@ -186,12 +206,6 @@ declare export var gen: {
    *
    */
   sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
-
-  /**
-   * Given an explicit size, and a Generator that relies on size, returns a new
-   * Generator which always uses the provided size and is not shrinkable.
-   */
-  resized: <T>(size: number, generator: Generator<T>) => Generator<T>;
 
   /**
    * Given a shrinkable Generator, return a new Generator which will never

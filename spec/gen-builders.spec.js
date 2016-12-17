@@ -110,4 +110,14 @@ describe('gen builders', () => {
     })
   })
 
+  it('scales a generator to grow at non-linear rates', () => {
+    const genInts = gen.int
+    const values = genInts.sample(100)
+    expect(values.filter(n => n > 100).length).toBe(0)
+
+    const genHugeInts = gen.int.scale(n => n * n)
+    const hugeValues = genHugeInts.sample(100)
+    expect(hugeValues.filter(n => n > 100).length).toBeGreaterThan(0)
+  })
+
 })

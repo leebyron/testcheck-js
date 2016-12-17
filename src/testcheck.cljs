@@ -132,10 +132,15 @@
   [f]
   (this-as this (Generator. (gen/bind (unwrap this) (fn [value] (unwrap (f value))))))))
 
+(js/goog.exportSymbol "Generator.prototype.scale" (fn
+  [f]
+  (this-as this (Generator. (gen/scale f (unwrap this))))))
 
 (js/goog.exportSymbol "gen.resize" (fn
   [size gen]
+  (deprecated! "Use generator.scale(() => size) instead of gen.resize(generator, size)")
   (Generator. (gen/resize size (unwrap gen)))))
+
 (js/goog.exportSymbol "gen.noShrink" (fn
   [gen]
   (Generator. (gen/no-shrink (unwrap gen)))))
