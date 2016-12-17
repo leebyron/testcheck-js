@@ -54,10 +54,51 @@ export interface Result {
 
 /**
  * Generators of values.
- *
- * Generator is an opaque type. It has no public methods or properties.
  */
-export interface Generator<T> {}
+export interface Generator<T> {
+
+  /**
+   * Creates a new Generator which ensures that all values Generated adhere to
+   * the given predicate function.
+   *
+   * For example, to create a Generator of any number except multiples of 5:
+   *
+   *     var genAnythingBut5s = gen.int.where(n => n % 5 !== 0);
+   *
+   * Note: Care is needed to ensure there is a high chance the predicate will
+   * pass, after ten attempts, an exception will throw.
+   */
+  where(fn: (value: T) => boolean): Generator<T>;
+
+  /**
+   * Creates a new Generator that depends on the values of this Generator.
+   *
+   * For example, to create a Generator of square numbers:
+   *
+   *     var genSquares = gen.int.then(n => n * n);
+   *
+   * For example, to create a Generator which first generates an array of
+   * integers, and then returns both that array and a sampled value from it:
+   *
+   *     var genList = gen.notEmpty(gen.array(gen.int))
+   *     var genListAndItem = genList.then(
+   *       list => gen.array([ list, gen.oneOf(list) ])
+   *     );
+   *
+   */
+  then<U>(fn: (value: T) => Generator<U> | U): Generator<U>;
+
+  /**
+   * Handy tool for checking the output of this generator.
+   * Returns an array of the results of the generator.
+   *
+   *     var results = gen.int.sample();
+   *     // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
+   *
+   * By default 10 samples are provided unless otherwise specified.
+   */
+  sample(count?: number): Array<T>;
+}
 
 
 /**
@@ -90,39 +131,11 @@ export function property(
   propertyFn: (...args: any[]) => boolean
 ): Generator<boolean>;
 
-/**
- * Handy tool for checking the output of your generators. Given a generator,
- * it returns an array of the results of the generator.
- *
- *     var results = sample(gen.int);
- *     // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
- *
- * By default 10 samples are provided unless otherwise specified.
- *
- */
-export function sample<T>(gen: Generator<T>, times?: number = 10): Array<T>;
-
 
 // Generator Builders
 // ------------------
 
 export const gen: {
-
-  /**
-   * Creates a new Generator which ensures that all values Generated adhere to
-   * the given `predicate`.
-   *
-   * Care is needed to ensure there is a high chance the predicate will pass.
-   * By default, `suchThat` will try 10 times to generate a satisfactory
-   * value. If no value adheres to the predicate, an exception will throw. You
-   * can pass an optional third argument to change the number of times tried.
-   * Note that each retry will increase the size of the generator.
-   */
-  suchThat: <T>(
-    predicate: (value: T) => boolean,
-    generator: Generator<T>,
-    maxTries?: number // default 10
-  ) => Generator<T>;
 
   /**
    * Creates a new Generator of collections (Arrays or Objects) which are
@@ -132,35 +145,6 @@ export const gen: {
     generator: Generator<T>,
     maxTries?: number
   ) => Generator<T>;
-
-  /**
-   * Creates a new Generator which is the mapped result of another generator.
-   *
-   *     var genSquares = gen.map(gen.posInt, n => n * n);
-   *
-   */
-  map: <T, S>(
-    generator: Generator<T>,
-    mapper: (value: T) => S
-  ) => Generator<S>;
-
-  /**
-   * Creates a new Generator which passes the result of `generator` into the
-   * `binder` function which should return a new Generator. This allows you to
-   * create new Generators that depend on the values of other Generators.
-   * For example, to create a Generator which first generates an array of
-   * integers, and then returns both that array and a sampled value from it:
-   *
-   *     var genListAndItem = gen.bind(
-   *       gen.notEmpty(gen.array(gen.int)),
-   *       list => gen.array([ gen.return(list), gen.returnOneOf(list) ])
-   *     );
-   *
-   */
-  bind: <T, S>(
-    generator: Generator<T>,
-    binder: (value: T) => Generator<S>
-  ) => Generator<S>;
 
   /**
    * Creates a Generator that relies on a size. Size allows for the "shrinking"
@@ -204,7 +188,7 @@ export const gen: {
    *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
    *
    */
-  oneOf: <T>(generators: Generator<T>[]) => Generator<T>;
+  oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
 
   /**
    * Similar to `oneOf`, except provides probablistic "weights" to
@@ -213,7 +197,7 @@ export const gen: {
    *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
    */
   oneOfWeighted: <T>(
-    generators: Array</*number, Generator<T>*/any>[]
+    generators: Array<[ number, Generator<T> | T ]>
   ) => Generator<T>;
 
   /**
@@ -272,7 +256,7 @@ export const gen: {
     <T>(valueGen: Generator<T>): Generator<Array<T>>;
     <T>(valueGen: Generator<T>, length: number): Generator<Array<T>>;
     <T>(valueGen: Generator<T>, min: number, max: number): Generator<Array<T>>;
-    (genTuple: Array<Generator<any>>): Generator<Array<any>>;
+    (genTuple: Array<Generator<any> | any>): Generator<Array<any>>;
   }
 
   /**

@@ -48,7 +48,7 @@ npm install testcheck
 Then require it into your testing environment and start testing.
 
 ```js
-const { gen, check, property, sample } = require('testcheck');
+const { check, gen, property } = require('testcheck');
 
 const result = check(
   property(
@@ -127,7 +127,7 @@ gen.array(gen.int)
 There are a wide variety of value generators, we've only scratched the surface.
 We can generate random JSON with `gen.JSON`, pick amongst a set of values with
 `gen.returnOneOf`, nested arrays with ints `gen.nested(gen.array, gen.int)` and
-much more. You can even define your own generators with `gen.map`, `gen.bind`
+much more. You can even define your own generators with `generator.then()`,
 and `gen.sized`.
 
 
@@ -236,10 +236,10 @@ a corner case.
 ### Sampling Test Data
 
 Visualizing the data `check` generates may help diagnose the quality of a test.
-Use `sample` to get a look at what a generator produces:
+Use `.sample()` to get a look at what a generator produces:
 
 ```js
-sample(gen.int)
+gen.int.sample()
 // [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
 ```
 

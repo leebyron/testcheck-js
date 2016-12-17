@@ -6,7 +6,7 @@
 /*:: declare function beforeEach(): void; */
 /*:: declare var jasmine: any; */
 
-const { sample, gen } = require('../')
+const { gen } = require('../')
 
 describe('gen builders', () => {
 
@@ -34,12 +34,12 @@ describe('gen builders', () => {
   })
 
   it('sample defaults to 10', () => {
-    const vals = sample(gen.int)
+    const vals = gen.int.sample()
     expect(vals.length).toBe(10)
   })
 
   it('generates an exact value', () => {
-    const vals = sample(gen.return('wow'), 100)
+    const vals = gen.return('wow').sample(100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return value === 'wow'
@@ -47,7 +47,7 @@ describe('gen builders', () => {
   })
 
   it('generates one of a collection of values', () => {
-    const vals = sample(gen.returnOneOf(['foo', 'bar', 'baz']), 100)
+    const vals = gen.oneOf(['foo', 'bar', 'baz']).sample(100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return value === 'foo' || value === 'bar' || value === 'baz'
@@ -55,7 +55,7 @@ describe('gen builders', () => {
   })
 
   it('generates one of other generators', () => {
-    const vals = sample(gen.oneOf([gen.int, gen.boolean]), 100)
+    const vals = gen.oneOf([gen.int, gen.boolean]).sample(100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       const type = typeof value
@@ -64,10 +64,9 @@ describe('gen builders', () => {
   })
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = sample(gen.returnOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), 10000)
+    const vals = gen.oneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]).sample(10000)
     expect(vals.length).toBe(10000)
     expect(vals).toAllPass(function (value) {
-      const type = typeof value
       return value === 'foo' || value === 'bar' || value === 'baz'
     })
     const fooCount = vals.reduce(function (count, val) { return count + (val === 'foo'); }, 0)
@@ -79,7 +78,7 @@ describe('gen builders', () => {
   })
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = sample(gen.oneOfWeighted([[2, gen.int], [1, gen.boolean]]), 10000)
+    const vals = gen.oneOfWeighted([[2, gen.int], [1, gen.boolean]]).sample(10000)
     expect(vals.length).toBe(10000)
     expect(vals).toAllPass(function (value) {
       const type = typeof value
@@ -91,19 +90,19 @@ describe('gen builders', () => {
   })
 
   it('maps a generator value', () => {
-    const genSquares = gen.map(gen.posInt, n => n * n)
-    const vals = sample(genSquares, 100)
+    const genSquares = gen.posInt.then(n => n * n)
+    const vals = genSquares.sample(100)
     expect(vals).toAllPass(function (value) {
       return typeof value === 'number' && Number.isInteger(Math.sqrt(value))
     })
   })
 
   it('bind creates a new generator from an existing one', () => {
-    const genListAndItem = gen.bind(
-      gen.notEmpty(gen.array(gen.int)),
-      list => gen.array([ gen.return(list), gen.returnOneOf(list) ])
+    const genList = gen.notEmpty(gen.array(gen.int))
+    const genListAndItem = genList.then(
+      list => gen.array([ list, gen.oneOf(list) ])
     )
-    const vals = sample(genListAndItem, 100)
+    const vals = genListAndItem.sample(100)
     expect(vals).toAllPass(function (pair) {
       const list = pair[0]
       const item = pair[1]
