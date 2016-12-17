@@ -13,7 +13,7 @@
     (throw (js/Error. "Generator cannot be constructed directly.")))
   (this-as this (js/Object.defineProperty this "__clj_gen" #js{ "value" gen })))
 
-(def ^{:jsdoc ["@this {Element}"]} Generator (js* "this.Generator"))
+(def Generator (js* "this.Generator"))
 
 ;; Private helpers
 
