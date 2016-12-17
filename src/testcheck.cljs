@@ -106,8 +106,11 @@
   (deprecated! "Use generator.where() instead of gen.suchThat(generator)")
   (Generator. (gen/such-that pred (unwrap gen)))))
 (js/goog.exportSymbol "gen.notEmpty" (fn
-  [gen]
-  (Generator. (gen/such-that (comp not-empty js->clj) (unwrap gen)))))
+  [gen max-tries]
+  (Generator.
+    (gen/such-that
+      #(not-empty (js->clj %) (or max-tries 10))
+      (unwrap gen)))))
 
 ; Prototype version of "suchThat"
 (js/goog.exportSymbol "Generator.prototype.where" (fn
