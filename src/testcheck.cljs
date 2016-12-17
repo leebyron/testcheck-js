@@ -119,7 +119,7 @@
 
 
 (js/goog.exportSymbol "gen.map" (fn
-  [gen f]
+  [f gen]
   (deprecated! "Use generator.then() instead of gen.map(generator)")
   (Generator. (gen/fmap f (unwrap gen)))))
 (js/goog.exportSymbol "gen.bind" (fn
