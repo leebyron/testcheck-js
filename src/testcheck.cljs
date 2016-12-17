@@ -148,9 +148,11 @@
   (Generator. (gen/return value))))
 (js/goog.exportSymbol "gen.returnOneOf" (fn
   [values]
+  (deprecated! "Use gen.oneOf() instead of gen.returnOneOf()")
   (Generator. (gen/elements values))))
 (js/goog.exportSymbol "gen.returnOneOfWeighted" (fn
   [pairs]
+  (deprecated! "Use gen.oneOfWeighted() instead of gen.returnOneOfWeighted()")
   (Generator. (gen/frequency (map (fn [[weight, value]] (array weight (gen/return value))) pairs)))))
 
 (js/goog.exportSymbol "gen.oneOf" (fn

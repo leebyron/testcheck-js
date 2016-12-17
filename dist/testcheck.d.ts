@@ -208,24 +208,6 @@ export const gen: {
    */
   return: <T>(value: T) => Generator<T>;
 
-  /**
-   * Creates a Generator which will always generate one of the provided values.
-   *
-   *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c'])
-   *
-   */
-  returnOneOf: <T>(values: T[]) => Generator<T>;
-
-  /**
-   * Similar to `oneOf`, except provides probablistic "weights" to
-   * each generator.
-   *
-   *     var fizzBuzz = gen.oneOf([[1, 'fizz'], [5, 'buzz']])
-   */
-  returnOneOfWeighted: <T>(
-    generators: Array</*number, T*/any>[]
-  ) => Generator<T>;
-
 
   // Collections: Arrays and Objects
   // -------------------------------

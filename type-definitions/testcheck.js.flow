@@ -219,24 +219,6 @@ declare export var gen: {
   return: <T>(value: T) => Generator<T>;
 
   /**
-   * Creates a Generator which will always generate one of the provided values.
-   *
-   *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c']);
-   *
-   */
-  returnOneOf: <T>(values: Array<T>) => Generator<T>;
-
-  /**
-   * Similar to `returnOneOf`, except provides probablistic "weights" to
-   * each value.
-   *
-   *     var numOrRarelyBool = gen.returnOneOf([[99, 'foo'], [1, 'bar']])
-   */
-  returnOneOfWeighted: <T>(
-    generators: Array<[ number, T ]>
-  ) => Generator<T>;
-
-  /**
    * Creates a Generator which will generate values from one of the
    * provided generators.
    *
