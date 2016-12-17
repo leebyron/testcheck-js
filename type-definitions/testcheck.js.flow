@@ -109,6 +109,12 @@ declare export class Generator<+T> {
   scale(fn: (size: number) => number): Generator<T>;
 
   /**
+   * Creates a new Generator which will never shrink.
+   * This is useful when shrinking is taking a long time or is not applicable.
+   */
+  neverShrink(): Generator<T>;
+
+  /**
    * Handy tool for checking the output of this generator.
    * Returns an array of the results of the generator.
    *
@@ -206,13 +212,6 @@ declare export var gen: {
    *
    */
   sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
-
-  /**
-   * Given a shrinkable Generator, return a new Generator which will never
-   * shrink. This can be useful when shrinking is taking a long time or is not
-   * applicable to the domain.
-   */
-  noShrink: <T>(generator: Generator<T>) => Generator<T>;
 
   /**
    * Given a shrinkable Generator, return a new Generator which will always
