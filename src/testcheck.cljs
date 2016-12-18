@@ -84,7 +84,7 @@
 
 (defexport Generator.prototype.then (fn
   [f]
-  (this-as this (Generator. (gen/bind (->gen this) (fn [value] (->gen (f value))))))))
+  (this-as this (Generator. (gen/bind (->gen this) (comp ->gen f))))))
 
 (defexport Generator.prototype.scale (fn
   [f]
