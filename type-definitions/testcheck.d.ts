@@ -122,6 +122,12 @@ export interface Generator<T> {
   neverShrink(): Generator<T>;
 
   /**
+   * Creates a new Generator which will always consider shrinking, even if the
+   * property passes (up to one additional level).
+   */
+  alwaysShrink(): Generator<T>;
+
+  /**
    * Handy tool for checking the output of this generator.
    * Returns an array of the results of the generator.
    *
@@ -180,13 +186,6 @@ export const gen: {
    *
    */
   sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
-
-  /**
-   * Given a shrinkable Generator, return a new Generator which will always
-   * consider shrinking, even if the property passes (up to one
-   * additional level).
-   */
-  shrink: <T>(generator: Generator<T>) => Generator<T>;
 
 
   // Simple Generators

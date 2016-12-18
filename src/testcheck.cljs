@@ -167,12 +167,18 @@
   (Generator. (gen/no-shrink (unwrap gen)))))
 (js/goog.exportSymbol "gen.shrink" (fn
   [gen]
+  (deprecated! "Use generator.alwaysShrink() instead of gen.shrink(generator)")
   (Generator. (gen/shrink-2 (unwrap gen)))))
 
 ; Prototype version of "no-shrink"
 (js/goog.exportSymbol "Generator.prototype.neverShrink" (fn
   [pred]
   (this-as this (Generator. (gen/no-shrink (unwrap this))))))
+
+; Prototype version of "shrink-2"
+(js/goog.exportSymbol "Generator.prototype.alwaysShrink" (fn
+  [pred]
+  (this-as this (Generator. (gen/shrink-2 (unwrap this))))))
 
 
 ;; Simple Generators
