@@ -58,6 +58,13 @@ export type Result = {|
 declare export class Generator<+T> {
 
   /**
+   * Creates a new Generator which generates non-empty values.
+   *
+   * Examples of empty values are 0, "", null, [], and {}
+   */
+  notEmpty(): Generator<T>;
+
+  /**
    * Creates a new Generator which ensures that all values Generated adhere to
    * the given predicate function.
    *
@@ -192,15 +199,6 @@ declare export var property: {
 // ------------------
 
 declare export var gen: {
-
-  /**
-   * Creates a new Generator of collections (Arrays or Objects) which are
-   * not empty.
-   */
-  notEmpty: <T>(
-    generator: Generator<T>,
-    maxTries?: number
-  ) => Generator<T>;
 
   /**
    * Creates a Generator that relies on a size. Size allows for the "shrinking"

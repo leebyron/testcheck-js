@@ -98,6 +98,20 @@
   [key-gen val-gen]
   (gen/fmap to-object (gen/vector (gen/tuple key-gen val-gen))))
 
+(defn- js-not-empty
+  [x]
+  (cond
+    (coercive-not x)
+    false
+
+    (number? (.-length x))
+    (> (.-length x) 0)
+
+    (identical? (.-constructor x) js/Object)
+    (> (.-length (js/Object.keys x)) 0)
+
+    :else true
+  ))
 
 ;; Generator Builders
 
@@ -107,9 +121,10 @@
   (Generator. (gen/such-that pred (unwrap gen)))))
 (js/goog.exportSymbol "gen.notEmpty" (fn
   [gen max-tries]
+  (deprecated! "Use generator.notEmpty() instead of gen.notEmpty(generator)")
   (Generator.
     (gen/such-that
-      (comp not-empty js->clj)
+      js-not-empty
       (unwrap gen)
       (or max-tries 10)))))
 
@@ -118,6 +133,10 @@
   [pred]
   (this-as this (Generator. (gen/such-that pred (unwrap this))))))
 
+; Prototype version of "not-empty"
+(js/goog.exportSymbol "Generator.prototype.notEmpty" (fn
+  []
+  (this-as this (Generator. (gen/such-that js-not-empty (unwrap this))))))
 
 (js/goog.exportSymbol "gen.map" (fn
   [f gen]

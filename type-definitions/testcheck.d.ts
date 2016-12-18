@@ -58,6 +58,13 @@ export interface Result {
 export interface Generator<T> {
 
   /**
+   * Creates a new Generator which generates non-empty values.
+   *
+   * Examples of empty values are 0, "", null, [], and {}
+   */
+  notEmpty(): Generator<T>;
+
+  /**
    * Creates a new Generator which ensures that all values Generated adhere to
    * the given predicate function.
    *
@@ -162,15 +169,6 @@ export function property(
 // ------------------
 
 export const gen: {
-
-  /**
-   * Creates a new Generator of collections (Arrays or Objects) which are
-   * not empty.
-   */
-  notEmpty: <T>(
-    generator: Generator<T>,
-    maxTries?: number
-  ) => Generator<T>;
 
   /**
    * Creates a Generator that relies on a size. Size allows for the "shrinking"

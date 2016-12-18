@@ -98,8 +98,8 @@ describe('gen builders', () => {
   })
 
   it('bind creates a new generator from an existing one', () => {
-    const genList = gen.notEmpty(gen.array(gen.int))
-    const genListAndItem = genList.then(
+    const genNotEmptyList = gen.array(gen.int).notEmpty()
+    const genListAndItem = genNotEmptyList.then(
       list => gen.array([ list, gen.oneOf(list) ])
     )
     const vals = genListAndItem.sample(100)
