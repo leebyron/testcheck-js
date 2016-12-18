@@ -15,7 +15,7 @@
 
 (def Generator (js* "this.Generator"))
 
-(defn- ->gen
+(defn ->gen
   [x]
   (cond
     (exists? (aget x "__clj_gen")) (aget x "__clj_gen")
@@ -54,19 +54,9 @@
       (gen/sample (->gen generator) num-samples))))
 
 
-;; Private helpers
+;; Generator Prototype
 
-(defn- to-object
-  [from-seq]
-  (let [obj (js-obj)]
-    (doseq [[k v] from-seq] (aset obj k v))
-    obj))
-
-(defn- gen-obj
-  [key-gen val-gen]
-  (gen/fmap to-object (gen/vector (gen/tuple key-gen val-gen))))
-
-(defn- js-not-empty
+(defn js-not-empty
   [x]
   (cond
     (coercive-not x)
@@ -81,16 +71,13 @@
     :else true
   ))
 
-
-;; Generator Prototype
+(js/goog.exportSymbol "Generator.prototype.notEmpty" (fn
+  []
+  (this-as this (Generator. (gen/such-that js-not-empty (->gen this))))))
 
 (js/goog.exportSymbol "Generator.prototype.where" (fn
   [pred]
   (this-as this (Generator. (gen/such-that pred (->gen this))))))
-
-(js/goog.exportSymbol "Generator.prototype.notEmpty" (fn
-  []
-  (this-as this (Generator. (gen/such-that js-not-empty (->gen this))))))
 
 (js/goog.exportSymbol "Generator.prototype.then" (fn
   [f]
@@ -141,19 +128,25 @@
         (apply gen/tuple (map ->gen val-gen-or-arr))
         (gen/vector (->gen val-gen-or-arr))))))
 
+(defn to-object
+  [from-seq]
+  (let [obj (js-obj)]
+    (doseq [[k v] from-seq] (aset obj k v))
+    obj))
+
 (defn genObject
   ([key-gen val-gen]
-    (gen/fmap clj->js (gen-obj (->gen key-gen) (->gen val-gen))))
+    (gen/fmap to-object (gen/vector (gen/tuple (->gen key-gen) (->gen val-gen)))))
   ([val-gen-or-obj]
-    (if (= js/Object (.-constructor val-gen-or-obj))
+    (if (object? val-gen-or-obj)
       (let [obj val-gen-or-obj
-            seq (into {} (for [k (js-keys obj)] [k (->gen (aget obj k))]))
-        ks (keys seq)
-        vs (vals seq)]
-        (gen/fmap clj->js
-          (gen/fmap (partial zipmap ks)
-                    (apply gen/tuple vs))))
-      (gen-obj (gen/not-empty gen/string-alphanumeric) (->gen val-gen-or-obj)))))
+            ks (js-keys obj)
+            vs (array)]
+        (doseq [k ks] (.push vs (->gen (aget obj k))))
+        (gen/fmap
+          (comp to-object (partial zipmap ks))
+          (apply gen/tuple vs)))
+      (genObject (gen/not-empty gen/string-alphanumeric) val-gen-or-obj))))
 
 (defn ^{:export gen.arrayOrObject} genArrayOrObject
   [val-gen]
