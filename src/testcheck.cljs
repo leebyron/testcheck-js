@@ -23,12 +23,6 @@
     :else (gen/return x)
   ))
 
-(def warned-map #js{})
-(defn deprecated!
-  [msg]
-  (when-not (aget warned-map msg)
-    (aset warned-map msg true)
-    (js/console.warn "DEPRECATED" msg (aget (js/Error.) "stack"))))
 
 ;; API
 
@@ -59,6 +53,7 @@
     (to-array
       (gen/sample (->gen generator) num-samples))))
 
+
 ;; Private helpers
 
 (defn- to-object
@@ -86,41 +81,17 @@
     :else true
   ))
 
-;; Generator Builders
 
-(js/goog.exportSymbol "gen.suchThat" (fn
-  [pred gen]
-  (deprecated! "Use generator.where() instead of gen.suchThat(generator)")
-  (Generator. (gen/such-that pred (->gen gen)))))
-(js/goog.exportSymbol "gen.notEmpty" (fn
-  [gen max-tries]
-  (deprecated! "Use generator.notEmpty() instead of gen.notEmpty(generator)")
-  (Generator.
-    (gen/such-that
-      js-not-empty
-      (->gen gen)
-      (or max-tries 10)))))
+;; Generator Prototype
 
-; Prototype version of "suchThat"
 (js/goog.exportSymbol "Generator.prototype.where" (fn
   [pred]
   (this-as this (Generator. (gen/such-that pred (->gen this))))))
 
-; Prototype version of "not-empty"
 (js/goog.exportSymbol "Generator.prototype.notEmpty" (fn
   []
   (this-as this (Generator. (gen/such-that js-not-empty (->gen this))))))
 
-(js/goog.exportSymbol "gen.map" (fn
-  [f gen]
-  (deprecated! "Use generator.then() instead of gen.map(generator)")
-  (Generator. (gen/fmap f (->gen gen)))))
-(js/goog.exportSymbol "gen.bind" (fn
-  [gen f]
-  (deprecated! "Use generator.then() instead of gen.bind(generator)")
-  (Generator. (gen/bind (->gen gen) (fn [value] (->gen (f value)))))))
-
-; Prototype version of "bind"
 (js/goog.exportSymbol "Generator.prototype.then" (fn
   [f]
   (this-as this (Generator. (gen/bind (->gen this) (fn [value] (->gen (f value))))))))
@@ -129,48 +100,25 @@
   [f]
   (this-as this (Generator. (gen/scale f (->gen this))))))
 
-(js/goog.exportSymbol "gen.resize" (fn
-  [size gen]
-  (deprecated! "Use generator.scale(() => size) instead of gen.resize(generator, size)")
-  (Generator. (gen/resize size (->gen gen)))))
-
-(js/goog.exportSymbol "gen.noShrink" (fn
-  [gen]
-  (deprecated! "Use generator.neverShrink() instead of gen.noShrink(generator)")
-  (Generator. (gen/no-shrink (->gen gen)))))
-(js/goog.exportSymbol "gen.shrink" (fn
-  [gen]
-  (deprecated! "Use generator.alwaysShrink() instead of gen.shrink(generator)")
-  (Generator. (gen/shrink-2 (->gen gen)))))
-
-; Prototype version of "no-shrink"
 (js/goog.exportSymbol "Generator.prototype.neverShrink" (fn
   [pred]
   (this-as this (Generator. (gen/no-shrink (->gen this))))))
 
-; Prototype version of "shrink-2"
 (js/goog.exportSymbol "Generator.prototype.alwaysShrink" (fn
   [pred]
   (this-as this (Generator. (gen/shrink-2 (->gen this))))))
 
 
-;; Simple Generators
+;; Generator Combinators
 
 (js/goog.exportSymbol "gen.return" (fn
   [value]
   (Generator. (gen/return value))))
-(js/goog.exportSymbol "gen.returnOneOf" (fn
-  [values]
-  (deprecated! "Use gen.oneOf() instead of gen.returnOneOf()")
-  (Generator. (gen/elements values))))
-(js/goog.exportSymbol "gen.returnOneOfWeighted" (fn
-  [pairs]
-  (deprecated! "Use gen.oneOfWeighted() instead of gen.returnOneOfWeighted()")
-  (Generator. (gen/frequency (map (fn [[weight, value]] (array weight (gen/return value))) pairs)))))
 
 (js/goog.exportSymbol "gen.oneOf" (fn
   [gens]
   (Generator. (gen/one-of (map ->gen gens)))))
+
 (js/goog.exportSymbol "gen.oneOfWeighted" (fn
   [pairs]
   (Generator. (gen/frequency (map (fn [[weight, gen]] (array weight (->gen gen))) pairs)))))
@@ -178,6 +126,7 @@
 (js/goog.exportSymbol "gen.nested" (fn
   [collection-gen val-gen]
   (collection-gen (gen/recursive-gen (comp ->gen collection-gen) (->gen val-gen)))))
+
 
 ;; Array and Object
 
@@ -214,6 +163,7 @@
 (js/goog.exportSymbol "gen.object" (fn [& args] (Generator. (apply genObject args))))
 (js/goog.exportSymbol "gen.arrayOrObject" (fn [val-gen] (Generator. (genArrayOrObject (->gen val-gen)))))
 
+
 ;; JS Primitives
 
 (js/goog.exportSymbol "gen.NaN" (Generator. (gen/return js/NaN)))
@@ -245,6 +195,7 @@
 
 
 ;; JSON
+
 (def genJSONPrimitive (gen/frequency [
   [1 (gen/return nil)]
   [2 gen/boolean]
@@ -271,3 +222,62 @@
 (js/goog.exportSymbol "gen.primitive" (Generator. genPrimitive))
 (js/goog.exportSymbol "gen.any"
   (Generator. (gen/recursive-gen genArrayOrObject genPrimitive)))
+
+
+;; Deprecated
+
+(def warned-map #js{})
+(defn deprecated!
+  [msg]
+  (when-not (aget warned-map msg)
+    (aset warned-map msg true)
+    (js/console.warn "DEPRECATED" msg (aget (js/Error.) "stack"))))
+
+(js/goog.exportSymbol "gen.suchThat" (fn
+  [pred gen]
+  (deprecated! "Use generator.where() instead of gen.suchThat(generator)")
+  (Generator. (gen/such-that pred (->gen gen)))))
+
+(js/goog.exportSymbol "gen.notEmpty" (fn
+  [gen max-tries]
+  (deprecated! "Use generator.notEmpty() instead of gen.notEmpty(generator)")
+  (Generator.
+    (gen/such-that
+      js-not-empty
+      (->gen gen)
+      (or max-tries 10)))))
+
+(js/goog.exportSymbol "gen.map" (fn
+  [f gen]
+  (deprecated! "Use generator.then() instead of gen.map(generator)")
+  (Generator. (gen/fmap f (->gen gen)))))
+
+(js/goog.exportSymbol "gen.bind" (fn
+  [gen f]
+  (deprecated! "Use generator.then() instead of gen.bind(generator)")
+  (Generator. (gen/bind (->gen gen) (fn [value] (->gen (f value)))))))
+
+(js/goog.exportSymbol "gen.resize" (fn
+  [size gen]
+  (deprecated! "Use generator.scale(() => size) instead of gen.resize(generator, size)")
+  (Generator. (gen/resize size (->gen gen)))))
+
+(js/goog.exportSymbol "gen.noShrink" (fn
+  [gen]
+  (deprecated! "Use generator.neverShrink() instead of gen.noShrink(generator)")
+  (Generator. (gen/no-shrink (->gen gen)))))
+
+(js/goog.exportSymbol "gen.shrink" (fn
+  [gen]
+  (deprecated! "Use generator.alwaysShrink() instead of gen.shrink(generator)")
+  (Generator. (gen/shrink-2 (->gen gen)))))
+
+(js/goog.exportSymbol "gen.returnOneOf" (fn
+  [values]
+  (deprecated! "Use gen.oneOf() instead of gen.returnOneOf()")
+  (Generator. (gen/elements values))))
+
+(js/goog.exportSymbol "gen.returnOneOfWeighted" (fn
+  [pairs]
+  (deprecated! "Use gen.oneOfWeighted() instead of gen.returnOneOfWeighted()")
+  (Generator. (gen/frequency (map (fn [[weight, value]] (array weight (gen/return value))) pairs)))))
