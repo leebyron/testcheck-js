@@ -106,7 +106,7 @@ export interface Generator<T> {
    * For example, to generate "big" numbers that grow super-linearly (cubicly):
    *
    *      var bigInts = gen.int.scale(n => n * n * n)
-   *      bigInts.sample()
+   *      console.log(sample(bigInts))
    *      // [ 0, 1, 5, 0, -59, -56, -160, 261, 409, -34 ]
    *
    * Note: When shrinking a failing test, "size" gets smaller. If the scale
@@ -126,17 +126,6 @@ export interface Generator<T> {
    * property passes (up to one additional level).
    */
   alwaysShrink(): Generator<T>;
-
-  /**
-   * Handy tool for checking the output of this generator.
-   * Returns an array of the results of the generator.
-   *
-   *     var results = gen.int.sample();
-   *     // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
-   *
-   * By default 10 samples are provided unless otherwise specified.
-   */
-  sample(count?: number): Array<T>;
 }
 
 
@@ -169,6 +158,18 @@ export function property(
   argGens: Array<Generator<any>>,
   propertyFn: (...args: any[]) => boolean
 ): Generator<boolean>;
+
+/**
+ * Handy tool for checking the output of your generators. Given a generator,
+ * it returns an array of the results of the generator.
+ *
+ *     var results = sample(gen.int);
+ *     // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
+ *
+ * By default 10 samples are provided unless otherwise specified.
+ *
+ */
+export function sample<T>(gen: Generator<T>, times?: number = 10): Array<T>;
 
 
 // Generator Builders

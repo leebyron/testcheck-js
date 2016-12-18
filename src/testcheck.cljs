@@ -61,18 +61,9 @@
 
 (defn ^{:export sample} sample
   [generator times]
-  (deprecated! "Use generator.sample() instead of sample(generator)")
   (let [num-samples (or times 10)]
     (to-array
       (gen/sample (unwrap generator) num-samples))))
-
-; Prototype version
-(js/goog.exportSymbol "Generator.prototype.sample" (fn
-  [times]
-  (this-as this
-    (let [num-samples (or times 10)]
-      (to-array
-        (gen/sample (unwrap this) num-samples))))))
 
 ;; Private helpers
 
