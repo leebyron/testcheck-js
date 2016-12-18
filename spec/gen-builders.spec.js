@@ -6,7 +6,7 @@
 /*:: declare function beforeEach(): void; */
 /*:: declare var jasmine: any; */
 
-const { sample, gen } = require('../')
+const { gen, sample } = require('../')
 
 describe('gen builders', () => {
 
@@ -47,7 +47,7 @@ describe('gen builders', () => {
   })
 
   it('generates one of a collection of values', () => {
-    const vals = sample(gen.returnOneOf(['foo', 'bar', 'baz']), 100)
+    const vals = sample(gen.oneOf(['foo', 'bar', 'baz']), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return value === 'foo' || value === 'bar' || value === 'baz'
@@ -64,10 +64,9 @@ describe('gen builders', () => {
   })
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = sample(gen.returnOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), 10000)
+    const vals = sample(gen.oneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), 10000)
     expect(vals.length).toBe(10000)
     expect(vals).toAllPass(function (value) {
-      const type = typeof value
       return value === 'foo' || value === 'bar' || value === 'baz'
     })
     const fooCount = vals.reduce(function (count, val) { return count + (val === 'foo'); }, 0)
@@ -91,7 +90,7 @@ describe('gen builders', () => {
   })
 
   it('maps a generator value', () => {
-    const genSquares = gen.map(gen.posInt, n => n * n)
+    const genSquares = gen.posInt.then(n => n * n)
     const vals = sample(genSquares, 100)
     expect(vals).toAllPass(function (value) {
       return typeof value === 'number' && Number.isInteger(Math.sqrt(value))
@@ -99,9 +98,9 @@ describe('gen builders', () => {
   })
 
   it('bind creates a new generator from an existing one', () => {
-    const genListAndItem = gen.bind(
-      gen.notEmpty(gen.array(gen.int)),
-      list => gen.array([ gen.return(list), gen.returnOneOf(list) ])
+    const genNotEmptyList = gen.array(gen.int).notEmpty()
+    const genListAndItem = genNotEmptyList.then(
+      list => gen.array([ list, gen.oneOf(list) ])
     )
     const vals = sample(genListAndItem, 100)
     expect(vals).toAllPass(function (pair) {
@@ -109,6 +108,16 @@ describe('gen builders', () => {
       const item = pair[1]
       return Array.isArray(list) && typeof item === 'number' && list.indexOf(item) !== -1
     })
+  })
+
+  it('scales a generator to grow at non-linear rates', () => {
+    const genInts = gen.int
+    const values = sample(genInts, 100)
+    expect(values.filter(n => n > 100).length).toBe(0)
+
+    const genHugeInts = gen.int.scale(n => n * n)
+    const hugeValues = sample(genHugeInts, 100)
+    expect(hugeValues.filter(n => n > 100).length).toBeGreaterThan(0)
   })
 
 })

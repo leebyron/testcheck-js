@@ -3,6 +3,39 @@
 (require '[clojure.test.check.properties :as prop])
 (use '[clojure.set :only (rename-keys)])
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generators
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn ^{:export Generator :jsdoc ["@constructor"]} $Generator
+  [gen]
+  (if (not (gen/generator? gen))
+    (throw (js/Error. "Generator cannot be constructed directly.")))
+  (this-as this (js/Object.defineProperty this "__clj_gen" #js{ "value" gen })))
+
+(def Generator (js* "this.Generator"))
+
+;; Private helpers
+
+(defn- jsgen?
+  [x]
+  (gen/generator? (aget x "__clj_gen")))
+
+(defn- unwrap
+  [x]
+  (if (jsgen? x)
+    (aget x "__clj_gen")
+    (if (gen/generator? x)
+      x
+      (gen/return x))))
+
+(def warned-map #js{})
+(defn deprecated!
+  [msg]
+  (when-not (aget warned-map msg)
+    (aset warned-map msg true)
+    (js/console.warn "DEPRECATED" msg (aget (js/Error.) "stack"))))
+
 ;; API
 
 (defn ^{:export check} check
@@ -22,17 +55,15 @@
                             resultRenamed)]
     (clj->js resultRenamedDeep)))
 
-(def ^{:export property} property prop/for-all*)
+(defn ^{:export property} property
+  [args function]
+  (prop/for-all* (map unwrap args) function))
 
 (defn ^{:export sample} sample
   [generator times]
   (let [num-samples (or times 10)]
     (to-array
-      (gen/sample generator num-samples))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Generators
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      (gen/sample (unwrap generator) num-samples))))
 
 ;; Private helpers
 
@@ -43,10 +74,10 @@
       val-gen
       (gen/one-of [
         val-gen
-        (collection-gen
+        (unwrap (collection-gen
           (gen/resize
             (quot size 2)
-            (gen-nested-or-val collection-gen val-gen)))])))))
+            (gen-nested-or-val collection-gen val-gen))))])))))
 
 (defn- to-object
   [from-seq]
@@ -58,123 +89,203 @@
   [key-gen val-gen]
   (gen/fmap to-object (gen/vector (gen/tuple key-gen val-gen))))
 
+(defn- js-not-empty
+  [x]
+  (cond
+    (coercive-not x)
+    false
+
+    (number? (.-length x))
+    (> (.-length x) 0)
+
+    (identical? (.-constructor x) js/Object)
+    (> (.-length (js/Object.keys x)) 0)
+
+    :else true
+  ))
 
 ;; Generator Builders
 
-(def ^{:export gen.suchThat} genSuchThat gen/such-that)
-(def ^{:export gen.notEmpty} genNotEmpty
-  (partial gen/such-that (comp not-empty js->clj)))
-(defn ^{:export gen.map} genMap [gen f] (gen/fmap f gen))
-(def ^{:export gen.bind} genBind gen/bind)
-(def ^{:export gen.sized} genSized gen/sized)
-(def ^{:export gen.resize} genResize gen/resize)
-(def ^{:export gen.noShrink} genNoShrink gen/no-shrink)
-(def ^{:export gen.shrink} genShrink gen/shrink-2)
+(js/goog.exportSymbol "gen.suchThat" (fn
+  [pred gen]
+  (deprecated! "Use generator.where() instead of gen.suchThat(generator)")
+  (Generator. (gen/such-that pred (unwrap gen)))))
+(js/goog.exportSymbol "gen.notEmpty" (fn
+  [gen max-tries]
+  (deprecated! "Use generator.notEmpty() instead of gen.notEmpty(generator)")
+  (Generator.
+    (gen/such-that
+      js-not-empty
+      (unwrap gen)
+      (or max-tries 10)))))
+
+; Prototype version of "suchThat"
+(js/goog.exportSymbol "Generator.prototype.where" (fn
+  [pred]
+  (this-as this (Generator. (gen/such-that pred (unwrap this))))))
+
+; Prototype version of "not-empty"
+(js/goog.exportSymbol "Generator.prototype.notEmpty" (fn
+  []
+  (this-as this (Generator. (gen/such-that js-not-empty (unwrap this))))))
+
+(js/goog.exportSymbol "gen.map" (fn
+  [f gen]
+  (deprecated! "Use generator.then() instead of gen.map(generator)")
+  (Generator. (gen/fmap f (unwrap gen)))))
+(js/goog.exportSymbol "gen.bind" (fn
+  [gen f]
+  (deprecated! "Use generator.then() instead of gen.bind(generator)")
+  (Generator. (gen/bind (unwrap gen) (fn [value] (unwrap (f value)))))))
+
+; Prototype version of "bind"
+(js/goog.exportSymbol "Generator.prototype.then" (fn
+  [f]
+  (this-as this (Generator. (gen/bind (unwrap this) (fn [value] (unwrap (f value))))))))
+
+(js/goog.exportSymbol "Generator.prototype.scale" (fn
+  [f]
+  (this-as this (Generator. (gen/scale f (unwrap this))))))
+
+(js/goog.exportSymbol "gen.resize" (fn
+  [size gen]
+  (deprecated! "Use generator.scale(() => size) instead of gen.resize(generator, size)")
+  (Generator. (gen/resize size (unwrap gen)))))
+
+(js/goog.exportSymbol "gen.noShrink" (fn
+  [gen]
+  (deprecated! "Use generator.neverShrink() instead of gen.noShrink(generator)")
+  (Generator. (gen/no-shrink (unwrap gen)))))
+(js/goog.exportSymbol "gen.shrink" (fn
+  [gen]
+  (deprecated! "Use generator.alwaysShrink() instead of gen.shrink(generator)")
+  (Generator. (gen/shrink-2 (unwrap gen)))))
+
+; Prototype version of "no-shrink"
+(js/goog.exportSymbol "Generator.prototype.neverShrink" (fn
+  [pred]
+  (this-as this (Generator. (gen/no-shrink (unwrap this))))))
+
+; Prototype version of "shrink-2"
+(js/goog.exportSymbol "Generator.prototype.alwaysShrink" (fn
+  [pred]
+  (this-as this (Generator. (gen/shrink-2 (unwrap this))))))
 
 
 ;; Simple Generators
 
-(js/goog.exportSymbol "gen.return", gen/return)
-(def ^{:export gen.returnOneOf} genReturnOneOf gen/elements)
-(def ^{:export gen.oneOf} genOneOf gen/one-of)
-(def ^{:export gen.oneOfWeighted} genOneOfWeighted gen/frequency)
-(defn ^{:export gen.returnOneOfWeighted} genReturnOneOfWeighted
+(js/goog.exportSymbol "gen.return" (fn
+  [value]
+  (Generator. (gen/return value))))
+(js/goog.exportSymbol "gen.returnOneOf" (fn
+  [values]
+  (deprecated! "Use gen.oneOf() instead of gen.returnOneOf()")
+  (Generator. (gen/elements values))))
+(js/goog.exportSymbol "gen.returnOneOfWeighted" (fn
   [pairs]
-  (gen/frequency (map vector
-    (map first pairs)
-    (map (comp gen/return second) pairs))))
-(defn ^{:export gen.nested} genNested
-  [collection-gen val-gen]
-  (collection-gen (gen-nested-or-val collection-gen val-gen)))
+  (deprecated! "Use gen.oneOfWeighted() instead of gen.returnOneOfWeighted()")
+  (Generator. (gen/frequency (map (fn [[weight, value]] (array weight (gen/return value))) pairs)))))
 
+(js/goog.exportSymbol "gen.oneOf" (fn
+  [gens]
+  (Generator. (gen/one-of (map unwrap gens)))))
+(js/goog.exportSymbol "gen.oneOfWeighted" (fn
+  [pairs]
+  (Generator. (gen/frequency (map (fn [[weight, gen]] (array weight (unwrap gen))) pairs)))))
+
+(js/goog.exportSymbol "gen.nested" (fn
+  [collection-gen val-gen]
+  (collection-gen (gen-nested-or-val collection-gen (unwrap val-gen)))))
 
 ;; Array and Object
 
-(defn ^{:export gen.array} genArray
+(defn genArray
   ([val-gen min-elements max-elements]
-    (gen/fmap to-array (gen/vector val-gen min-elements max-elements)))
+    (gen/fmap to-array (gen/vector (unwrap val-gen) min-elements max-elements)))
   ([val-gen num-elements]
-    (gen/fmap to-array (gen/vector val-gen num-elements)))
+    (gen/fmap to-array (gen/vector (unwrap val-gen) num-elements)))
   ([val-gen-or-arr]
     (gen/fmap to-array
       (if (js/Array.isArray val-gen-or-arr)
-        (apply gen/tuple val-gen-or-arr)
-        (gen/vector val-gen-or-arr)))))
+        (apply gen/tuple (map unwrap val-gen-or-arr))
+        (gen/vector (unwrap val-gen-or-arr))))))
 
-(defn ^{:export gen.object} genObject
+(defn genObject
   ([key-gen val-gen]
-    (gen/fmap clj->js (gen-obj key-gen val-gen)))
+    (gen/fmap clj->js (gen-obj (unwrap key-gen) (unwrap val-gen))))
   ([val-gen-or-obj]
     (if (= js/Object (.-constructor val-gen-or-obj))
-      (let [seq (into {} (for [k (js-keys val-gen-or-obj)] [k (aget val-gen-or-obj k)]))
+      (let [obj val-gen-or-obj
+            seq (into {} (for [k (js-keys obj)] [k (unwrap (aget obj k))]))
         ks (keys seq)
         vs (vals seq)]
         (gen/fmap clj->js
           (gen/fmap (partial zipmap ks)
                     (apply gen/tuple vs))))
-      (gen-obj (gen/not-empty gen/string-alphanumeric) val-gen-or-obj))))
+      (gen-obj (gen/not-empty gen/string-alphanumeric) (unwrap val-gen-or-obj)))))
 
 (defn ^{:export gen.arrayOrObject} genArrayOrObject
   [val-gen]
   (gen/one-of [(genArray val-gen) (genObject val-gen)]))
 
+(js/goog.exportSymbol "gen.array" (fn [& args] (Generator. (apply genArray args))))
+(js/goog.exportSymbol "gen.object" (fn [& args] (Generator. (apply genObject args))))
+(js/goog.exportSymbol "gen.arrayOrObject" (fn [val-gen] (Generator. (genArrayOrObject (unwrap val-gen)))))
 
 ;; JS Primitives
 
-;; TODO: UTF8 strings
-;; TODO: More performant string generation?
+(js/goog.exportSymbol "gen.NaN" (Generator. (gen/return js/NaN)))
+(js/goog.exportSymbol "gen.undefined" (Generator. (gen/return js/undefined)))
+(js/goog.exportSymbol "gen.null" (Generator. (gen/return nil)))
+(js/goog.exportSymbol "gen.boolean" (Generator. gen/boolean))
 
-(def ^{:export gen.NaN} genNaN (gen/return js/NaN))
-(def ^{:export gen.undefined} genUndefined (gen/return js/undefined))
-(def genNull (gen/return nil))
-(js/goog.exportSymbol "gen.null", genNull)
-(js/goog.exportSymbol "gen.boolean", gen/boolean)
+(js/goog.exportSymbol "gen.number" (Generator. gen/double))
+(js/goog.exportSymbol "gen.posNumber" (Generator. (gen/double* {:min 0, :NaN? false})))
+(js/goog.exportSymbol "gen.negNumber" (Generator. (gen/double* {:max 0, :NaN? false})))
+(js/goog.exportSymbol "gen.numberWithin" (fn [from, to]
+  (Generator. (gen/double* {:min from, :max to, :NaN? false}))))
 
-(js/goog.exportSymbol "gen.number", gen/double)
-(def ^{:export gen.posNumber} genPosDouble (gen/double* {:min 0, :NaN? false}))
-(def ^{:export gen.negNumber} genNegDouble (gen/double* {:max 0, :NaN? false}))
-(defn ^{:export gen.numberWithin} genNumberWithin
-  [from, to]
-  (gen/double* {:min from, :max to, :NaN? false}))
+(js/goog.exportSymbol "gen.int" (Generator. gen/int))
+(js/goog.exportSymbol "gen.posInt" (Generator. gen/pos-int))
+(js/goog.exportSymbol "gen.negInt" (Generator. gen/neg-int))
+(js/goog.exportSymbol "gen.strictPosInt" (Generator. gen/s-pos-int))
+(js/goog.exportSymbol "gen.strictNegInt" (Generator. gen/s-neg-int))
+(js/goog.exportSymbol "gen.intWithin" (fn [lower, upper]
+  (Generator. (gen/choose lower upper))))
 
-(js/goog.exportSymbol "gen.int", gen/int)
-(def ^{:export gen.posInt} genPosInt gen/pos-int)
-(def ^{:export gen.negInt} genNegInt gen/neg-int)
-(def ^{:export gen.strictPosInt} genStrictPosInt gen/s-pos-int)
-(def ^{:export gen.strictNegInt} genStrictNegInt gen/s-neg-int)
-(def ^{:export gen.intWithin} genIntWithin gen/choose)
+(js/goog.exportSymbol "gen.char", (Generator. gen/char))
+(js/goog.exportSymbol "gen.asciiChar" (Generator. gen/char-ascii))
+(js/goog.exportSymbol "gen.alphaNumChar" (Generator. gen/char-alphanumeric))
 
-(js/goog.exportSymbol "gen.char", gen/char)
-(def ^{:export gen.asciiChar} genAsciiChar gen/char-ascii)
-(def ^{:export gen.alphaNumChar} genAlphaNumChar gen/char-alphanumeric)
-
-(def ^{:export gen.string} genString gen/string)
-(def ^{:export gen.asciiString} genAsciiString gen/string-ascii)
-(def ^{:export gen.alphaNumString} genAlphaNumString gen/string-alphanumeric)
+(js/goog.exportSymbol "gen.string" (Generator. gen/string))
+(js/goog.exportSymbol "gen.asciiString" (Generator. gen/string-ascii))
+(js/goog.exportSymbol "gen.alphaNumString" (Generator. gen/string-alphanumeric))
 
 
 ;; JSON
+(def genJSONPrimitive (gen/frequency [
+  [1 (gen/return nil)]
+  [2 gen/boolean]
+  [3 (gen/double* {:infinite? false, :NaN? false})]
+  [10 gen/int]
+  [10 gen/string]]))
+(def genJSONValue (gen-nested-or-val genArrayOrObject genJSONPrimitive))
 
-(def ^{:export gen.JSONPrimitive} genJSONPrimitive
-  (gen/frequency [[1 genNull]
-                  [2 gen/boolean]
-                  [3 (gen/double* {:infinite? false, :NaN? false})]
-                  [10 gen/int]
-                  [10 gen/string]]))
-(def ^{:export gen.JSONValue} genJSONValue
-  (gen-nested-or-val genArrayOrObject genJSONPrimitive))
-(def ^{:export gen.JSON} genJSON (genObject genJSONValue))
+(js/goog.exportSymbol "gen.JSONPrimitive" (Generator. genJSONPrimitive))
+(js/goog.exportSymbol "gen.JSONValue" (Generator. genJSONValue))
+(js/goog.exportSymbol "gen.JSON" (Generator. (genObject genJSONValue)))
 
 
 ;; JS values, potentially nested
 
-(def ^{:export gen.primitive} genPrimitive
-  (gen/frequency [[1 genUndefined]
-                  [2 genNull]
-                  [4 gen/boolean]
-                  [6 gen/double]
-                  [20 gen/int]
-                  [20 gen/string]]))
+(def genPrimitive (gen/frequency [
+  [1 (gen/return js/undefined)]
+  [2 (gen/return nil)]
+  [4 gen/boolean]
+  [6 gen/double]
+  [20 gen/int]
+  [20 gen/string]]))
 
-(def ^{:export gen.any} genAny
-  (gen-nested-or-val genArrayOrObject genPrimitive))
+(js/goog.exportSymbol "gen.primitive" (Generator. genPrimitive))
+(js/goog.exportSymbol "gen.any"
+  (Generator. (gen-nested-or-val genArrayOrObject genPrimitive)))

@@ -6,7 +6,7 @@
 /*:: declare function beforeEach(): void; */
 /*:: declare var jasmine: any; */
 
-const { sample, gen } = require('../')
+const { gen, sample } = require('../')
 
 describe('value generator', () => {
 
