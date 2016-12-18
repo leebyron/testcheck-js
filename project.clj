@@ -18,7 +18,6 @@
       :compiler {
         :output-to "dist/testcheck.js",
         :libs [""]
-        :closure-warnings {:global-this :off}
         :optimizations :advanced
         :output-wrapper false
         :pretty-print false }}]})

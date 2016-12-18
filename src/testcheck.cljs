@@ -16,7 +16,10 @@
     (throw (js/Error. "Generator cannot be constructed directly.")))
   (this-as this (js/Object.defineProperty this "__clj_gen" #js{ "value" gen }))))
 
-(def Generator (js* "this.Generator"))
+; Note: Exporting first, then defining the local var from the export ensures
+; that Closure Compiler leaves the function inlined, ensuring no leakage of
+; minified function names.
+(def Generator (aget js/exports "Generator"))
 
 (defn ->gen
   [x]
@@ -100,6 +103,8 @@
 
 
 ;; Generator Combinators
+
+(defexport gen (js-obj))
 
 (defexport gen.return (fn
   [value]

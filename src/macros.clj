@@ -1,5 +1,7 @@
 (ns macros)
+(require '[clojure.string :as str])
 
 (defmacro defexport
   [n val]
-  `(js/goog.exportSymbol ~(name n) ~val))
+  (let [parts (str/split (name n) #"\.")]
+    (concat `(aset js/exports) parts `(~val))))
