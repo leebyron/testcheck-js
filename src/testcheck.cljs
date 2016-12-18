@@ -113,12 +113,8 @@
   [pairs]
   (Generator. (gen/frequency (map (fn [[weight, gen]] (array weight (->gen gen))) pairs)))))
 
-(defexport gen.nested (fn
-  [collection-gen val-gen]
-  (collection-gen (gen/recursive-gen (comp ->gen collection-gen) (->gen val-gen)))))
 
-
-;; Array and Object
+;; Collections
 
 (defn gen-array
   ([val-gen min-elements max-elements]
@@ -166,6 +162,10 @@
 (defexport gen.arrayOrObject (fn
   [val-gen]
   (Generator. (gen-array-or-object (->gen val-gen)))))
+
+(defexport gen.nested (fn
+  [collection-gen val-gen]
+  (collection-gen (gen/recursive-gen (comp ->gen collection-gen) (->gen val-gen)))))
 
 
 ;; JS Primitives
