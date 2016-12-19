@@ -1,0 +1,6 @@
+spec/types.spec.ts(8,5): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
+spec/types.spec.ts(23,12): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
+spec/types.spec.ts(40,12): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
+spec/types.spec.ts(58,15): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
+spec/types.spec.ts(110,5): error TS2345: Argument of type '{ numTimes: number; }' is not assignable to parameter of type 'Options | undefined'.
+  Object literal may only specify known properties, and 'numTimes' does not exist in type 'Options | undefined'.

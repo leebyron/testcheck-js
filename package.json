@@ -3,6 +3,7 @@
   "version": "0.1.4",
   "description": "Property testing for JavaScript",
   "homepage": "https://github.com/leebyron/testcheck-js",
+  "license": "BSD-3-Clause",
   "author": {
     "name": "Lee Byron",
     "url": "https://github.com/leebyron"
@@ -17,8 +18,9 @@
   "main": "dist/testcheck.js",
   "types": "dist/testcheck.d.ts",
   "devDependencies": {
+    "flow-bin": "^0.37.0",
     "jasmine-node": "^1.14.5",
-    "flow-bin": "^0.37.0"
+    "typescript": "^2.1.4"
   },
   "files": [
     "dist",
@@ -35,11 +37,13 @@
     "generative"
   ],
   "scripts": {
-    "test": "npm run testonly && npm run check",
+    "test": "npm run testonly && npm run flow-check && npm run ts-check",
     "testonly": "jasmine-node spec/",
-    "check": "flow check",
+    "flow-check": "flow check",
+    "ts-check": "DIFF=$(tsc --noEmit --noImplicitAny --strictNullChecks spec/types.spec.ts | diff spec/types.spec.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
+    "ts-check-update": "tsc --noEmit --noImplicitAny --strictNullChecks spec/types.spec.ts > spec/types.spec.ts.expected; exit 0",
     "build": "rm dist/* && lein do clean, cljsbuild once && cp type-definitions/* dist/",
     "rebuild": "lein do cljsbuild once && cp type-definitions/* dist/"
   },
-  "license": "BSD"
+  "dependencies": {}
 }
