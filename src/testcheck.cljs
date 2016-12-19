@@ -50,8 +50,17 @@
     (clj->js resultRenamedDeep))))
 
 (defexport property (fn
-  [args function]
-  (prop/for-all* (map ->gen args) function)))
+  []
+  (let [gen-len (- (alength (js-arguments)) 1)
+        gen-fn (aget (js-arguments) gen-len)]
+    (if (and (identical? 1 gen-len) (array? (aget (js-arguments) 0)))
+      (prop/for-all* (map ->gen (aget (js-arguments) 0)) gen-fn)
+      (let [gens (array)]
+        (loop [i 0]
+          (when (< i gen-len)
+            (.push gens (->gen (aget (js-arguments) i)))
+            (recur (inc i))))
+        (prop/for-all* gens gen-fn))))))
 
 (defexport sample (fn
   [generator times]

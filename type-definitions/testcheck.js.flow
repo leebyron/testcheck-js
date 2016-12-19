@@ -158,37 +158,36 @@ declare export function check(
  */
 declare export var property: {
   <A>(
-    gens: [
-      Generator<A>
-    ],
+    genA: Generator<A>,
     f: (a: A) => boolean
   ): Generator<boolean>;
   <A,B>(
-    gens: [
-      Generator<A>,
-      Generator<B>
-    ],
+    genA: Generator<A>,
+    genB: Generator<B>,
     f: (a: A, b: B) => boolean
   ): Generator<boolean>;
   <A,B,C>(
-    gens: [
-      Generator<A>,
-      Generator<B>,
-      Generator<C>
-    ],
+    genA: Generator<A>,
+    genB: Generator<B>,
+    genC: Generator<C>,
     f: (a: A, b: B, c: C) => boolean
   ): Generator<boolean>;
   <A,B,C,D>(
-    gens: [
-      Generator<A>,
-      Generator<B>,
-      Generator<C>,
-      Generator<D>
-    ],
+    genA: Generator<A>,
+    genB: Generator<B>,
+    genC: Generator<C>,
+    genD: Generator<D>,
     f: (a: A, b: B, c: C, d: D) => boolean
   ): Generator<boolean>;
-
-}
+  <A,B,C,D,E>(
+    genA: Generator<A>,
+    genB: Generator<B>,
+    genC: Generator<C>,
+    genD: Generator<D>,
+    genE: Generator<E>,
+    f: (a: A, b: B, c: C, d: D, e: E) => boolean
+  ): Generator<boolean>;
+};
 
 /**
  * Handy tool for checking the output of your generators. Given a generator,
@@ -312,9 +311,9 @@ declare export var gen: {
    *
    */
   object: {
+    <Elem, T:{[key: string]: Generator<Elem> | Elem}>(recordGens: T): Generator<$ObjMap<T,<V>(Generator<V>) => V>>;
     <V>(valueGen: Generator<V>, _: void): Generator<{[key: string]: V}>;
     <K,V>(keyGen: Generator<K>, valueGen: Generator<V>): Generator<{[key: K]: V}>;
-    (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
   };
 
   /**

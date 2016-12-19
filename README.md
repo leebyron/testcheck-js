@@ -52,7 +52,7 @@ const { check, gen, property, sample } = require('testcheck');
 
 const result = check(
   property(
-    [gen.int],
+    gen.int,
     x => x - x === 0
   )
 )
@@ -140,7 +140,7 @@ up to 1000 different tests before concluding).
 ```js
 const result = check(
   property(
-    [gen.int],    // the arguments generator
+    gen.int,        // the arguments generator
     function (x) {  // the property function to test
       return x - x === 0;
     }
@@ -166,7 +166,7 @@ either of the integers alone.
 ```js
 check(
   property(
-    [gen.int, gen.int],
+    gen.int, gen.int,
     function (a, b) {
       return a + b >= a && a + b >= b;
     }
@@ -210,7 +210,7 @@ property or make the test data more specific:
 
 ```js
 check(property(
-  [gen.posInt, gen.posInt],
+  gen.posInt, gen.posInt,
   function (a, b) {
     return a + b >= a && a + b >= b;
   }
@@ -261,7 +261,7 @@ by another string always returns an array of length 1.
 
 ```js
 check(property(
-  [gen.notEmpty(gen.string), gen.notEmpty(gen.string)],
+  gen.notEmpty(gen.string), gen.notEmpty(gen.string),
   function (str, separator) {
     return str.split(separator).length === 1;
   }
@@ -278,7 +278,7 @@ We could change the test to be aware of this relationship such that the
 
 ```js
 check(property(
-  [gen.notEmpty(gen.string), gen.posInt, gen.strictPosInt],
+  gen.notEmpty(gen.string), gen.posInt, gen.strictPosInt,
   function (str, start, length) {
     var separator = str.substr(start % str.length, length);
     return str.split(separator).length === 1;
