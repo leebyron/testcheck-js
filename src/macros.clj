@@ -4,7 +4,7 @@
 (defmacro defexport
   [n val]
   (let [parts (str/split (name n) #"\.")]
-    (concat `(aset js/exports) parts `(~val))))
+    `(aset js/exports ~@parts ~val)))
 
 (defmacro defproto
   [obj n & fn-tail]
