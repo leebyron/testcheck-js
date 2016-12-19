@@ -46,6 +46,17 @@ describe('gen builders', () => {
     })
   })
 
+  it('generators are iterable', () => {
+    const values = []
+    for (let value of gen.int) {
+      values.push(value)
+      if (value > 10) {
+        break
+      }
+    }
+    expect(values.length).toBeGreaterThan(0)
+  })
+
   it('generates one of a collection of values', () => {
     const vals = sample(gen.oneOf(['foo', 'bar', 'baz']), 100)
     expect(vals.length).toBe(100)
