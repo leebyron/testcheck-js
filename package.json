@@ -38,7 +38,8 @@
     "test": "npm run testonly && npm run check",
     "testonly": "jasmine-node spec/",
     "check": "flow check",
-    "build": "./resources/build.sh"
+    "build": "rm dist/* && lein do clean, cljsbuild once && cp type-definitions/* dist/",
+    "rebuild": "lein do cljsbuild once && cp type-definitions/* dist/"
   },
   "license": "BSD"
 }
