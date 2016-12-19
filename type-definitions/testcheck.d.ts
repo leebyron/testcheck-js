@@ -55,7 +55,7 @@ export interface Result {
 /**
  * Generators of values.
  */
-export interface Generator<T> {
+export class Generator<T> {
 
   /**
    * Creates a new Generator which generates non-empty values.
@@ -195,7 +195,7 @@ export function property<A,B,C,D,E>(
  * By default 10 samples are provided unless otherwise specified.
  *
  */
-export function sample<T>(gen: Generator<T>, times?: number = 10): Array<T>;
+export function sample<T>(gen: Generator<T>, times?: number): Array<T>;
 
 
 // Generator Builders
