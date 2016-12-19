@@ -86,6 +86,10 @@
     :else true
   ))
 
+(defexport Generator.prototype.nullable (fn
+  []
+  (this-as this (Generator. (gen/frequency [[1 (gen/return nil)] [5 (->gen this)]])))))
+
 (defexport Generator.prototype.notEmpty (fn
   []
   (this-as this (Generator. (gen/such-that js-not-empty (->gen this))))))

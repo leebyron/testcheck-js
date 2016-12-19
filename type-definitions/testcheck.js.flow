@@ -58,6 +58,11 @@ export type Result = {|
 declare export class Generator<+T> {
 
   /**
+   * Creates a new Generator which also sometimes generates null values.
+   */
+  nullable(): Generator<T | null>;
+
+  /**
    * Creates a new Generator which generates non-empty values.
    *
    * Examples of empty values are 0, "", null, [], and {}

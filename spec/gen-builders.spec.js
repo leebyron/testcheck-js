@@ -120,4 +120,12 @@ describe('gen builders', () => {
     expect(hugeValues.filter(n => n > 100).length).toBeGreaterThan(0)
   })
 
+  it('creates nullable generators', () => {
+    const values = sample(gen.int, 100)
+    const nullableValues = sample(gen.int.nullable(), 100)
+
+    expect(values.filter(n => n === null).length).toBe(0)
+    expect(nullableValues.filter(n => n === null).length).toBeGreaterThan(0)
+  })
+
 })
