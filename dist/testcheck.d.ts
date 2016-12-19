@@ -154,9 +154,35 @@ export function check(property: Generator<boolean>, options?: Options): Result;
  *     check(numGoUp, {times: 1000});
  *
  */
-export function property(
-  argGens: Array<Generator<any>>,
-  propertyFn: (...args: any[]) => boolean
+export function property<A>(
+  genA: Generator<A>,
+  f: (a: A) => boolean
+): Generator<boolean>;
+export function property<A,B>(
+  genA: Generator<A>,
+  genB: Generator<B>,
+  f: (a: A, b: B) => boolean
+): Generator<boolean>;
+export function property<A,B,C>(
+  genA: Generator<A>,
+  genB: Generator<B>,
+  genC: Generator<C>,
+  f: (a: A, b: B, c: C) => boolean
+): Generator<boolean>;
+export function property<A,B,C,D>(
+  genA: Generator<A>,
+  genB: Generator<B>,
+  genC: Generator<C>,
+  genD: Generator<D>,
+  f: (a: A, b: B, c: C, d: D) => boolean
+): Generator<boolean>;
+export function property<A,B,C,D,E>(
+  genA: Generator<A>,
+  genB: Generator<B>,
+  genC: Generator<C>,
+  genD: Generator<D>,
+  genE: Generator<E>,
+  f: (a: A, b: B, c: C, d: D, e: E) => boolean
 ): Generator<boolean>;
 
 /**

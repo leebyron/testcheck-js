@@ -15,7 +15,7 @@ describe('check', () => {
     let calls = 0
 
     const result = check(property(
-      [gen.posInt],
+      gen.posInt,
       function (intValue) {
         calls++
         return intValue >= 0
@@ -35,7 +35,7 @@ describe('check', () => {
     let calls = 0
 
     const result = check(property(
-      [gen.posInt],
+      gen.posInt,
       function (intValue) {
         calls++
         return intValue >= 0 && intValue < 42
@@ -53,6 +53,39 @@ describe('check', () => {
       expect(fail.length).toBe(1)
       expect(shrunk.smallest).toEqual([42])
     }
+  })
+
+  it('accepts multiple generators as arguments', () => {
+    let calls = 0
+
+    const result = check(property(
+      gen.posInt, gen.string,
+      function (intValue, string) {
+        calls++
+        return intValue >= 0 && typeof string === 'string'
+      }
+    ), { times: 100 })
+
+    expect(calls).toBe(100)
+    expect(result.result).toBe(true)
+    expect(result.numTests).toBe(100)
+  })
+
+  it('supports deprecated array properties', () => {
+    let calls = 0
+
+    // $ExpectError
+    const result = check(property(
+      [gen.posInt, gen.string],
+      function (intValue, string) {
+        calls++
+        return intValue >= 0 && typeof string === 'string'
+      }
+    ), { times: 100 })
+
+    expect(calls).toBe(100)
+    expect(result.result).toBe(true)
+    expect(result.numTests).toBe(100)
   })
 
 })
