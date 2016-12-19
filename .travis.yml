@@ -1,2 +1,5 @@
-language: node_js
-node_js: stable
+language: clojure
+before_install:
+  - nvm install stable
+  - npm install
+script: npm test
