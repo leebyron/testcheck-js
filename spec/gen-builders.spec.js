@@ -100,7 +100,7 @@ describe('gen builders', () => {
     expect(intCount / boolCount).toBeApprx(2)
   })
 
-  it('maps a generator value', () => {
+  it('.then() maps a generator value', () => {
     const genSquares = gen.posInt.then(n => n * n)
     const vals = sample(genSquares, 100)
     expect(vals).toAllPass(function (value) {
@@ -108,7 +108,7 @@ describe('gen builders', () => {
     })
   })
 
-  it('bind creates a new generator from an existing one', () => {
+  it('.then() creates a new generator from an existing one', () => {
     const genNotEmptyList = gen.array(gen.int).notEmpty()
     const genListAndItem = genNotEmptyList.then(
       list => gen.array([ list, gen.oneOf(list) ])
@@ -119,6 +119,14 @@ describe('gen builders', () => {
       const item = pair[1]
       return Array.isArray(list) && typeof item === 'number' && list.indexOf(item) !== -1
     })
+  })
+
+  it('.suchThat() narrows down possible values', () => {
+    const nonFives = gen.int.suchThat(n => n % 5 !== 0)
+    const vals = sample(nonFives, 100)
+    expect(vals).toAllPass(
+      nonFive => Number.isInteger(nonFive / 5) === false
+    )
   })
 
   it('scales a generator to grow at non-linear rates', () => {

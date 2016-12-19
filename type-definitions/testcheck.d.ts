@@ -75,12 +75,12 @@ export class Generator<T> {
    *
    * For example, to create a Generator of any number except multiples of 5:
    *
-   *     var genAnythingBut5s = gen.int.where(n => n % 5 !== 0);
+   *     var genAnythingBut5s = gen.int.suchThat(n => n % 5 !== 0);
    *
    * Note: Care is needed to ensure there is a high chance the predicate will
    * pass, after ten attempts, an exception will throw.
    */
-  where(fn: (value: T) => boolean): Generator<T>;
+  suchThat(fn: (value: T) => boolean): Generator<T>;
 
   /**
    * Creates a new Generator that depends on the values of this Generator.

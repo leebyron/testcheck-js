@@ -94,7 +94,7 @@
   []
   (this-as this (Generator. (gen/such-that js-not-empty (->gen this)))))
 
-(defproto Generator where
+(defproto Generator suchThat
   [pred]
   (this-as this (Generator. (gen/such-that pred (->gen this)))))
 
