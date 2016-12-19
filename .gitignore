@@ -4,5 +4,6 @@ npm-debug.log
 .DS_Store
 *~
 *.swp
-TODO
-target
+/TODO
+/target
+/dist
