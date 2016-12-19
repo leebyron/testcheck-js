@@ -157,7 +157,7 @@
 
 (defn gen-object
   ([key-gen val-gen]
-    (gen/fmap to-object (gen/vector (gen/tuple (->gen key-gen) (->gen val-gen)))))
+    (gen/fmap to-object (gen/map (->gen key-gen) (->gen val-gen))))
   ([val-gen-or-obj]
     (if (object? val-gen-or-obj)
       (let [obj val-gen-or-obj
