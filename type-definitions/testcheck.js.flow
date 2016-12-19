@@ -131,6 +131,22 @@ declare export class Generator<+T> {
    * property passes (up to one additional level).
    */
   alwaysShrink(): Generator<T>;
+
+  /**
+   * Generators are iterable, but take caution as they generate an infinite
+   * series of results.
+   *
+   * This can be useful as an alternative way to sample values:
+   *
+   *     for (let value of generator) {
+   *       console.log(value)
+   *       if (value > 10) {
+   *         break
+   *       }
+   *     }
+   *
+   */
+  @@iterator(): Iterator<T>;
 };
 
 /**

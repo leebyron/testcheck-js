@@ -114,6 +114,9 @@
   [pred]
   (this-as this (Generator. (gen/shrink-2 (->gen this))))))
 
+(aset (.-prototype Generator) ITER_SYMBOL (fn []
+  (this-as this (es6-iterator (gen/sample-seq (->gen this))))))
+
 
 ;; Generator Combinators
 
