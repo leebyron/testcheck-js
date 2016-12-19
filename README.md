@@ -261,7 +261,7 @@ by another string always returns an array of length 1.
 
 ```js
 check(property(
-  gen.notEmpty(gen.string), gen.notEmpty(gen.string),
+  gen.string.nonEmpty(), gen.string.nonEmpty(),
   function (str, separator) {
     return str.split(separator).length === 1;
   }
@@ -278,7 +278,7 @@ We could change the test to be aware of this relationship such that the
 
 ```js
 check(property(
-  gen.notEmpty(gen.string), gen.posInt, gen.strictPosInt,
+  gen.string.nonEmpty(), gen.posInt, gen.strictPosInt,
   function (str, start, length) {
     var separator = str.substr(start % str.length, length);
     return str.split(separator).length === 1;
