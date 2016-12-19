@@ -275,8 +275,12 @@ export const gen: {
     <T>(valueGen: Generator<T>): Generator<Array<T>>;
     <T>(valueGen: Generator<T>, length: number): Generator<Array<T>>;
     <T>(valueGen: Generator<T>, min: number, max: number): Generator<Array<T>>;
-    (genTuple: Array<Generator<any> | any>): Generator<Array<any>>;
-  }
+    <T1, T2, T3, T4, T5>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>, T5 | Generator<T5>]): Generator<[T1, T2, T3, T4, T5]>;
+    <T1, T2, T3, T4>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>]): Generator<[T1, T2, T3, T4]>;
+    <T1, T2, T3>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>]): Generator<[T1, T2, T3]>;
+    <T1, T2>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>]): Generator<[T1, T2]>;
+    <T1>(tupleGens: [T1 | Generator<T1>]): Generator<[T1]>;
+  };
 
   /**
    * Generates Objects of values. There are a few forms `gen.object` can be used:
@@ -300,7 +304,7 @@ export const gen: {
     <T>(valueGen: Generator<T>): Generator<{[key: string]: T}>;
     <T>(keyGen: Generator<string>, valueGen: Generator<T>): Generator<{[key: string]: T}>;
     (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
-  }
+  };
 
   /**
    * Generates either an Array or an Object with values of the provided kind.
