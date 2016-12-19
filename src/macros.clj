@@ -5,3 +5,7 @@
   [n val]
   (let [parts (str/split (name n) #"\.")]
     (concat `(aset js/exports) parts `(~val))))
+
+(defmacro defproto
+  [obj n & fn-tail]
+  `(aset (.-prototype ~obj) ~(if (seq? n) (last n) (name n)) (fn ~@fn-tail)))

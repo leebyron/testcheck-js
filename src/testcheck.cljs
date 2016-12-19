@@ -1,4 +1,4 @@
-(require-macros '[macros :refer [defexport]])
+(require-macros '[macros :refer [defexport defproto]])
 (require
   '[clojure.test.check :as tc]
   '[clojure.test.check.generators :as gen]
@@ -86,36 +86,37 @@
     :else true
   ))
 
-(defexport Generator.prototype.nullable (fn
+(defproto Generator nullable
   []
-  (this-as this (Generator. (gen/frequency [[1 (gen/return nil)] [5 (->gen this)]])))))
+  (this-as this (Generator. (gen/frequency [[1 (gen/return nil)] [5 (->gen this)]]))))
 
-(defexport Generator.prototype.notEmpty (fn
+(defproto Generator notEmpty
   []
-  (this-as this (Generator. (gen/such-that js-not-empty (->gen this))))))
+  (this-as this (Generator. (gen/such-that js-not-empty (->gen this)))))
 
-(defexport Generator.prototype.where (fn
+(defproto Generator where
   [pred]
-  (this-as this (Generator. (gen/such-that pred (->gen this))))))
+  (this-as this (Generator. (gen/such-that pred (->gen this)))))
 
-(defexport Generator.prototype.then (fn
+(defproto Generator then
   [f]
-  (this-as this (Generator. (gen/bind (->gen this) (comp ->gen f))))))
+  (this-as this (Generator. (gen/bind (->gen this) (comp ->gen f)))))
 
-(defexport Generator.prototype.scale (fn
+(defproto Generator scale
   [f]
-  (this-as this (Generator. (gen/scale f (->gen this))))))
+  (this-as this (Generator. (gen/scale f (->gen this)))))
 
-(defexport Generator.prototype.neverShrink (fn
+(defproto Generator neverShrink
   [pred]
-  (this-as this (Generator. (gen/no-shrink (->gen this))))))
+  (this-as this (Generator. (gen/no-shrink (->gen this)))))
 
-(defexport Generator.prototype.alwaysShrink (fn
+(defproto Generator alwaysShrink
   [pred]
-  (this-as this (Generator. (gen/shrink-2 (->gen this))))))
+  (this-as this (Generator. (gen/shrink-2 (->gen this)))))
 
-(aset (.-prototype Generator) ITER_SYMBOL (fn []
-  (this-as this (es6-iterator (gen/sample-seq (->gen this))))))
+(defproto Generator ~ITER_SYMBOL
+  []
+  (this-as this (es6-iterator (gen/sample-seq (->gen this)))))
 
 
 ;; Generator Combinators
