@@ -160,6 +160,15 @@ describe('value generator', () => {
     })
   })
 
+  it('generates substrings', () => {
+    const original = 'abracadabda'
+    const vals = sample(gen.substring(original), 100)
+    expect(vals.length).toBe(100)
+    expect(vals).toAllPass(function (value) {
+      return typeof value === 'string' && original.indexOf(value) !== -1
+    })
+  })
+
   it('generates JS primitives', () => {
     const vals = sample(gen.primitive, 100)
     expect(vals.length).toBe(100)

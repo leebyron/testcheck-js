@@ -141,10 +141,10 @@ up to 1000 different tests before concluding).
 ```js
 const result = check(
   property(
-    gen.int,        // the arguments generator
-    function (x) {  // the property function to test
-      return x - x === 0;
-    }
+    // the arguments generator
+    gen.int,
+    // the property function to test
+    x => x - x === 0
   ),
   { times: 1000 }
 )
@@ -168,9 +168,7 @@ either of the integers alone.
 check(
   property(
     gen.int, gen.int,
-    function (a, b) {
-      return a + b >= a && a + b >= b;
-    }
+    (a, b) => a + b >= a && a + b >= b
   )
 )
 ```
@@ -212,9 +210,7 @@ property or make the test data more specific:
 ```js
 check(property(
   gen.posInt, gen.posInt,
-  function (a, b) {
-    return a + b >= a && a + b >= b;
-  }
+  (a, b) => a + b >= a && a + b >= b
 ));
 ```
 
@@ -262,33 +258,33 @@ by another string always returns an array of length 1.
 
 ```js
 check(property(
-  gen.string.nonEmpty(), gen.string.nonEmpty(),
-  function (str, separator) {
-    return str.split(separator).length === 1;
-  }
-));
+  gen.asciiString.notEmpty(), gen.asciiString.notEmpty(),
+  (str, separator) => str.split(separator).length === 1
+))
 ```
 
 Unless you got lucky, you probably saw this check pass. This is because we're
 testing for a relationship between these strings. If `separator` is not found
-in `str`, then this test passes. The second random string is very unlikely to
-be found within the first random string.
+in `str`, then this test passes. The second unrelated random string is very
+unlikely to be found within the first random string.
 
 We could change the test to be aware of this relationship such that the
-`separator` is always contained within the `str`.
+`separator` is always contained within the `str` by using `then()`.
 
 ```js
 check(property(
-  gen.string.nonEmpty(), gen.posInt, gen.strictPosInt,
-  function (str, start, length) {
-    var separator = str.substr(start % str.length, length);
-    return str.split(separator).length === 1;
-  }
-));
+  gen.asciiString.notEmpty().then(str =>
+    gen.array([ str, gen.substring(str).notEmpty() ])),
+  ([ str, separator ]) => str.split(separator).length === 1
+))
 ```
 
 Now `separator` is a random substring of `str` and the test fails with the
-smallest failing arguments: `'0', 0, 1`.
+smallest failing arguments: `[ ' ', ' ' ]`.
+
+We can test this example out ourselves, with the value `' '` generated for both
+`str` and `separator`, we can run `' '.split(' ').length` to see that we in
+fact get `2`, not `1`.
 
 
 Contribution

@@ -424,6 +424,11 @@ export const gen: {
    */
   alphaNumString: Generator<string>;
 
+  /**
+   * Generates substrings of the original string, including the empty string.
+   */
+  substring: (original: string) => Generator<string>;
+
 
   // JSON
 

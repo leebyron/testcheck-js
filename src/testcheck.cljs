@@ -217,6 +217,20 @@
 (defexport gen.asciiString (Generator. gen/string-ascii))
 (defexport gen.alphaNumString (Generator. gen/string-alphanumeric))
 
+(defn substring
+  [[ string from to ]]
+  (.substring string from to))
+
+(defexport gen.substring (fn
+  [string]
+  (Generator.
+    (gen/fmap
+      substring
+      (gen/tuple
+        (gen/return string)
+        (gen/choose 0 (alength string))
+        (gen/choose 0 (alength string)))))))
+
 
 ;; JSON
 
