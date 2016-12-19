@@ -114,7 +114,7 @@
   [pred]
   (this-as this (Generator. (gen/shrink-2 (->gen this)))))
 
-(defproto Generator '(ITER_SYMBOL)
+(defproto Generator ~ITER_SYMBOL
   []
   (this-as this (es6-iterator (gen/sample-seq (->gen this)))))
 
