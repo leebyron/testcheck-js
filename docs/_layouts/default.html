@@ -25,12 +25,12 @@
             <li><a href="{{ site.github.repository_url }}">View On <strong>GitHub</strong></a></li>
           </ul>
 
-          <nav>{{ content | toc_only }}</nav>
+          <nav><ul></ul></nav>
 
       </header>
       <section>
 
-      {{ content | toc }}
+      {{ content }}
 
       </section>
       <footer>
@@ -42,6 +42,18 @@
     </div>
     <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
 
+    <script type="text/javascript">
+      var navUl = document.getElementsByTagName('nav')[0].firstChild
+      var h2s = document.getElementsByTagName('h2')
+      for (var i = 0; i < h2s.length; i++) {
+        var li = document.createElement('li')
+        var a = document.createElement('a')
+        a.href = '#' + h2s[i].id
+        a.innerHTML = h2s[i].innerHTML
+        li.appendChild(a)
+        navUl.appendChild(li)
+      }
+    </script>
 
   {% if site.google_analytics %}
     <script type="text/javascript">
