@@ -1,9 +1,9 @@
-testcheck.js [![Build Status](https://travis-ci.org/leebyron/testcheck-js.svg)](https://travis-ci.org/leebyron/testcheck-js)
+TestCheck.js [![Build Status](https://travis-ci.org/leebyron/testcheck-js.svg)](https://travis-ci.org/leebyron/testcheck-js)
 =========
 
 Generative property testing for JavaScript.
 
-`testcheck.js` is a library for generative testing of program properties,
+`TestCheck.js` is a library for generative testing of program properties,
 ala QuickCheck.
 
 By providing a specification of the JavaScript program in the form of
@@ -14,7 +14,7 @@ failing test case is found.
 
 ### Use Jasmine or Mocha?
 
-`testcheck.js` is a testing utility and not a complete test-running software. It
+`TestCheck.js` is a testing utility and not a complete test-running software. It
 doesn't replace test frameworks like Jasmine or Mocha.
 
 If you
@@ -30,7 +30,7 @@ Mocha plugin.
 
 ### Atop the shoulders of giants
 
-`testcheck.js` is based on Clojure's [test.check](https://github.com/clojure/test.check)
+`TestCheck.js` is based on Clojure's [test.check](https://github.com/clojure/test.check)
 which is inspired by Haskell's [QuickCheck](https://hackage.haskell.org/package/QuickCheck).
 It's made possible by [double-check](https://github.com/cemerick/double-check/),
 the ClojureScript port of test.check. Many gracious thanks goes to all of the
