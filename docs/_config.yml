@@ -1,4 +1,5 @@
 theme: jekyll-theme-minimal
 title: TestCheck.js
 description: Generative testing for JavaScript.
-markdown: kramdown
+gems:
+  - jekyll-toc

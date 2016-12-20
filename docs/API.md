@@ -1,6 +1,7 @@
 ---
 permalink: /api
 layout: default
+toc: true
 ---
 
 API Documentation
