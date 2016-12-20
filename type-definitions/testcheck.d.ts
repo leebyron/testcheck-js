@@ -18,7 +18,7 @@ export interface Options {
  */
 export interface Result {
 
-  // True of the check passed.
+  // True if the check passed.
   result: boolean;
 
   // The number of generated checks ran.
@@ -171,11 +171,11 @@ export function check(property: Generator<boolean>, options?: Options): Result;
 /**
  * Creates a "property" as needed by `check`.
  *
- * Accepts an array of value generators, the results of which become the
+ * Accepts any number of value generators, the results of which become the
  * arguments of the property function. The property function should return
  * true if the property is upheld, or false if it fails.
  *
- *     var numGoUp = property([gen.int, gen.posInt], (a, b) => a + b > a);
+ *     var numGoUp = property(gen.int, gen.posInt, (a, b) => a + b > a);
  *     check(numGoUp, {times: 1000});
  *
  */
@@ -220,7 +220,7 @@ export function property<A,B,C,D,E>(
  * By default 10 samples are provided unless otherwise specified.
  *
  */
-export function sample<T>(gen: Generator<T>, times?: number): Array<T>;
+export function sample<T>(gen: Generator<T>, numValues?: number): Array<T>;
 
 
 // Generator Builders
