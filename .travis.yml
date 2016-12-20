@@ -1,5 +1,10 @@
 language: clojure
+
 before_install:
   - nvm install stable
   - npm install
-script: npm test
+
+script:
+  - npm run build
+  - npm test
+  - integrations/test-all
