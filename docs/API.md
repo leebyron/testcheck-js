@@ -1,9 +1,12 @@
 ---
 permalink: /api
+layout: default
 ---
 
 API Documentation
 =================
+
+{:toc}
 
 check()
 -------
@@ -145,7 +148,7 @@ const genNonEmptyIntArray = gen.array(gen.int).notEmpty()
 Generator#nullable()
 --------------------
 
-Creates a new Generator which also sometimes generates `null` values.
+Creates a new *Generator* which also sometimes generates `null` values.
 
 ```js
 // A generator of integers or nulls.
@@ -163,7 +166,7 @@ A new *Generator*.
 Generator#notEmpty()
 --------------------
 
-Creates a new Generator which generates non-empty values.
+Creates a new *Generator* which generates non-empty values.
 
 Examples of empty values are `0`, `""`, `null`, `[]`, and `{}`
 
