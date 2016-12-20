@@ -13,7 +13,7 @@ failing test case is found.
 
 
 Getting started
-===============
+---------------
 
 Install `testcheck` using npm
 
@@ -55,7 +55,7 @@ Mocha plugin.
 
 
 Using TestCheck.js
-==================
+------------------
 
 See the complete [API documentation](http://leebyron.com/testcheck-js/api) for
 all available generators and utilities.
@@ -274,7 +274,7 @@ fact get `2`, not `1`.
 
 
 Contribution
-============
+------------
 
 Use [Github issues](https://github.com/leebyron/testcheck-js/issues) for requests.
 
@@ -282,7 +282,7 @@ Pull requests actively welcomed. Learn how to [contribute](./CONTRIBUTING.md).
 
 
 License
-=======
+-------
 
 Copyright Lee Byron
 
