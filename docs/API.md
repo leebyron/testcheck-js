@@ -7,19 +7,22 @@ toc: true
 API Documentation
 =================
 
-The `testcheck` npm module exports five values:
+The `testcheck` npm module exports six values:
 
 ```js
-// ES6 modules
-import { check, property, sample, gen, Generator } from 'testcheck'
-
-// Node modules
-const { check, property, sample, gen, Generator } = require('testcheck')
+const {
+  check,
+  property,
+  sample,
+  sampleOne,
+  gen,
+  Generator
+} = require('testcheck')
 ```
 
 * `check`: Runs a property test.
 * `property`: Defines a property test.
-* `sample`: Samples generator values for debugging.
+* `sample` & `sampleOne`: Samples generator values for debugging.
 * `gen`: A collection of *Generator*s and functions that return *Generator*s.
 * `Generator`: The class which all *Generator*s are instances of.
 
@@ -117,8 +120,9 @@ A *Generator* of boolean values.
 
 ### sample()
 
-Handy tool for visualizing the output of your generators. Given a *Generator*,
-it returns an *Array* of values resulting from the generator.
+Handy tool for visualizing the output of a *Generator*.
+
+Given a *Generator*, it returns an *Array* of values resulting from the generator.
 
 ```js
 sample(gen.int)
@@ -140,6 +144,32 @@ By default 10 samples are provided unless otherwise specified.
 **Returns**
 
 An *Array* of values from `generator`.
+
+
+### sampleOne()
+
+Handy tool for visualizing the output of your *Generator*.
+
+Given a *Generator*, it returns a single value generated for a given `size`.
+
+```js
+sampleOne(gen.int)
+// 24
+```
+
+**Parameters**
+
+```
+sample(generator[, size])
+```
+
+* `generator`: Any *Generator* object.
+
+* `size`: The size of the value to produce. Default: `30`.
+
+**Returns**
+
+A single value from `generator`.
 
 
 
@@ -406,6 +436,9 @@ converted to strings first so they can be compared.
 ```js
 var genPoint = gen.array([ gen.int, gen.int ])
 var genUniquePoints = gen.uniqueArray(genPoint, point => point.join())
+
+sampleOne(genUniquePoints)
+// [ [ -9, -3 ], [ -1, -1 ], [ 2, -2 ], [ -11, -6 ], [ 9, -4 ] ]
 ```
 
 **Parameters**
@@ -503,8 +536,10 @@ Given a function which takes a *Generator* and returns a *Generator* (such as
 potentially nested values.
 
 ```js
-gen.nested(gen.array, gen.int)
-// Example: [ 0, [ -2 ], 1, [] ]
+const deepArrayOfInts = gen.nested(gen.array, gen.int)
+
+sampleOne(deepArrayOfInts)
+// [ 0, [ -2 ], 1, [] ]
 ```
 
 Note: It may generate just values, not wrapped in a container.

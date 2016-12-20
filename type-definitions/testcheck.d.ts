@@ -222,6 +222,19 @@ export function property<A,B,C,D,E>(
  */
 export function sample<T>(gen: Generator<T>, numValues?: number): Array<T>;
 
+/**
+ * Handy tool for visualizing the output of your Generator.
+ *
+ * Given a Generator, it returns a single value generated for a given `size`.
+ *
+ *     sampleOne(gen.int)
+ *     // 24
+ *
+ * By default, values of size 30 are produced.
+ */
+export function sampleOne<T>(gen: Generator<T>, size?: number): T;
+
+
 
 // Generator Builders
 // ------------------

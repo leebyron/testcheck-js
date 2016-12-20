@@ -79,10 +79,12 @@
         (prop/for-all* gens gen-fn))))))
 
 (defexport sample (fn
-  [generator times]
-  (let [num-samples (or times 10)]
-    (to-array
-      (gen/sample (->gen generator) num-samples)))))
+  [generator num-samples]
+  (to-array (gen/sample (->gen generator) (or num-samples 10)))))
+
+(defexport sampleOne (fn
+  [generator size]
+  (gen/generate (->gen generator) (or size 30))))
 
 
 ;; Internal
