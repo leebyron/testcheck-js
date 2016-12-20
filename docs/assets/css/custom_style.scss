@@ -22,6 +22,7 @@ header nav ul li + li {
 
 header nav ul li a {
   color: #525258;
+  display: inline;
   font-size: inherit;
   height: auto;
   line-height: inherit;
@@ -46,5 +47,13 @@ section h3 {
 }
 
 header {
-  position: initial;
+  overflow-y: scroll;
+  height: calc(100% - 100px);
+  box-sizing: border-box;
+}
+
+@media print, screen and (max-width: 960px) {
+  header {
+    height: auto
+  }
 }
