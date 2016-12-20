@@ -49,7 +49,7 @@ section h3 {
 header {
   box-sizing: border-box;
   height: 100%;
-  margin; -50px 0;
+  margin: -50px 0;
   overflow-y: scroll;
   padding: 50px 0;
 }
@@ -57,7 +57,7 @@ header {
 @media print, screen and (max-width: 960px) {
   header {
     height: auto;
-    margin; 0;
+    margin: 0;
     padding: 0;
   }
 }
