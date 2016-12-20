@@ -1,5 +1,5 @@
 TestCheck.js [![Build Status](https://travis-ci.org/leebyron/testcheck-js.svg)](https://travis-ci.org/leebyron/testcheck-js)
-=========
+============
 
 Generative property testing for JavaScript.
 
@@ -12,33 +12,8 @@ randomly generated cases. In the case of a test failure, the smallest possible
 failing test case is found.
 
 
-### Use Jasmine or Mocha?
-
-`TestCheck.js` is a testing utility and not a complete test-running software. It
-doesn't replace test frameworks like Jasmine or Mocha.
-
-If you
-use [Jasmine](http://jasmine.github.io/) then check out
-[`jasmine-check`](https://github.com/leebyron/jasmine-check/), a testcheck
-Jasmine plugin.
-
-If you
-use [Mocha](http://visionmedia.github.io/mocha/) then check out
-[`mocha-check`](https://github.com/leebyron/mocha-check/), a testcheck
-Mocha plugin.
-
-
-### Atop the shoulders of giants
-
-`TestCheck.js` is based on Clojure's [test.check](https://github.com/clojure/test.check)
-which is inspired by Haskell's [QuickCheck](https://hackage.haskell.org/package/QuickCheck).
-It's made possible by [double-check](https://github.com/cemerick/double-check/),
-the ClojureScript port of test.check. Many gracious thanks goes to all of the
-brilliance and hard work enabling this project to exist.
-
-
 Getting started
----------------
+===============
 
 Install `testcheck` using npm
 
@@ -65,15 +40,28 @@ This module includes type definitions for [Flow type](http://flowtype.org/) and
 [Typescript](https://www.typescriptlang.org/). Simply require or import this
 module and enjoy type suggestions and corrections.
 
+### Use Jasmine or Mocha?
 
-API
----
+`TestCheck.js` is a testing utility and not a complete test-running software. It
+doesn't replace test frameworks like Jasmine or Mocha.
 
-All API documentation is contained within the type definition file, [testcheck.d.ts](./type-definitions/testcheck.d.ts).
+If you use [Jasmine](http://jasmine.github.io/) then check out
+[`jasmine-check`](https://github.com/leebyron/jasmine-check/), a testcheck
+Jasmine plugin.
+
+If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
+[`mocha-check`](https://github.com/leebyron/mocha-check/), a testcheck
+Mocha plugin.
 
 
-Defining properties
--------------------
+Using TestCheck.js
+==================
+
+See the complete [API documentation](http://leebyron.com/testcheck-js/api) for
+all available generators and utilities.
+
+
+### Defining properties
 
 A property is simply a function which is expected to always return true, we
 might also call these properties "assumptions" or "expectations".
@@ -107,8 +95,7 @@ If you can start to describe your program in terms of its properties, then
 `testcheck` can test them for you.
 
 
-Generating test cases
----------------------
+### Generating test cases
 
 Once we've defined some properties, we generate test cases for each properties
 by describing the types of values for each argument.
@@ -132,8 +119,7 @@ much more. You can even define your own generators with `generator.then()`,
 and `gen.sized`.
 
 
-Checking the properties
------------------------
+### Checking the properties
 
 Finally, we check our properties using our test case generator (in this case,
 up to 1000 different tests before concluding).
@@ -158,8 +144,7 @@ any failures, it returns:
 ```
 
 
-Smallest failing test
----------------------
+### Smallest failing test
 
 Let's try another property: the sum of two integers is the same or larger than
 either of the integers alone.
@@ -217,8 +202,7 @@ check(property(
 With our correction, our property passes all tests.
 
 
-Thinking in random distributions
---------------------------------
+### Thinking in random distributions
 
 It's important to remember that your test is only as good as the data being
 provided. While `testcheck` provides tools to generate random data, thinking
@@ -240,6 +224,7 @@ sample(gen.int)
 // [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
 ```
 
+
 ### The Size of Test Data
 
 Test data generators have an implicit `size` property, which could be used to
@@ -250,6 +235,7 @@ increases the size.
 So if you wish to test very large numbers or extremely long arrays, running
 `check` the default 100 times with maxSize of 200, you may not get what
 you expect.
+
 
 ### Data relationships
 
@@ -288,8 +274,24 @@ fact get `2`, not `1`.
 
 
 Contribution
-------------
+============
 
 Use [Github issues](https://github.com/leebyron/testcheck-js/issues) for requests.
 
 Pull requests actively welcomed. Learn how to [contribute](./CONTRIBUTING.md).
+
+
+License
+=======
+
+Copyright Lee Byron
+
+TestCheck.js is distributed under the BSD-3-Clause license.
+
+### Atop the shoulders of giants
+
+`TestCheck.js` is based on Clojure's [test.check](https://github.com/clojure/test.check)
+which is inspired by Haskell's [QuickCheck](https://hackage.haskell.org/package/QuickCheck). Many gracious thanks goes to all of the brilliance and hard work enabling this project to exist.
+
+Clojure's test.check is Copyright Rich Hickey, Reid Draper and contributors and is
+distributed under the Eclipse Public License.

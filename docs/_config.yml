@@ -1,2 +1,3 @@
 theme: jekyll-theme-minimal
-title: 'TestCheck.js'
+title: TestCheck.js
+description: Generative testing for JS.
