@@ -37,7 +37,7 @@
     "generative"
   ],
   "scripts": {
-    "test": "npm run build && npm run testonly && npm run flow-check && npm run ts-check",
+    "test": "npm run rebuild && npm run testonly && npm run flow-check && npm run ts-check",
     "testonly": "jasmine-node spec/",
     "flow-check": "flow check",
     "ts-check": "DIFF=$(tsc --noEmit --noImplicitAny --strictNullChecks spec/types.spec.ts | diff spec/types.spec.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
