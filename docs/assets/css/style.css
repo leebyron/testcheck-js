@@ -1,0 +1,29 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+header nav ul {
+  background: inherit;
+  border: none;
+  height: auto;
+  list-style: none;
+  padding: 0;
+  width: auto;
+}
+
+header nav ul li {
+  border-right: none;
+  float: inherit;
+  height: auto;
+  width: auto;
+}
+
+header nav ul li a {
+  color: #666;
+  font-size: inherit;
+  height: auto;
+  line-height: inherit;
+  margin: 10px 0;
+  text-align: left;
+}
