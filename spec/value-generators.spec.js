@@ -214,6 +214,40 @@ describe('value generator', () => {
     })
   })
 
+  it('generates unique arrays', () => {
+    const vals = sample(gen.uniqueArray(gen.int), 100)
+    expect(vals.length).toBe(100)
+    expect(vals).toAllPass(value =>
+      Array.isArray(value) &&
+      value.every(item => value.filter(item2 => item === item2).length === 1)
+    )
+  })
+
+  it('generates unique arrays of a specific size', () => {
+    const vals = sample(gen.uniqueArray(gen.int, { size: 3 }), 100)
+    expect(vals.length).toBe(100)
+    expect(vals).toAllPass(value =>
+      Array.isArray(value) &&
+      value.length === 3 &&
+      value.every(item => value.filter(item2 => item === item2).length === 1)
+    )
+  })
+
+  it('generates unique arrays with custom unique function', () => {
+    const uniqueFn = point => point.join()
+    const genPoint = gen.array([ gen.int, gen.int ])
+    const genUniquePoints = gen.uniqueArray(genPoint, uniqueFn)
+
+    const vals = sample(genUniquePoints, 100)
+    expect(vals.length).toBe(100)
+    expect(vals).toAllPass(value =>
+      Array.isArray(value) &&
+      value.every(item => value.filter(item2 =>
+        uniqueFn(item) === uniqueFn(item2)
+      ).length === 1)
+    )
+  })
+
   it('generates objects', () => {
     const vals = sample(gen.object(gen.null), 50)
     expect(vals.length).toBe(50)

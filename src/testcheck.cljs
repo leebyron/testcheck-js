@@ -1,4 +1,4 @@
-(require-macros '[macros :refer [defexport defproto]])
+(require-macros '[macros :refer [defexport defproto jsfn?]])
 (require
   '[clojure.test.check :as tc]
   '[clojure.test.check.generators :as gen]
@@ -198,7 +198,7 @@
   (Generator. (gen/fmap to-array
     (cond
       ; gen.array([ gen.int, gen.string ])
-      (js/Array.isArray a)
+      ^boolean (js/Array.isArray a)
       (apply gen/tuple (map ->gen a))
 
       ; gen.array(gen.int, { opts })
@@ -260,6 +260,18 @@
 (defexport gen.nested (fn
   [collection-gen val-gen]
   (collection-gen (Generator. (gen/recursive-gen (->genfn collection-gen) (->gen val-gen))))))
+
+(defexport gen.uniqueArray (fn
+  [val-gen fn-or-opts opts]
+  (Generator. (gen/fmap to-array
+    (if (jsfn? fn-or-opts)
+      (gen/list-distinct-by
+        fn-or-opts
+        (->gen val-gen)
+        (gen-object-args opts))
+      (gen/list-distinct
+        (->gen val-gen)
+        (gen-object-args fn-or-opts)))))))
 
 
 ;; JS Primitives

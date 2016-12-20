@@ -9,3 +9,7 @@
 (defmacro defproto
   [obj n & fn-tail]
   `(aset (.-prototype ~obj) ~(if (seq? n) (last n) (name n)) (fn ~@fn-tail)))
+
+(defmacro jsfn?
+  [x]
+  (with-meta (list 'js* "typeof ~{} === 'function'" x) {:tag 'boolean}))

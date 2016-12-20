@@ -307,6 +307,23 @@ export const gen: {
   };
 
   /**
+   * Generates Arrays of unique values.
+   *
+   * Accepts the same size options as gen.array()
+   *
+   * Optionally also accepts a function to determine how to determine if a value
+   * is unique. For example, if 2d points are the same:
+   *
+   *     var genPoint = gen.array([ gen.int, gen.int ])
+   *     var genUniquePoints = gen.uniqueArray(genPoint, point => point.join())
+   *
+   */
+  uniqueArray: {
+    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
+    <T>(valueGen: Generator<T>, uniqueBy: (value: T) => any, options?: SizeOptions): Generator<Array<T>>;
+  };
+
+  /**
    * Generates Objects of values. There are a few forms `gen.object` can be used:
    *
    *  - Generate Objects with random keys (alpha-numeric keys, up to 16 chars)
