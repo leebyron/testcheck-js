@@ -1,6 +1,9 @@
+---
+title: API Documentation
 permalink: /api
+---
 
-TestCheck.js API Documentation
-------------------------------
+API Documentation
+-----------------
 
 TODO.
