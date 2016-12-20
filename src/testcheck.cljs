@@ -85,54 +85,40 @@
       (gen/sample (->gen generator) num-samples)))))
 
 
-;; Generator Prototype
+;; Internal
 
-(defn js-not-empty
-  [x]
-  (cond
-    (coercive-not x)
-    false
+(defn gen-array
+  [val-gen]
+  (gen/fmap to-array (gen/vector val-gen)))
 
-    (number? (.-length x))
-    (> (.-length x) 0)
+(defn to-object
+  [from-seq]
+  (let [obj (js-obj)]
+    (doseq [[k v] from-seq] (aset obj k v))
+    obj))
 
-    (identical? (.-constructor x) js/Object)
-    (> (.-length (js/Object.keys x)) 0)
+(defn gen-object
+  [val-gen]
+  (gen/fmap to-object (gen/map (gen/not-empty gen/string-alphanumeric) val-gen)))
 
-    :else true
-  ))
+(defn gen-object-args
+  [args]
+  { :num-elements (and args (aget args "size"))
+    :min-elements (and args (aget args "minSize"))
+    :max-elements (and args (aget args "maxSize")) })
 
-(defproto Generator nullable
-  []
-  (this-as this (Generator. (gen/frequency [[1 (gen/return nil)] [5 (->gen this)]]))))
+(defn gen-record
+  [obj]
+  (let [ks (js-keys obj)
+        vs (array)]
+    (doseq [k ks] (.push vs (->gen (aget obj k))))
+    (gen/fmap
+      (partial zipmap ks)
+      (apply gen/tuple vs))))
 
-(defproto Generator notEmpty
-  []
-  (this-as this (Generator. (gen/such-that js-not-empty (->gen this)))))
-
-(defproto Generator suchThat
-  [pred]
-  (this-as this (Generator. (gen/such-that pred (->gen this)))))
-
-(defproto Generator then
-  [f]
-  (this-as this (Generator. (gen/bind (->gen this) (comp ->gen f)))))
-
-(defproto Generator scale
-  [f]
-  (this-as this (Generator. (gen/scale f (->gen this)))))
-
-(defproto Generator neverShrink
-  [pred]
-  (this-as this (Generator. (gen/no-shrink (->gen this)))))
-
-(defproto Generator alwaysShrink
-  [pred]
-  (this-as this (Generator. (gen/shrink-2 (->gen this)))))
-
-(defproto Generator ~ITER_SYMBOL
-  []
-  (this-as this (es6-iterator (gen/sample-seq (->gen this)))))
+(defn gen-array-or-object
+  [val-gen]
+  (gen/one-of [(gen-array val-gen) (gen-object val-gen)]))
 
 
 ;; Generators
@@ -204,39 +190,6 @@
 
 
 ;; Collections
-
-(defn gen-array
-  [val-gen]
-  (gen/fmap to-array (gen/vector val-gen)))
-
-(defn to-object
-  [from-seq]
-  (let [obj (js-obj)]
-    (doseq [[k v] from-seq] (aset obj k v))
-    obj))
-
-(defn gen-object
-  [val-gen]
-  (gen/fmap to-object (gen/map (gen/not-empty gen/string-alphanumeric) val-gen)))
-
-(defn gen-object-args
-  [args]
-  { :num-elements (and args (aget args "size"))
-    :min-elements (and args (aget args "minSize"))
-    :max-elements (and args (aget args "maxSize")) })
-
-(defn gen-record
-  [obj]
-  (let [ks (js-keys obj)
-        vs (array)]
-    (doseq [k ks] (.push vs (->gen (aget obj k))))
-    (gen/fmap
-      (partial zipmap ks)
-      (apply gen/tuple vs))))
-
-(defn gen-array-or-object
-  [val-gen]
-  (gen/one-of [(gen-array val-gen) (gen-object val-gen)]))
 
 (defexport gen.array (fn
   [a b c]
@@ -340,7 +293,7 @@
 (defexport gen.JSONPrimitive (Generator. gen-json-primitive))
 
 
-;; Combinators
+;; Generator Creators
 
 (defexport gen.oneOf (fn
   [gens]
@@ -353,6 +306,56 @@
 (defexport gen.return (fn
   [value]
   (Generator. (gen/return value))))
+
+
+;; Generator Prototype
+
+(defn js-not-empty
+  [x]
+  (cond
+    (coercive-not x)
+    false
+
+    (number? (.-length x))
+    (> (.-length x) 0)
+
+    (identical? (.-constructor x) js/Object)
+    (> (.-length (js/Object.keys x)) 0)
+
+    :else true
+  ))
+
+(defproto Generator nullable
+  []
+  (this-as this (Generator. (gen/frequency [[1 (gen/return nil)] [5 (->gen this)]]))))
+
+(defproto Generator notEmpty
+  []
+  (this-as this (Generator. (gen/such-that js-not-empty (->gen this)))))
+
+(defproto Generator suchThat
+  [pred]
+  (this-as this (Generator. (gen/such-that pred (->gen this)))))
+
+(defproto Generator then
+  [f]
+  (this-as this (Generator. (gen/bind (->gen this) (comp ->gen f)))))
+
+(defproto Generator scale
+  [f]
+  (this-as this (Generator. (gen/scale f (->gen this)))))
+
+(defproto Generator neverShrink
+  [pred]
+  (this-as this (Generator. (gen/no-shrink (->gen this)))))
+
+(defproto Generator alwaysShrink
+  [pred]
+  (this-as this (Generator. (gen/shrink-2 (->gen this)))))
+
+(defproto Generator ~ITER_SYMBOL
+  []
+  (this-as this (es6-iterator (gen/sample-seq (->gen this)))))
 
 
 ;; Deprecated
