@@ -309,6 +309,10 @@
   [value]
   (Generator. (gen/return value))))
 
+(defexport gen.sized (fn
+  [f]
+  (Generator. (gen/sized (comp ->gen f)))))
+
 
 ;; Generator Prototype
 

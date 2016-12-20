@@ -43,11 +43,11 @@ describe('gen builders', () => {
     expect(typeof val === 'number')
   })
 
-  // it('samples one of a given size', () => {
-  //   const simpleSized = gen.sized(s => s)
-  //   const val = sampleOne(simpleSized, 55)
-  //   expect(val).toBe(55)
-  // })
+  it('samples one of a given size', () => {
+    const simpleSized = gen.sized(s => s)
+    const val = sampleOne(simpleSized, 55)
+    expect(val).toBe(55)
+  })
 
   it('generates an exact value', () => {
     const vals = sample(gen.return('wow'), 100)

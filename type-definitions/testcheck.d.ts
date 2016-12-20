@@ -516,6 +516,6 @@ export const gen: {
    *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
    *
    */
-  sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
+  sized: <T>(sizedGenFn: (size: number) => Generator<T> | T) => Generator<T>;
 
 }
