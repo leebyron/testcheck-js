@@ -187,7 +187,7 @@ describe('value generator', () => {
   })
 
   it('generates arrays of a certain length', () => {
-    const vals = sample(gen.array(gen.null, 3), 100)
+    const vals = sample(gen.array(gen.null, { size: 3 }), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -196,7 +196,7 @@ describe('value generator', () => {
   })
 
   it('generates arrays within a length range', () => {
-    const vals = sample(gen.array(gen.null, 3, 5), 100)
+    const vals = sample(gen.array(gen.null, { minSize: 3, maxSize: 5 }), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -227,13 +227,53 @@ describe('value generator', () => {
     })
   })
 
-  it('generates objects with alphanum keys', () => {
+  it('generates objects of a specific size', () => {
+    const vals = sample(gen.object(gen.null, { size: 10 }), 50)
+    expect(vals.length).toBe(50)
+    expect(vals).toAllPass(function (value) {
+      const keys = Object.keys(value)
+      return value.constructor === Object &&
+        keys.length === 10 &&
+        keys.every(function (key) {
+          return typeof key === 'string' && value[key] === null
+        })
+    })
+  })
+
+  it('generates objects in a specific size range', () => {
+    const vals = sample(gen.object(gen.null, { minSize: 3, maxSize: 6 }), 50)
+    expect(vals.length).toBe(50)
+    expect(vals).toAllPass(function (value) {
+      const keys = Object.keys(value)
+      return value.constructor === Object &&
+        keys.length >= 3 &&
+        keys.length <= 6 &&
+        keys.every(function (key) {
+          return typeof key === 'string' && value[key] === null
+        })
+    })
+  })
+
+  it('generates objects with specific keys', () => {
     const vals = sample(gen.object(gen.alphaNumString, gen.null), 50)
     expect(vals.length).toBe(50)
     expect(vals).toAllPass(function (value) {
       const keys = Object.keys(value)
       return value.constructor === Object &&
         keys.length >= 0 &&
+        keys.every(function (key) {
+          return typeof key === 'string' && ALPHA_NUM_RX.test(key) && value[key] === null
+        })
+    })
+  })
+
+  it('generates objects with specific keys of a specific size', () => {
+    const vals = sample(gen.object(gen.alphaNumString, gen.null, { size: 10 }), 50)
+    expect(vals.length).toBe(50)
+    expect(vals).toAllPass(function (value) {
+      const keys = Object.keys(value)
+      return value.constructor === Object &&
+        keys.length === 10 &&
         keys.every(function (key) {
           return typeof key === 'string' && ALPHA_NUM_RX.test(key) && value[key] === null
         })

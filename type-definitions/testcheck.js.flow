@@ -53,6 +53,26 @@ export type Result = {|
 |};
 
 /**
+ * Options to be passed to array() or object()
+ */
+type SizeOptions = {|
+  /**
+   * If provided, the exact size of the resulting collection.
+   */
+  size?: number,
+
+  /**
+   * If provided, the minimum size of the resulting collection.
+   */
+  minSize?: number,
+
+  /**
+   * If provided, the maximum size of the resulting collection.
+   */
+  maxSize?: number,
+|};
+
+/**
  * Generators of values.
  */
 declare export class Generator<+T> {
@@ -310,7 +330,7 @@ declare export var gen: {
    */
   array: {
     <Elem, T:Array<Generator<Elem> | Elem>>(tupleGens: T): Generator<$TupleMap<T,<V>(Generator<V>) => V>>;
-    <T>(valueGen: Generator<T>, lengthOrMin?: number, max?:number): Generator<Array<T>>;
+    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
   };
 
   /**
@@ -333,8 +353,8 @@ declare export var gen: {
    */
   object: {
     <Elem, T:{[key: string]: Generator<Elem> | Elem}>(recordGens: T): Generator<$ObjMap<T,<V>(Generator<V>) => V>>;
-    <V>(valueGen: Generator<V>, _: void): Generator<{[key: string]: V}>;
-    <K,V>(keyGen: Generator<K>, valueGen: Generator<V>): Generator<{[key: K]: V}>;
+    <V>(valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: string]: V}>;
+    <K,V>(keyGen: Generator<K>, valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: K]: V}>;
   };
 
   /**

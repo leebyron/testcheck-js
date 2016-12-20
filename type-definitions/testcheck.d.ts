@@ -53,6 +53,26 @@ export interface Result {
 }
 
 /**
+ * Options to be passed to array() or object()
+ */
+interface SizeOptions {
+  /**
+   * If provided, the exact size of the resulting collection.
+   */
+  size?: number,
+
+  /**
+   * If provided, the minimum size of the resulting collection.
+   */
+  minSize?: number,
+
+  /**
+   * If provided, the maximum size of the resulting collection.
+   */
+  maxSize?: number,
+}
+
+/**
  * Generators of values.
  */
 export class Generator<T> {
@@ -278,8 +298,7 @@ export const gen: {
    */
   array: {
     <T>(valueGen: Generator<T>): Generator<Array<T>>;
-    <T>(valueGen: Generator<T>, length: number): Generator<Array<T>>;
-    <T>(valueGen: Generator<T>, min: number, max: number): Generator<Array<T>>;
+    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
     <T1, T2, T3, T4, T5>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>, T5 | Generator<T5>]): Generator<[T1, T2, T3, T4, T5]>;
     <T1, T2, T3, T4>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>]): Generator<[T1, T2, T3, T4]>;
     <T1, T2, T3>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>]): Generator<[T1, T2, T3]>;
@@ -306,8 +325,8 @@ export const gen: {
    *
    */
   object: {
-    <T>(valueGen: Generator<T>): Generator<{[key: string]: T}>;
-    <T>(keyGen: Generator<string>, valueGen: Generator<T>): Generator<{[key: string]: T}>;
+    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
+    <T>(keyGen: Generator<string>, valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
     (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
   };
 

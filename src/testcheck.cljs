@@ -3,7 +3,8 @@
   '[clojure.test.check :as tc]
   '[clojure.test.check.generators :as gen]
   '[clojure.test.check.properties :as prop]
-  '[clojure.set :refer [rename-keys]])
+  '[clojure.set :refer [rename-keys]]
+  '[clojure.string :refer [split join]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generators
@@ -21,13 +22,28 @@
 ; minified function names.
 (def Generator (aget js/exports "Generator"))
 
+; Converts a Generator into a gen/generator
 (defn ->gen
   [x]
-  (cond
-    (exists? (aget x "__clj_gen")) (aget x "__clj_gen")
-    (gen/generator? x) x
-    :else (gen/return x)
-  ))
+  (assert (not (gen/generator? x)))
+  (if (exists? (aget x "__clj_gen"))
+    (aget x "__clj_gen")
+    (gen/return x)))
+
+; Converts a function which accepts a Generator and returns a Generator
+; into a function which accepts a gen/generator and returns a gen/generator
+(defn ->genfn
+  [f]
+  (fn [g] (->gen (f (Generator. g)))))
+
+(def warned-map #js{})
+(defn deprecated!
+  [msg]
+  (when-not (aget warned-map msg)
+    (aset warned-map msg true)
+    (js/console.warn (str
+      "DEPRECATED: " msg "\n"
+      (join "\n" (drop 2 (split (aget (js/Error.) "stack") #"\n")))))))
 
 
 ;; API
@@ -139,15 +155,8 @@
 ;; Collections
 
 (defn gen-array
-  ([val-gen min-elements max-elements]
-    (gen/fmap to-array (gen/vector (->gen val-gen) min-elements max-elements)))
-  ([val-gen num-elements]
-    (gen/fmap to-array (gen/vector (->gen val-gen) num-elements)))
-  ([val-gen-or-arr]
-    (gen/fmap to-array
-      (if (js/Array.isArray val-gen-or-arr)
-        (apply gen/tuple (map ->gen val-gen-or-arr))
-        (gen/vector (->gen val-gen-or-arr))))))
+  [val-gen]
+  (gen/fmap to-array (gen/vector val-gen)))
 
 (defn to-object
   [from-seq]
@@ -156,30 +165,93 @@
     obj))
 
 (defn gen-object
-  ([key-gen val-gen]
-    (gen/fmap to-object (gen/map (->gen key-gen) (->gen val-gen))))
-  ([val-gen-or-obj]
-    (if (object? val-gen-or-obj)
-      (let [obj val-gen-or-obj
-            ks (js-keys obj)
-            vs (array)]
-        (doseq [k ks] (.push vs (->gen (aget obj k))))
-        (gen/fmap
-          (comp to-object (partial zipmap ks))
-          (apply gen/tuple vs)))
-      (gen-object (gen/not-empty gen/string-alphanumeric) val-gen-or-obj))))
+  [val-gen]
+  (gen/fmap to-object (gen/map (gen/not-empty gen/string-alphanumeric) val-gen)))
+
+(defn gen-object-args
+  [args]
+  { :num-elements (and args (aget args "size"))
+    :min-elements (and args (aget args "minSize"))
+    :max-elements (and args (aget args "maxSize")) })
+
+(defn gen-record
+  [obj]
+  (let [ks (js-keys obj)
+        vs (array)]
+    (doseq [k ks] (.push vs (->gen (aget obj k))))
+    (gen/fmap
+      (partial zipmap ks)
+      (apply gen/tuple vs))))
 
 (defn gen-array-or-object
   [val-gen]
   (gen/one-of [(gen-array val-gen) (gen-object val-gen)]))
 
 (defexport gen.array (fn
-  [& args]
-  (Generator. (apply gen-array args))))
+  [a b c]
+  (cond
+    (number? c)
+    (deprecated! "Use gen.array(vals, { minSize: num, maxSize: num })")
+
+    (number? b)
+    (deprecated! "Use gen.array(vals, { size: num })"))
+  (Generator. (gen/fmap to-array
+    (cond
+      ; gen.array([ gen.int, gen.string ])
+      (js/Array.isArray a)
+      (apply gen/tuple (map ->gen a))
+
+      ; gen.array(gen.int, { opts })
+      (object? b)
+      (cond
+        (exists? (aget b "size"))
+        (gen/vector (->gen a) (aget b "size"))
+
+        (exists? (aget b "maxSize"))
+        (gen/sized (fn [size]
+          (let [min-size (or (aget b "minSize") 0)
+                max-size (Math/min (aget b "maxSize") (+ size min-size))]
+            (gen/vector (->gen a) min-size max-size))))
+
+        (exists? (aget b "minSize"))
+        (gen/sized (fn [size]
+          (let [min-size (aget b "minSize")
+                max-size (+ size min-size)]
+            (gen/vector (->gen a) min-size max-size))))
+
+        :else
+        (gen/vector (->gen a))
+      )
+
+      ; gen.array(gen.int, min, max) (deprecated)
+      (number? c)
+      (gen/vector (->gen a) b c)
+
+      ; gen.array(gen.int, size) (deprecated)
+      (number? b)
+      (gen/vector (->gen a) b)
+
+      ; gen.array(gen.int)
+      :else
+      (gen/vector (->gen a))
+    )))))
 
 (defexport gen.object (fn
-  [& args]
-  (Generator. (apply gen-object args))))
+  [a b c]
+  (Generator. (gen/fmap to-object
+    (cond
+      ; gen.object({ record: gen.int })
+      (object? a)
+      (gen-record a)
+
+      ; gen.object(valGen, { opts })
+      (or (nil? b) (object? b))
+      (gen/map (gen/not-empty gen/string-alphanumeric) (->gen a) (gen-object-args b))
+
+      ; gen.object(keyGen, valGen, { opts })
+      :else
+      (gen/map (->gen a) (->gen b) (gen-object-args c))
+    )))))
 
 (defexport gen.arrayOrObject (fn
   [val-gen]
@@ -187,7 +259,7 @@
 
 (defexport gen.nested (fn
   [collection-gen val-gen]
-  (collection-gen (gen/recursive-gen (comp ->gen collection-gen) (->gen val-gen)))))
+  (collection-gen (Generator. (gen/recursive-gen (->genfn collection-gen) (->gen val-gen))))))
 
 
 ;; JS Primitives
@@ -267,13 +339,6 @@
 
 
 ;; Deprecated
-
-(def warned-map #js{})
-(defn deprecated!
-  [msg]
-  (when-not (aget warned-map msg)
-    (aset warned-map msg true)
-    (js/console.warn "DEPRECATED" msg (aget (js/Error.) "stack"))))
 
 (defexport gen.suchThat (fn
   [pred gen]
