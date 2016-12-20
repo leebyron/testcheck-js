@@ -32,6 +32,10 @@ section h2 {
   margin-top: 2.5em;
 }
 
+section h3 {
+  margin-top: 2em;
+}
+
 header {
   position: initial;
 }
