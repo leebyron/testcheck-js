@@ -23,7 +23,7 @@ check(property(gen.int, n => n - n === 0), { times: 1000 })
 // { result: true, seed: 1482203464997, numTests: 1000 }
 ```
 
-#### Parameters
+**Parameters**
 
 ```
 check(property[, options])
@@ -40,7 +40,7 @@ check(property[, options])
 
   * `seed`: The seed to use for the random number generator. Default: *<Random>*
 
-#### Returns
+**Returns**
 
 An Object with the properties:
 
@@ -81,7 +81,7 @@ const numGoUp = property(gen.int, gen.posInt, (a, b) => a + b > a);
 check(numGoUp);
 ```
 
-#### Parameters
+**Parameters**
 
 ```
 property(gen[, gen2[, ...genN]], propertyFn)
@@ -91,7 +91,7 @@ property(gen[, gen2[, ...genN]], propertyFn)
 
 * `propertyFn`: *Function* representing a property that should always be true. Returns `true` when the property is upheld and `false` when the property fails.
 
-#### Returns
+**Returns**
 
 A *Generator* of boolean values.
 
@@ -107,7 +107,7 @@ sample(gen.int)
 // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
 ```
 
-#### Parameters
+**Parameters**
 
 ```
 sample(generator[, numValues])
@@ -119,7 +119,7 @@ sample(generator[, numValues])
 
 By default 10 samples are provided unless otherwise specified.
 
-#### Returns
+**Returns**
 
 An *Array* of values from `generator`.
 
@@ -156,7 +156,7 @@ sample(genNullableInt)
 // [ 0, -1, null, null, 1, 4, 3, -3, -5, null ]
 ```
 
-#### Returns
+**Returns**
 
 A new *Generator*.
 
@@ -174,7 +174,7 @@ sample(notEmptyStrings, 5)
 // [ 'f', 'SJ', '8?sH{', 'zWUb}X1', '.AS Mz.x7' ]
 ```
 
-#### Returns
+**Returns**
 
 A new *Generator*.
 
@@ -196,7 +196,7 @@ sample(genAnythingBut5s)
 Note: Care is needed to ensure there is a high chance the predicate will
 pass. After ten attempts an exception will throw.
 
-#### Parameters
+**Parameters**
 
 ```
 g.suchThat(predicateFn)
@@ -205,7 +205,7 @@ g.suchThat(predicateFn)
 * `predicateFn` A function which accepts a `value` from the *Generator* and
   returns `true` if it is allowed, or `false` if not.
 
-#### Returns
+**Returns**
 
 A new *Generator*.
 
@@ -236,7 +236,7 @@ sample(genListAndItem, 3)
 // [ [ [ 1 ], 1 ], [ [ 2, -1 ], 2 ], [ [ -3, 2, -1 ], 2 ] ]
 ```
 
-#### Parameters
+**Parameters**
 
 ```
 g.then(mappingFn)
@@ -245,7 +245,7 @@ g.then(mappingFn)
 * `mappingFn` A function which accepts a `value` from the *Generator* and
   returns either a new value, or a new *Generator*.
 
-#### Returns
+**Returns**
 
 A new *Generator*.
 
@@ -273,7 +273,7 @@ function returns a value that's not dependent on it's input, then the
 resulting Generator will not shrink.
 
 
-#### Parameters
+**Parameters**
 
 ```
 g.scale(sizingFn)
@@ -281,7 +281,7 @@ g.scale(sizingFn)
 
 * `sizingFn` A function which accepts a `size` number and returns a new size.
 
-#### Returns
+**Returns**
 
 A new *Generator*.
 
@@ -291,7 +291,7 @@ A new *Generator*.
 Creates a new Generator which will never shrink.
 This is useful when shrinking is taking a long time or is not applicable.
 
-#### Returns
+**Returns**
 
 A new *Generator*.
 
@@ -301,7 +301,7 @@ A new *Generator*.
 Creates a new Generator which will always consider shrinking, even if the
 property passes (up to one additional level).
 
-#### Returns
+**Returns**
 
 A new *Generator*.
 
@@ -362,7 +362,7 @@ Generates only negative numbers (`0` though `-Infinity`), does not generate `NaN
 Generates a floating point number within the provided (inclusive) range.
 Does not generate `NaN` or `Infinity`.
 
-#### Parameters
+**Parameters**
 
 ```
 gen.numberWithin(min, max)
