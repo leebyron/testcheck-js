@@ -135,21 +135,72 @@
   (this-as this (es6-iterator (gen/sample-seq (->gen this)))))
 
 
-;; Generator Combinators
+;; Generators
 
 (defexport gen (js-obj))
 
-(defexport gen.return (fn
-  [value]
-  (Generator. (gen/return value))))
 
-(defexport gen.oneOf (fn
-  [gens]
-  (Generator. (gen/one-of (map ->gen gens)))))
+;; Primitives
 
-(defexport gen.oneOfWeighted (fn
-  [pairs]
-  (Generator. (gen/frequency (map (fn [[weight, gen]] (array weight (->gen gen))) pairs)))))
+(def gen-primitive (gen/frequency [
+  [1 (gen/return js/undefined)]
+  [2 (gen/return nil)]
+  [4 gen/boolean]
+  [6 gen/double]
+  [20 gen/int]
+  [20 gen/string]]))
+
+(defexport gen.any (Generator. (gen/recursive-gen gen-array-or-object gen-primitive)))
+(defexport gen.primitive (Generator. gen-primitive))
+
+(defexport gen.boolean (Generator. gen/boolean))
+(defexport gen.null (Generator. (gen/return nil)))
+(defexport gen.undefined (Generator. (gen/return js/undefined)))
+(defexport gen.NaN (Generator. (gen/return js/NaN)))
+
+
+;; Numbers
+
+(defexport gen.number (Generator. gen/double))
+(defexport gen.posNumber (Generator. (gen/double* {:min 0, :NaN? false})))
+(defexport gen.negNumber (Generator. (gen/double* {:max 0, :NaN? false})))
+(defexport gen.numberWithin (fn
+  [from, to]
+  (Generator. (gen/double* {:min from, :max to, :NaN? false}))))
+
+(defexport gen.int (Generator. gen/int))
+(defexport gen.posInt (Generator. gen/pos-int))
+(defexport gen.negInt (Generator. gen/neg-int))
+(defexport gen.strictPosInt (Generator. gen/s-pos-int))
+(defexport gen.strictNegInt (Generator. gen/s-neg-int))
+(defexport gen.intWithin (fn
+  [lower, upper]
+  (Generator. (gen/choose lower upper))))
+
+
+;; Strings
+
+(defexport gen.string (Generator. gen/string))
+(defexport gen.asciiString (Generator. gen/string-ascii))
+(defexport gen.alphaNumString (Generator. gen/string-alphanumeric))
+
+(defn substring
+  [[ string from to ]]
+  (.substring string from to))
+
+(defexport gen.substring (fn
+  [string]
+  (Generator.
+    (gen/fmap
+      substring
+      (gen/tuple
+        (gen/return string)
+        (gen/choose 0 (alength string))
+        (gen/choose 0 (alength string)))))))
+
+(defexport gen.char (Generator. gen/char))
+(defexport gen.asciiChar (Generator. gen/char-ascii))
+(defexport gen.alphaNumChar (Generator. gen/char-alphanumeric))
 
 
 ;; Collections
@@ -236,6 +287,18 @@
       (gen/vector (->gen a))
     )))))
 
+(defexport gen.uniqueArray (fn
+  [val-gen fn-or-opts opts]
+  (Generator. (gen/fmap to-array
+    (if (jsfn? fn-or-opts)
+      (gen/list-distinct-by
+        fn-or-opts
+        (->gen val-gen)
+        (gen-object-args opts))
+      (gen/list-distinct
+        (->gen val-gen)
+        (gen-object-args fn-or-opts)))))))
+
 (defexport gen.object (fn
   [a b c]
   (Generator. (gen/fmap to-object
@@ -261,64 +324,6 @@
   [collection-gen val-gen]
   (collection-gen (Generator. (gen/recursive-gen (->genfn collection-gen) (->gen val-gen))))))
 
-(defexport gen.uniqueArray (fn
-  [val-gen fn-or-opts opts]
-  (Generator. (gen/fmap to-array
-    (if (jsfn? fn-or-opts)
-      (gen/list-distinct-by
-        fn-or-opts
-        (->gen val-gen)
-        (gen-object-args opts))
-      (gen/list-distinct
-        (->gen val-gen)
-        (gen-object-args fn-or-opts)))))))
-
-
-;; JS Primitives
-
-(defexport gen.NaN (Generator. (gen/return js/NaN)))
-(defexport gen.undefined (Generator. (gen/return js/undefined)))
-(defexport gen.null (Generator. (gen/return nil)))
-(defexport gen.boolean (Generator. gen/boolean))
-
-(defexport gen.number (Generator. gen/double))
-(defexport gen.posNumber (Generator. (gen/double* {:min 0, :NaN? false})))
-(defexport gen.negNumber (Generator. (gen/double* {:max 0, :NaN? false})))
-(defexport gen.numberWithin (fn
-  [from, to]
-  (Generator. (gen/double* {:min from, :max to, :NaN? false}))))
-
-(defexport gen.int (Generator. gen/int))
-(defexport gen.posInt (Generator. gen/pos-int))
-(defexport gen.negInt (Generator. gen/neg-int))
-(defexport gen.strictPosInt (Generator. gen/s-pos-int))
-(defexport gen.strictNegInt (Generator. gen/s-neg-int))
-(defexport gen.intWithin (fn
-  [lower, upper]
-  (Generator. (gen/choose lower upper))))
-
-(defexport gen.char (Generator. gen/char))
-(defexport gen.asciiChar (Generator. gen/char-ascii))
-(defexport gen.alphaNumChar (Generator. gen/char-alphanumeric))
-
-(defexport gen.string (Generator. gen/string))
-(defexport gen.asciiString (Generator. gen/string-ascii))
-(defexport gen.alphaNumString (Generator. gen/string-alphanumeric))
-
-(defn substring
-  [[ string from to ]]
-  (.substring string from to))
-
-(defexport gen.substring (fn
-  [string]
-  (Generator.
-    (gen/fmap
-      substring
-      (gen/tuple
-        (gen/return string)
-        (gen/choose 0 (alength string))
-        (gen/choose 0 (alength string)))))))
-
 
 ;; JSON
 
@@ -330,24 +335,24 @@
   [10 gen/string]]))
 (def gen-json-value (gen/recursive-gen gen-array-or-object gen-json-primitive))
 
-(defexport gen.JSONPrimitive (Generator. gen-json-primitive))
-(defexport gen.JSONValue (Generator. gen-json-value))
 (defexport gen.JSON (Generator. (gen-object gen-json-value)))
+(defexport gen.JSONValue (Generator. gen-json-value))
+(defexport gen.JSONPrimitive (Generator. gen-json-primitive))
 
 
-;; JS values, potentially nested
+;; Combinators
 
-(def gen-primitive (gen/frequency [
-  [1 (gen/return js/undefined)]
-  [2 (gen/return nil)]
-  [4 gen/boolean]
-  [6 gen/double]
-  [20 gen/int]
-  [20 gen/string]]))
+(defexport gen.oneOf (fn
+  [gens]
+  (Generator. (gen/one-of (map ->gen gens)))))
 
-(defexport gen.primitive (Generator. gen-primitive))
-(defexport gen.any
-  (Generator. (gen/recursive-gen gen-array-or-object gen-primitive)))
+(defexport gen.oneOfWeighted (fn
+  [pairs]
+  (Generator. (gen/frequency (map (fn [[weight, gen]] (array weight (->gen gen))) pairs)))))
+
+(defexport gen.return (fn
+  [value]
+  (Generator. (gen/return value))))
 
 
 ;; Deprecated

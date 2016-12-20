@@ -248,60 +248,121 @@ declare export function sample<T>(gen: Generator<T>, times?: number): Array<T>;
 
 declare export var gen: {
 
-  /**
-   * Creates a Generator that relies on a size. Size allows for the "shrinking"
-   * of Generators. Larger "size" should result in a larger generated value.
-   *
-   * For example, `gen.int` is shrinkable because it is implemented as:
-   *
-   *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
-   *
-   */
-  sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
-
-  // Simple Generators
-  // -----------------
+  // JS Primitives
+  // -------------
 
   /**
-   * Creates a Generator which will always generate the provided value.
-   *
-   *     var alwaysThree = gen.return(3);
-   *
+   * Generates any JS value, including Arrays and Objects (possibly nested).
    */
-  return: <T>(value: T) => Generator<T>;
+  any: Generator<any>;
 
   /**
-   * Creates a Generator which will generate values from one of the
-   * provided generators.
-   *
-   *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
-   *
+   * Generates any primitive JS value:
+   * strings, numbers, booleans, null, undefined, or NaN.
    */
-  oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
+  primitive: Generator<any>;
+
+  boolean: Generator<boolean>;
+  null: Generator<null>;
+  undefined: Generator<void>;
+  NaN: Generator<number>;
+
+
+  // Numbers
+  // -------
 
   /**
-   * Similar to `oneOf`, except provides probablistic "weights" to
-   * each generator.
-   *
-   *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
+   * Generates floating point numbers (including +Infinity, -Infinity, and NaN).
    */
-  oneOfWeighted: <T>(
-    generators: Array<[ number, Generator<T> | T ]>
-  ) => Generator<T>;
+  number: Generator<number>;
 
   /**
-   * Given a function which takes a generator and returns a generator (such as
-   * `gen.array` or `gen.object`), and a Generator to use as values, creates
-   * potentially nested values.
-   *
-   *     gen.nested(gen.array, gen.int)
-   *     // [ [ 0, [ -2 ], 1, [] ]
-   *
+   * Only positive numbers (0 though +Infinity), does not generate NaN.
    */
-  nested: <C, T>(
-    collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
-    valueGen: Generator<T>
-  ) => Generator<C>;
+  posNumber: Generator<number>;
+
+  /**
+   * Only negative numbers (0 though -Infinity), does not generate NaN.
+   */
+  negNumber: Generator<number>;
+
+  /**
+   * Generates a floating point number within the provided (inclusive) range.
+   * Does not generate NaN or +-Infinity.
+   */
+  numberWithin: (min: number, max: number) => Generator<number>;
+
+  /**
+   * A sized, shrinkable generator producing integers.
+   */
+  int: Generator<number>;
+
+  /**
+   * Only positive integers (0 through +Inf)
+   */
+  posInt: Generator<number>;
+
+  /**
+   * Only negative integers (0 through -Inf)
+   */
+  negInt: Generator<number>;
+
+  /**
+   * Only strictly positive integers (1 through +Inf)
+   */
+  strictPosInt: Generator<number>;
+
+  /**
+   * Only strictly negative integers (1 through -Inf)
+   */
+  strictNegInt: Generator<number>;
+
+  /**
+   * Generates an integer within the provided (inclusive) range.
+   * The resulting Generator is not shrinkable.
+   */
+  intWithin: (min: number, max: number) => Generator<number>;
+
+
+  // Strings
+  // -------
+
+  /**
+   * Generates strings. Note: strings of arbitrary characters may result in
+   * Unicode characters and non-printable characters.
+   */
+  string: Generator<string>;
+
+  /**
+   * Generates strings of printable Ascii characters.
+   */
+  asciiString: Generator<string>;
+
+  /**
+   * Generates strings of [a-zA-Z0-9]*
+   */
+  alphaNumString: Generator<string>;
+
+  /**
+   * Generates substrings of the original string, including the empty string.
+   */
+  substring: (original: string) => Generator<string>;
+
+  /**
+   * Generates ascii characters (code 0 through 255).
+   */
+  char: Generator<string>;
+
+  /**
+   * Generates printable ascii characters (code 32 through 126).
+   */
+  asciiChar: Generator<string>;
+
+  /**
+   * Generates ascii characters matching /a-zA-Z0-9/
+   */
+  alphaNumChar: Generator<string>;
+
 
   // Collections: Arrays and Objects
   // -------------------------------
@@ -381,109 +442,27 @@ declare export var gen: {
     valueGen: Generator<T>
   ) => Generator<{[key: string]: T} | Array<T>>;
 
-  // JS Primitives
-  // -------------
-
-  NaN: Generator<number>;
-  undefined: Generator<void>;
-  null: Generator<null>;
-  boolean: Generator<boolean>;
-
   /**
-   * Generates floating point numbers (including +Infinity, -Infinity, and NaN).
+   * Given a function which takes a generator and returns a generator (such as
+   * `gen.array` or `gen.object`), and a Generator to use as values, creates
+   * potentially nested values.
+   *
+   *     gen.nested(gen.array, gen.int)
+   *     // [ [ 0, [ -2 ], 1, [] ]
+   *
    */
-  number: Generator<number>;
-
-  /**
-   * Only positive numbers (0 though +Infinity), does not generate NaN.
-   */
-  posNumber: Generator<number>;
-
-  /**
-   * Only negative numbers (0 though -Infinity), does not generate NaN.
-   */
-  negNumber: Generator<number>;
-
-  /**
-   * Generates a floating point number within the provided (inclusive) range.
-   * Does not generate NaN or +-Infinity.
-   */
-  numberWithin: (min: number, max: number) => Generator<number>;
-
-  /**
-   * A sized, shrinkable generator producing integers.
-   */
-  int: Generator<number>;
-
-  /**
-   * Only positive integers (0 through +Inf)
-   */
-  posInt: Generator<number>;
-
-  /**
-   * Only negative integers (0 through -Inf)
-   */
-  negInt: Generator<number>;
-
-  /**
-   * Only strictly positive integers (1 through +Inf)
-   */
-  strictPosInt: Generator<number>;
-
-  /**
-   * Only strictly negative integers (1 through -Inf)
-   */
-  strictNegInt: Generator<number>;
-
-  /**
-   * Generates an integer within the provided (inclusive) range.
-   * The resulting Generator is not shrinkable.
-   */
-  intWithin: (min: number, max: number) => Generator<number>;
-
-  /**
-   * Generates ascii characters (code 0 through 255).
-   */
-  char: Generator<string>;
-
-  /**
-   * Generates printable ascii characters (code 32 through 126).
-   */
-  asciiChar: Generator<string>;
-
-  /**
-   * Generates ascii characters matching /a-zA-Z0-9/
-   */
-  alphaNumChar: Generator<string>;
-
-  /**
-   * Generates strings. Note: strings of arbitrary characters may result in
-   * Unicode characters and non-printable characters.
-   */
-  string: Generator<string>;
-
-  /**
-   * Generates strings of printable Ascii characters.
-   */
-  asciiString: Generator<string>;
-
-  /**
-   * Generates strings of [a-zA-Z0-9]*
-   */
-  alphaNumString: Generator<string>;
-
-  /**
-   * Generates substrings of the original string, including the empty string.
-   */
-  substring: (original: string) => Generator<string>;
+  nested: <C, T>(
+    collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
+    valueGen: Generator<T>
+  ) => Generator<C>;
 
 
   // JSON
 
   /**
-   * Generates JSON primitives: strings, numbers, booleans and null.
+   * Generates JSON objects where each key is a JSON value.
    */
-  JSONPrimitive: Generator<any>;
+  JSON: Generator<{[key: string]: any}>;
 
   /**
    * Generates JSON values: primitives, or (possibly nested) arrays or objects.
@@ -491,21 +470,50 @@ declare export var gen: {
   JSONValue: Generator<any>;
 
   /**
-   * Generates JSON objects where each key is a JSON value.
+   * Generates JSON primitives: strings, numbers, booleans and null.
    */
-  JSON: Generator<{[key: string]: any}>;
+  JSONPrimitive: Generator<any>;
 
-  // JS
-  // --
 
-  /**
-   * Generates any primitive JS value:
-   * strings, numbers, booleans, null, undefined, or NaN.
-   */
-  primitive: Generator<any>;
+  // Generator Creators
+  // ------------------
 
   /**
-   * Generates any JS value (possibly nested).
+   * Creates a Generator which will generate values from one of the
+   * provided generators.
+   *
+   *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
+   *
    */
-  any: Generator<any>;
+  oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
+
+  /**
+   * Similar to `oneOf`, except provides probablistic "weights" to
+   * each generator.
+   *
+   *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
+   */
+  oneOfWeighted: <T>(
+    generators: Array<[ number, Generator<T> | T ]>
+  ) => Generator<T>;
+
+  /**
+   * Creates a Generator which will always generate the provided value.
+   *
+   *     var alwaysBlue = gen.return('blue');
+   *
+   */
+  return: <T>(value: T) => Generator<T>;
+
+  /**
+   * Creates a Generator that relies on a size. Size allows for the "shrinking"
+   * of Generators. Larger "size" should result in a larger generated value.
+   *
+   * For example, `gen.int` is shrinkable because it is implemented as:
+   *
+   *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
+   *
+   */
+  sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
+
 }
