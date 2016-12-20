@@ -3,10 +3,10 @@ permalink: /api
 ---
 
 API Documentation
------------------
+=================
 
-`check()`
-=========
+check()
+-------
 
 Given a property to check, return the result of the check.
 
@@ -65,8 +65,8 @@ An Object with the properties:
     * `totalNodesVisited`: The number of nodes shrunk to result in this smallest failing value.
 
 
-`property()`
-============
+property()
+----------
 
 Creates a "property" as needed by `check()`.
 
@@ -85,7 +85,7 @@ check(numGoUp);
 property(gen[, gen2[, ...genN]], propertyFn)
 ```
 
-* `gen`: Any *Generator* instance. Values from which will be provided as arguments to `propertyFn`. Multiple *Generator*s may be provided, each of which will produce another function argument.
+* `gen`: Any *Generator* object. Values from which will be provided as arguments to `propertyFn`. Multiple *Generator*s may be provided, each of which will produce another function argument.
 
 * `propertyFn`: *Function* representing a property that should always be true. Returns `true` when the property is upheld and `false` when the property fails.
 
@@ -94,8 +94,8 @@ property(gen[, gen2[, ...genN]], propertyFn)
 A *Generator* of boolean values.
 
 
-`sample()`
-==========
+sample()
+--------
 
 Handy tool for visualizing the output of your generators. Given a *Generator*,
 it returns an *Array* of values resulting from the generator.
@@ -111,7 +111,7 @@ sample(gen.int)
 sample(generator[, numValues])
 ```
 
-* `generator`: Any *Generator* instance.
+* `generator`: Any *Generator* object.
 
 * `numValues`: The number of values to produce. Default: `10`.
 
@@ -123,26 +123,61 @@ An *Array* of values from `generator`.
 
 
 *Generator*
-===========
+-----------
+
+A *Generator* object produces values of a particular kind. *Generator*s cannot
+be constructed directly, but instead are obtained by one of the `gen` values
+or functions, or as the result of calling one of the prototype methods of another
+*Generator* object.
+
+```js
+// A generator of integers
+const genInt = gen.int
+
+// A generator of arrays of integers
+const genIntArray = gen.array(gen.int)
+
+// A generator of non-empty arrays of integers
+const genNonEmptyIntArray = gen.array(gen.int).notEmpty()
+```
 
 
+Generator#nullable()
+--------------------
 
-/**
- * Generators of values.
- */
-export class Generator<T> {
+Creates a new Generator which also sometimes generates `null` values.
 
-  /**
-   * Creates a new Generator which also sometimes generates null values.
-   */
-  nullable(): Generator<T | null>;
+```js
+// A generator of integers or nulls.
+const genNullableInt = gen.int.nullable()
 
-  /**
-   * Creates a new Generator which generates non-empty values.
-   *
-   * Examples of empty values are 0, "", null, [], and {}
-   */
-  notEmpty(): Generator<T>;
+sample(genNullableInt)
+// [ 0, -1, null, null, 1, 4, 3, -3, -5, null ]
+```
+
+#### Returns
+
+A new *Generator*.
+
+
+Generator#notEmpty()
+--------------------
+
+Creates a new Generator which generates non-empty values.
+
+Examples of empty values are `0`, `""`, `null`, `[]`, and `{}`
+
+```js
+const notEmptyStrings = gen.asciiString.notEmpty()
+
+sample(notEmptyStrings, 5)
+// [ 'f', 'SJ', '8?sH{', 'zWUb}X1', '.AS Mz.x7' ]
+```
+
+#### Returns
+
+A new *Generator*.
+
 
   /**
    * Creates a new Generator which ensures that all values Generated adhere to
