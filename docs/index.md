@@ -58,7 +58,7 @@ Using TestCheck.js
 ------------------
 
 See the complete [API documentation](http://leebyron.com/testcheck-js/api) for
-all available generators and utilities.
+all available generators and utilities, or the [Walkthrough Guide](http://leebyron.com/testcheck-js/guide) for a more thorough walkthrough.
 
 
 ### Defining properties
