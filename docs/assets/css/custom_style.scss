@@ -38,14 +38,6 @@ header nav ul li.nav-H2 a {
   color: #909096;
 }
 
-section h2 {
-  margin-top: 3em;
-}
-
-section h3 {
-  margin-top: 2.5em;
-}
-
 header {
   box-sizing: border-box;
   height: 100%;
@@ -61,4 +53,16 @@ header {
     margin: 0;
     padding: 0;
   }
+}
+
+section {
+  margin-bottom: 50%;
+}
+
+section h2 {
+  padding-top: 3em;
+}
+
+section h3 {
+  padding-top: 2.5em;
 }
