@@ -7,8 +7,27 @@ toc: true
 API Documentation
 =================
 
-check()
--------
+The `testcheck` npm module exports five values:
+
+```js
+// ES6 modules
+import { check, property, sample, gen, Generator } from 'testcheck'
+
+// Node modules
+const { check, property, sample, gen, Generator } = require('testcheck')
+```
+
+* `check`: Runs a property test.
+* `property`: Defines a property test.
+* `sample`: Samples generator values for debugging.
+* `gen`: A collection of *Generator*s and functions that return *Generator*s.
+* `Generator`: The class which all *Generator*s are instances of.
+
+
+Running Tests
+-------------
+
+### check()
 
 Given a property to check, return the result of the check.
 
@@ -67,8 +86,7 @@ An Object with the properties:
     * `totalNodesVisited`: The number of nodes shrunk to result in this smallest failing value.
 
 
-property()
-----------
+### property()
 
 Creates a "property" as needed by `check()`.
 
@@ -96,8 +114,7 @@ property(gen[, gen2[, ...genN]], propertyFn)
 A *Generator* of boolean values.
 
 
-sample()
---------
+### sample()
 
 Handy tool for visualizing the output of your generators. Given a *Generator*,
 it returns an *Array* of values resulting from the generator.
@@ -122,6 +139,445 @@ By default 10 samples are provided unless otherwise specified.
 **Returns**
 
 An *Array* of values from `generator`.
+
+
+Primitive Value Generators
+--------------------------
+
+### gen.any
+
+Generates any JS value, including Arrays and Objects (possibly nested).
+
+
+### gen.primitive
+
+Generates any primitive JS value: strings, numbers, booleans, `null`, `undefined`, or `NaN`.
+
+
+### gen.boolean
+
+Generates `true` or `false` values.
+
+
+### gen.null
+
+Generates only the value `null`.
+
+
+### gen.undefined
+
+Generates only the value `undefined`.
+
+
+### gen.NaN
+
+Generates only the value `NaN`.
+
+
+Number Generators
+-----------------
+
+### gen.number
+
+Generates floating point numbers (including `+Infinity`, `-Infinity`, and `NaN`).
+
+
+### gen.posNumber
+
+Generates only positive numbers (`0` though `+Infinity`), does not generate `NaN`.
+
+
+### gen.negNumber
+
+Generates only negative numbers (`0` though `-Infinity`), does not generate `NaN`.
+
+
+### gen.numberWithin()
+
+Generates a floating point number within the provided (inclusive) range.
+Does not generate `NaN` or `Infinity`.
+
+Note: The resulting *Generator* is not shrinkable.
+
+**Parameters**
+
+```
+gen.numberWithin(min, max)
+```
+
+* `min` The smallest possible number to generate (inclusive).
+
+* `max` The largest possible number to generate (inclusive).
+
+
+### gen.int
+
+Generator integers (32-bit signed) including negative numbers and `0`.
+
+
+### gen.posInt
+
+Generates only positive integers, including 0.
+
+
+### gen.negInt
+
+Generates only negative integers, including 0.
+
+
+### gen.strictPosInt
+
+Generates only strictly positive integers, not including 0.
+
+
+### gen.strictNegInt
+
+Generates only strictly negative integers, not including 0.
+
+
+### gen.intWithin()
+
+Generates an integer within the provided (inclusive) range.
+
+Note: The resulting *Generator* is not shrinkable.
+
+**Parameters**
+
+```
+gen.intWithin(min, max)
+```
+
+* `min` The smallest possible integer to generate (inclusive).
+
+* `max` The largest possible integer to generate (inclusive).
+
+
+String Generators
+-----------------
+
+
+### gen.string
+
+Generates strings of arbitrary characters.
+
+```js
+sample(gen.string)
+// [ '', 'c', '¸Ã', 'uq', 'd.', '', 'FÏs', 'Ú\u0019oÞ', 'Ô', 'ßÞ' ]
+```
+
+Note: strings of arbitrary characters may result in higher-plane Unicode
+characters and non-printable characters.
+
+
+### gen.asciiString
+
+Generates strings of printable ascii characters.
+
+```js
+sample(gen.asciiString)
+// [ '', 'j', ':o', 'EM5', 'I]', '', 'GCeTvG', '\'\\zB+', '8gc7y', 'g3Ei' ]
+```
+
+
+### gen.alphaNumString
+
+Generates strings of only alpha-numeric characters: a-z, A-Z, 0-9.
+
+```js
+sample(gen.alphaNumString)
+// [ '', 'N', 'T', 's9', 'wm', 'eT', '9', 'lNu', 'h', '81EvZX' ]
+```
+
+
+### gen.substring()
+
+Generates substrings of an original string (including the empty string).
+
+```js
+sample(gen.substring('abracadabra'))
+// [ 'ac', 'r', 'abra', 'braca', 'a', 'ad', 'b', 'r', '', 'abra' ]
+```
+
+**Parameters**
+
+```
+gen.substring(original)
+```
+
+* `original` The original string from which to generate substrings.
+
+
+
+### gen.char
+
+Generates arbitrary 1-byte characters (code 0 through 255).
+
+```js
+sample(gen.char)
+// [ 'ã', '}', '£', 'O', '\u000b', '±', '\n', '\u0007', 'ÿ', 'b' ]
+```
+
+
+### gen.asciiChar
+
+Generates only printable ascii characters (code 32 through 126).
+
+```js
+sample(gen.asciiChar)
+// [ 'q', '-', '8', 'I', 'O', ';', 'A', 'm', '3', '9' ]
+```
+
+
+### gen.alphaNumChar
+
+Generates only alpha-numeric characters: a-z, A-Z, 0-9.
+
+```js
+sample(gen.alphaNumChar)
+// [ 'x', '8', 'T', '9', '5', 'w', 'U', 'a', 'J', 'f' ]
+```
+
+
+Collections: Arrays and Objects
+-------------------------------
+
+### gen.array()
+
+Generates Arrays of values. There are a few forms `gen.array` can be used:
+
+- Generate Arrays of random sizes (ex. arrays of integers).
+
+  ```js
+  gen.array(gen.int)
+  ```
+
+- Generate Arrays of specific sizes (ex. length of 5).
+
+  ```js
+  gen.array(gen.int, { size: 5 })
+  ```
+
+- Generate Arrays of random sizes within a specific range (ex. between 2 and 10).
+
+  ```js
+  gen.array(gen.int, { minSize: 2, maxSize: 10 })
+  ```
+
+- Generate Arrays of specific lengths with different kinds of values at
+  each index, also known as "tuples", (ex. tuples of [int, bool] like `[3, true]`).
+
+  ```js
+  gen.array([ gen.int, gen.boolean ])
+  ```
+
+**Parameters**
+
+```
+gen.array(valueGen[, options])
+```
+
+* `valueGen`: A *Generator* which will produce the values of the resulting Arrays.
+
+* `options`: An optional object of options describing the size of the resulting Arrays:
+
+  * `size`: If provided, the exact size of the resulting Array.
+
+  * `minSize`: If provided, the minimum size of the resulting Array.
+
+  * `maxSize`: If provided, the maximum size of the resulting Array.
+
+
+### gen.uniqueArray()
+
+Generates Arrays of unique values.
+
+Accepts the same size options as gen.array()
+
+Also optionally accepts a function to determine how to determine if a value
+is unique. For example, if generating [x, y] points as Arrays, JavaScript cannot
+determine if two Arrays are unique. By providing a function, the points can be
+converted to strings first so they can be compared.
+
+```js
+var genPoint = gen.array([ gen.int, gen.int ])
+var genUniquePoints = gen.uniqueArray(genPoint, point => point.join())
+```
+
+**Parameters**
+
+```
+gen.array(valueGen[, uniqueFn][, options])
+```
+
+* `valueGen`: A *Generator* which will produce the values of the resulting Arrays.
+
+* `uniqueFn`: A Function which accepts a value from `valueGen` and returns a value
+              which can be compared with `===` to determine uniqueness.
+
+* `options`: An optional object of options describing the size of the resulting Arrays:
+
+  * `size`: If provided, the exact size of the resulting Array.
+
+  * `minSize`: If provided, the minimum size of the resulting Array.
+
+  * `maxSize`: If provided, the maximum size of the resulting Array.
+
+
+### gen.object()
+
+Generates Objects of values. There are a few forms `gen.object` can be used:
+
+- Generate Objects with a specified kind of value and alpha-numeric keys.
+
+  ```js
+  gen.object(gen.int)
+  ```
+
+- Generate Objects of a specific size
+
+  ```js
+  gen.object(gen.int, { size: 5 })
+  ```
+
+- Generate Objects with a specified kind of key and value, (ex. numeric keys).
+
+  ```js
+  gen.object(gen.int, gen.int)
+  ```
+
+- Generate Objects with specific keys with different kinds of values at
+  each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
+
+  ```js
+  gen.object({ x: gen.posInt, y: gen.posInt })
+  ```
+
+**Parameters**
+
+```
+gen.object([keyGen, ]valueGen[, options])
+```
+
+* `keyGen`: An optional *Generator* which will produce the keys of the resulting Objects.
+
+* `valueGen`: A *Generator* which will produce the values of the resulting Objects.
+
+* `options`: An optional object of options describing the size of the resulting Objects:
+
+  * `size`: If provided, the exact size of the resulting Object.
+
+  * `minSize`: If provided, the minimum size of the resulting Object.
+
+  * `maxSize`: If provided, the maximum size of the resulting Object.
+
+
+### gen.arrayOrObject()
+
+Generates either an Array or an Object with values of the provided kind.
+
+```js
+sample(gen.arrayOrObject(gen.int), 5)
+// [ [], {}, [ 1 ], { y96: -1, hfR: 1 }, [ -3, -7, 7, -5, 5 ] ]
+```
+
+Note: Objects will be produced with alpha-numeric keys.
+
+**Parameters**
+
+```
+gen.arrayOrObject(valueGen)
+```
+
+* `valueGen`: A *Generator* which will produce the values of the resulting Arrays or Objects.
+
+
+### gen.nested()
+
+Given a function which takes a *Generator* and returns a *Generator* (such as
+`gen.array` or `gen.object`), and a *Generator* to use as values, creates
+potentially nested values.
+
+```js
+gen.nested(gen.array, gen.int)
+// Example: [ 0, [ -2 ], 1, [] ]
+```
+
+Note: It may generate just values, not wrapped in a container.
+
+**Parameters**
+
+```
+gen.nested(collectionGenFn, valueGen)
+```
+
+* `collectionGenFn`: A Function which accepts a *Generator* (like `valueGen`) and returns a new *Generator* which presumably generates collections that contain the provided *Generator*.
+
+* `valueGen`: A *Generator* which will produce the values within the resulting collections.
+
+
+JSON Generators
+---------------
+
+  /**
+   * Generates JSON objects where each key is a JSON value.
+   */
+  JSON: Generator<{[key: string]: any}>;
+
+  /**
+   * Generates JSON values: primitives, or (possibly nested) arrays or objects.
+   */
+  JSONValue: Generator<any>;
+
+  /**
+   * Generates JSON primitives: strings, numbers, booleans and null.
+   */
+  JSONPrimitive: Generator<any>;
+
+
+  // Generator Creators
+  // ------------------
+
+  /**
+   * Creates a Generator which will generate values from one of the
+   * provided generators.
+   *
+   *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
+   *
+   */
+  oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
+
+  /**
+   * Similar to `oneOf`, except provides probablistic "weights" to
+   * each generator.
+   *
+   *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
+   */
+  oneOfWeighted: <T>(
+    generators: Array<[ number, Generator<T> | T ]>
+  ) => Generator<T>;
+
+  /**
+   * Creates a Generator which will always generate the provided value.
+   *
+   *     var alwaysBlue = gen.return('blue');
+   *
+   */
+  return: <T>(value: T) => Generator<T>;
+
+  /**
+   * Creates a Generator that relies on a size. Size allows for the "shrinking"
+   * of Generators. Larger "size" should result in a larger generated value.
+   *
+   * For example, `gen.int` is shrinkable because it is implemented as:
+   *
+   *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
+   *
+   */
+  sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
+
+}
+
+
 
 
 *Generator*
@@ -304,381 +760,3 @@ property passes (up to one additional level).
 **Returns**
 
 A new *Generator*.
-
-
-Primitive Value Generators
---------------------------
-
-### gen.any
-
-Generates any JS value, including Arrays and Objects (possibly nested).
-
-
-### gen.primitive
-
-Generates any primitive JS value: strings, numbers, booleans, `null`, `undefined`, or `NaN`.
-
-
-### gen.boolean
-
-Generates `true` or `false` values.
-
-
-### gen.null
-
-Generates only the value `null`.
-
-
-### gen.undefined
-
-Generates only the value `undefined`.
-
-
-### gen.NaN
-
-Generates only the value `NaN`.
-
-
-Number Generators
------------------
-
-### gen.number
-
-Generates floating point numbers (including `+Infinity`, `-Infinity`, and `NaN`).
-
-
-### gen.posNumber
-
-Generates only positive numbers (`0` though `+Infinity`), does not generate `NaN`.
-
-
-### gen.negNumber
-
-Generates only negative numbers (`0` though `-Infinity`), does not generate `NaN`.
-
-
-### gen.numberWithin()
-
-Generates a floating point number within the provided (inclusive) range.
-Does not generate `NaN` or `Infinity`.
-
-Note: The resulting *Generator* is not shrinkable.
-
-**Parameters**
-
-```
-gen.numberWithin(min, max)
-```
-
-* `min` The smallest possible number to generate (inclusive).
-
-* `max` The largest possible number to generate (inclusive).
-
-
-### gen.int
-
-Generator integers (32-bit signed) including negative numbers and `0`.
-
-
-### gen.posInt
-
-Generates only positive integers, including 0.
-
-
-### gen.negInt
-
-Generates only negative integers, including 0.
-
-
-### gen.strictPosInt
-
-Generates only strictly positive integers, not including 0.
-
-
-### gen.strictNegInt
-
-Generates only strictly negative integers, not including 0.
-
-
-### gen.intWithin()
-
-Generates an integer within the provided (inclusive) range.
-
-Note: The resulting *Generator* is not shrinkable.
-
-**Parameters**
-
-```
-gen.intWithin(min, max)
-```
-
-* `min` The smallest possible integer to generate (inclusive).
-
-* `max` The largest possible integer to generate (inclusive).
-
-
-Strings
--------
-
-
-### gen.string
-
-Generates strings of arbitrary characters.
-
-```js
-sample(gen.string)
-// [ '', 'c', '¸Ã', 'uq', 'd.', '', 'FÏs', 'Ú\u0019oÞ', 'Ô', 'ßÞ' ]
-```
-
-Note: strings of arbitrary characters may result in higher-plane Unicode
-characters and non-printable characters.
-
-
-### gen.asciiString
-
-Generates strings of printable ascii characters.
-
-```js
-sample(gen.asciiString)
-// [ '', 'j', ':o', 'EM5', 'I]', '', 'GCeTvG', '\'\\zB+', '8gc7y', 'g3Ei' ]
-```
-
-
-### gen.alphaNumString
-
-Generates strings of only alpha-numeric characters: a-z, A-Z, 0-9.
-
-```js
-sample(gen.alphaNumString)
-// [ '', 'N', 'T', 's9', 'wm', 'eT', '9', 'lNu', 'h', '81EvZX' ]
-```
-
-
-### gen.substring()
-
-Generates substrings of an original string (including the empty string).
-
-```js
-sample(gen.substring('abracadabra'))
-// [ 'ac', 'r', 'abra', 'braca', 'a', 'ad', 'b', 'r', '', 'abra' ]
-```
-
-**Parameters**
-
-```
-gen.substring(original)
-```
-
-* `original` The original string from which to generate substrings.
-
-
-
-### gen.char
-
-Generates arbitrary 1-byte characters (code 0 through 255).
-
-```js
-sample(gen.char)
-// [ 'ã', '}', '£', 'O', '\u000b', '±', '\n', '\u0007', 'ÿ', 'b' ]
-```
-
-
-### gen.asciiChar
-
-Generates only printable ascii characters (code 32 through 126).
-
-```js
-sample(gen.asciiChar)
-// [ 'q', '-', '8', 'I', 'O', ';', 'A', 'm', '3', '9' ]
-```
-
-
-### gen.alphaNumChar
-
-Generates only alpha-numeric characters: a-z, A-Z, 0-9.
-
-```js
-sample(gen.alphaNumChar)
-// [ 'x', '8', 'T', '9', '5', 'w', 'U', 'a', 'J', 'f' ]
-```
-
-
-Collections: Arrays and Objects
--------------------------------
-
-  /**
-   * Generates Arrays of values. There are a few forms `gen.array` can be used:
-   *
-   *  - Generate Arrays of random sizes (ex. arrays of integers)
-   *
-   *     gen.array(gen.int)
-   *
-   *  - Generate Arrays of specific sizes (ex. length of 5)
-   *
-   *     gen.array(gen.int, { size: 5 })
-   *
-   *  - Generate Arrays of random sizes within a specific range
-   *    (ex. between 2 and 10)
-   *
-   *     gen.array(gen.int, { minSize: 2, maxSize: 10 })
-   *
-   *  - Generate Arrays of specific lengths with different kinds of values at
-   *    each index (e.g. tuples). (ex. tuples of [int, bool] like `[3, true]`)
-   *
-   *     gen.array([ gen.int, gen.boolean ])
-   *
-   */
-  array: {
-    <T>(valueGen: Generator<T>): Generator<Array<T>>;
-    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
-    <T1, T2, T3, T4, T5>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>, T5 | Generator<T5>]): Generator<[T1, T2, T3, T4, T5]>;
-    <T1, T2, T3, T4>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>]): Generator<[T1, T2, T3, T4]>;
-    <T1, T2, T3>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>]): Generator<[T1, T2, T3]>;
-    <T1, T2>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>]): Generator<[T1, T2]>;
-    <T1>(tupleGens: [T1 | Generator<T1>]): Generator<[T1]>;
-  };
-
-  /**
-   * Generates Arrays of unique values.
-   *
-   * Accepts the same size options as gen.array()
-   *
-   * Optionally also accepts a function to determine how to determine if a value
-   * is unique. For example, if 2d points are the same:
-   *
-   *     var genPoint = gen.array([ gen.int, gen.int ])
-   *     var genUniquePoints = gen.uniqueArray(genPoint, point => point.join())
-   *
-   */
-  uniqueArray: {
-    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
-    <T>(valueGen: Generator<T>, uniqueBy: (value: T) => any, options?: SizeOptions): Generator<Array<T>>;
-  };
-
-  /**
-   * Generates Objects of values. There are a few forms `gen.object` can be used:
-   *
-   *  - Generate Objects with random keys (alpha-numeric keys, up to 16 chars)
-   *
-   *     gen.object(gen.int)
-   *
-   *  - Generate Objects with a specified kind of key and value,
-   *    (ex. numeric keys)
-   *
-   *     gen.object(gen.int, gen.int)
-   *
-   *  - Generate Objects with specific keys with different kinds of values at
-   *    each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
-   *
-   *     gen.object({ x: gen.posInt, y: gen.posInt })
-   *
-   */
-  object: {
-    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
-    <T>(keyGen: Generator<string>, valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
-    (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
-  };
-
-  /**
-   * Generates either an Array or an Object with values of the provided kind.
-   */
-  arrayOrObject: <T>(
-    valueGen: Generator<T>
-  ) => Generator<{[key: string]: T; [key: number]: T}>;
-
-  /**
-   * Given a function which takes a generator and returns a generator (such as
-   * `gen.array` or `gen.object`), and a Generator to use as values, creates
-   * potentially nested values.
-   *
-   *     gen.nested(gen.array, gen.int)
-   *     // [ [ 0, [ -2 ], 1, [] ]
-   *
-   */
-  nested: <C, T>(
-    collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
-    valueGen: Generator<T>
-  ) => Generator<C>;
-
-
-  // JSON
-  // ----
-
-  /**
-   * Generates JSON objects where each key is a JSON value.
-   */
-  JSON: Generator<{[key: string]: any}>;
-
-  /**
-   * Generates JSON values: primitives, or (possibly nested) arrays or objects.
-   */
-  JSONValue: Generator<any>;
-
-  /**
-   * Generates JSON primitives: strings, numbers, booleans and null.
-   */
-  JSONPrimitive: Generator<any>;
-
-
-  // Generator Creators
-  // ------------------
-
-  /**
-   * Creates a Generator which will generate values from one of the
-   * provided generators.
-   *
-   *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
-   *
-   */
-  oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
-
-  /**
-   * Similar to `oneOf`, except provides probablistic "weights" to
-   * each generator.
-   *
-   *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
-   */
-  oneOfWeighted: <T>(
-    generators: Array<[ number, Generator<T> | T ]>
-  ) => Generator<T>;
-
-  /**
-   * Creates a Generator which will always generate the provided value.
-   *
-   *     var alwaysBlue = gen.return('blue');
-   *
-   */
-  return: <T>(value: T) => Generator<T>;
-
-  /**
-   * Creates a Generator that relies on a size. Size allows for the "shrinking"
-   * of Generators. Larger "size" should result in a larger generated value.
-   *
-   * For example, `gen.int` is shrinkable because it is implemented as:
-   *
-   *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
-   *
-   */
-  sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
-
-}
-
-/**
- * Options to be passed to array() or object()
- */
-interface SizeOptions {
-  /**
-   * If provided, the exact size of the resulting collection.
-   */
-  size?: number,
-
-  /**
-   * If provided, the minimum size of the resulting collection.
-   */
-  minSize?: number,
-
-  /**
-   * If provided, the maximum size of the resulting collection.
-   */
-  maxSize?: number,
-}

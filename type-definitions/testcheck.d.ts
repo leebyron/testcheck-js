@@ -400,7 +400,7 @@ export const gen: {
   /**
    * Generates Objects of values. There are a few forms `gen.object` can be used:
    *
-   *  - Generate Objects with random keys (alpha-numeric keys, up to 16 chars)
+   *  - Generate Objects with a specified kind of value and alpha-numeric keys.
    *
    *     gen.object(gen.int)
    *
@@ -423,6 +423,8 @@ export const gen: {
 
   /**
    * Generates either an Array or an Object with values of the provided kind.
+   *
+   * Note: Objects will be produced with alpha-numeric keys.
    */
   arrayOrObject: <T>(
     valueGen: Generator<T>
