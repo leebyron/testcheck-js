@@ -309,18 +309,18 @@ declare export var gen: {
   /**
    * Generates Arrays of values. There are a few forms `gen.array` can be used:
    *
-   *  - Generate Arrays of random lengths (ex. arrays of integers)
+   *  - Generate Arrays of random sizes (ex. arrays of integers)
    *
    *     gen.array(gen.int)
    *
-   *  - Generate Arrays of specific lengths (ex. length of 5)
+   *  - Generate Arrays of specific sizes (ex. length of 5)
    *
-   *     gen.array(gen.int, 5)
+   *     gen.array(gen.int, { size: 5 })
    *
-   *  - Generate Arrays of random lengths within a specific range
+   *  - Generate Arrays of random sizes within a specific range
    *    (ex. between 2 and 10)
    *
-   *     gen.array(gen.int, 2, 10)
+   *     gen.array(gen.int, { minSize: 2, maxSize: 10 })
    *
    *  - Generate Arrays of specific lengths with different kinds of values at
    *    each index (e.g. tuples). (ex. tuples of [int, bool] like `[3, true]`)
