@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 pushd ${BASH_SOURCE%/*} > /dev/null
 
