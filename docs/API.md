@@ -399,7 +399,9 @@ Generates Arrays of values. There are a few forms `gen.array` can be used:
   ```
 
 - Generate Arrays of specific lengths with different kinds of values at
-  each index, also known as "tuples", (ex. tuples of [int, bool] like `[3, true]`).
+  each index, also known as "tuples",
+
+  For example, a tuples of [ *int*, *bool* ] like `[3, true]`:
 
   ```js
   gen.array([ gen.int, gen.boolean ])
@@ -484,7 +486,9 @@ Generates Objects of values. There are a few forms `gen.object` can be used:
   ```
 
 - Generate Objects with specific keys with different kinds of values at
-  each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
+  each key, also known as "records".
+
+  For example, a 2D point like `{ x: 3, y: 5 }`:
 
   ```js
   gen.object({ x: gen.posInt, y: gen.posInt })
