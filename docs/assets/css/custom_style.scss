@@ -12,7 +12,8 @@ header nav ul {
   width: auto;
 }
 
-header nav ul li {
+header nav ul li,
+header nav ul li + li {
   border-right: none;
   float: inherit;
   height: auto;
