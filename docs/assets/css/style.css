@@ -3,13 +3,14 @@
 
 @import "{{ site.theme }}";
 
-header nav ul
-  background: inherit
-  border: none
-  height: auto
-  list-style: none
-  padding: 0
-  width: auto
+header nav ul {
+  background: inherit;
+  border: none;
+  height: auto;
+  list-style: none;
+  padding: 0;
+  width: auto;
+}
 
 header nav ul li {
   border-right: none;
