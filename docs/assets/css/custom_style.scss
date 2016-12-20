@@ -47,13 +47,17 @@ section h3 {
 }
 
 header {
-  overflow-y: scroll;
-  height: calc(100% - 100px);
   box-sizing: border-box;
+  height: 100%;
+  margin; -50px 0;
+  overflow-y: scroll;
+  padding: 50px 0;
 }
 
 @media print, screen and (max-width: 960px) {
   header {
-    height: auto
+    height: auto;
+    margin; 0;
+    padding: 0;
   }
 }
