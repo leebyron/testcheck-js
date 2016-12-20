@@ -42,12 +42,13 @@
 
     <script type="text/javascript">
       var navUl = document.getElementsByTagName('nav')[0].firstChild
-      var h2s = document.getElementsByTagName('h2')
-      for (var i = 0; i < h2s.length; i++) {
+      var headers = document.querySelectorAll('h2, h3')
+      for (var i = 0; i < headers.length; i++) {
         var li = document.createElement('li')
         var a = document.createElement('a')
-        a.href = '#' + h2s[i].id
-        a.innerHTML = h2s[i].innerHTML
+        a.href = '#' + headers[i].id
+        a.innerHTML = headers[i].innerHTML
+        li.className = 'nav-' + headers[i].tagName
         li.appendChild(a)
         navUl.appendChild(li)
       }
