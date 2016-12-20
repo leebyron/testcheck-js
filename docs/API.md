@@ -144,8 +144,7 @@ const genNonEmptyIntArray = gen.array(gen.int).notEmpty()
 ```
 
 
-Generator#nullable()
---------------------
+### Generator#nullable()
 
 Creates a new *Generator* which also sometimes generates `null` values.
 
@@ -162,8 +161,7 @@ sample(genNullableInt)
 A new *Generator*.
 
 
-Generator#notEmpty()
---------------------
+### Generator#notEmpty()
 
 Creates a new *Generator* which generates non-empty values.
 
@@ -181,139 +179,199 @@ sample(notEmptyStrings, 5)
 A new *Generator*.
 
 
-  /**
-   * Creates a new Generator which ensures that all values Generated adhere to
-   * the given predicate function.
-   *
-   * For example, to create a Generator of any number except multiples of 5:
-   *
-   *     var genAnythingBut5s = gen.int.suchThat(n => n % 5 !== 0);
-   *
-   * Note: Care is needed to ensure there is a high chance the predicate will
-   * pass, after ten attempts, an exception will throw.
-   */
-  suchThat(fn: (value: T) => boolean): Generator<T>;
+### Generator#suchThat()
 
-  /**
-   * Creates a new Generator that depends on the values of this Generator.
-   *
-   * For example, to create a Generator of square numbers:
-   *
-   *     var genSquares = gen.int.then(n => n * n);
-   *
-   * For example, to create a Generator which first generates an array of
-   * integers, and then returns both that array and a sampled value from it:
-   *
-   *     var genList = gen.notEmpty(gen.array(gen.int))
-   *     var genListAndItem = genList.then(
-   *       list => gen.array([ list, gen.oneOf(list) ])
-   *     );
-   *
-   */
-  then<U>(fn: (value: T) => Generator<U> | U): Generator<U>;
+Creates a new *Generator* which ensures that all values generated adhere to
+the given predicate function.
 
-  /**
-   * Creates a new Generator which grows at a different scale.
-   *
-   * Generators start by producing very "small" values (closer to 0) at first,
-   * and produce larger values in later iterations of a test as a result of a
-   * "size" value which grows with each generation. Typically "size" grows
-   * linearly, but .scale() can alter a size to grow at different rates.
-   *
-   * For example, to generate "big" numbers that grow super-linearly (cubicly):
-   *
-   *      var bigInts = gen.int.scale(n => n * n * n)
-   *      console.log(sample(bigInts))
-   *      // [ 0, 1, 5, 0, -59, -56, -160, 261, 409, -34 ]
-   *
-   * Note: When shrinking a failing test, "size" gets smaller. If the scale
-   * function returns a value that's not dependent on it's input, then the
-   * resulting Generator will not shrink.
-   */
-  scale(fn: (size: number) => number): Generator<T>;
+For example, to create a *Generator* of any number except multiples of 5:
 
-  /**
-   * Creates a new Generator which will never shrink.
-   * This is useful when shrinking is taking a long time or is not applicable.
-   */
-  neverShrink(): Generator<T>;
+```js
+var genAnythingBut5s = gen.int.suchThat(n => n % 5 !== 0);
 
-  /**
-   * Creates a new Generator which will always consider shrinking, even if the
-   * property passes (up to one additional level).
-   */
-  alwaysShrink(): Generator<T>;
-}
+sample(genAnythingBut5s)
+// [ 0, 1, -1, 2, 4, -3, 6, 2, 4, -7 ]
+```
+
+Note: Care is needed to ensure there is a high chance the predicate will
+pass. After ten attempts an exception will throw.
+
+#### Parameters
+
+```
+g.suchThat(predicateFn)
+```
+
+* `predicateFn` A function which accepts a `value` from the *Generator* and
+  returns `true` if it is allowed, or `false` if not.
+
+#### Returns
+
+A new *Generator*.
 
 
+### Generator#then()
 
-/**
- * Options to be passed to array() or object()
- */
-interface SizeOptions {
-  /**
-   * If provided, the exact size of the resulting collection.
-   */
-  size?: number,
+Creates a new *Generator* that depends on the values of this *Generator*.
 
-  /**
-   * If provided, the minimum size of the resulting collection.
-   */
-  minSize?: number,
+For example, to create a *Generator* of square numbers:
 
-  /**
-   * If provided, the maximum size of the resulting collection.
-   */
-  maxSize?: number,
-}
+```js
+var genSquares = gen.int.then(n => n * n);
 
-// Generator Builders
-// ------------------
+sample(genSquares)
+// [ 0, 0, 4, 9, 1, 16, 0, 36, 25, 81 ]
+```
 
-export const gen: {
+For example, to create a *Generator* which first generates an Array of
+integers, and then returns both that Array and a sampled value from it:
 
-  // JS Primitives
-  // -------------
+```js
+var genList = gen.notEmpty(gen.array(gen.int))
+var genListAndItem = genList.then(
+  list => gen.array([ list, gen.oneOf(list) ])
+);
 
-  /**
-   * Generates any JS value, including Arrays and Objects (possibly nested).
-   */
-  any: Generator<any>;
+sample(genListAndItem, 3)
+// [ [ [ 1 ], 1 ], [ [ 2, -1 ], 2 ], [ [ -3, 2, -1 ], 2 ] ]
+```
 
-  /**
-   * Generates any primitive JS value:
-   * strings, numbers, booleans, null, undefined, or NaN.
-   */
-  primitive: Generator<any>;
+#### Parameters
 
-  boolean: Generator<boolean>;
-  null: Generator<void>;
-  undefined: Generator<void>;
-  NaN: Generator<number>;
+```
+g.then(mappingFn)
+```
 
-  // Numbers
-  // -------
+* `mappingFn` A function which accepts a `value` from the *Generator* and
+  returns either a new value, or a new *Generator*.
 
-  /**
-   * Generates floating point numbers (including +Infinity, -Infinity, and NaN).
-   */
-  number: Generator<number>;
+#### Returns
 
-  /**
-   * Only positive numbers (0 though +Infinity), does not generate NaN.
-   */
-  posNumber: Generator<number>;
+A new *Generator*.
 
-  /**
-   * Only negative numbers (0 though -Infinity), does not generate NaN.
-   */
-  negNumber: Generator<number>;
 
-  /**
-   * Generates a floating point number within the provided (inclusive) range.
-   * Does not generate NaN or +-Infinity.
-   */
-  numberWithin: (min: number, max: number) => Generator<number>;
+### Generator#scale()
+
+Creates a new Generator which grows at a different scale.
+
+Generators start by producing very "small" values (closer to 0) at first,
+and produce larger values in later iterations of a test as a result of a
+"size" value which grows with each generation. Typically "size" grows
+linearly, but .scale() can alter a size to grow at different rates.
+
+For example, to generate "big" numbers that grow super-linearly (cubicly):
+
+```
+var bigInts = gen.int.scale(n => n * n * n)
+
+sample(bigInts)
+// [ 0, 1, 5, 0, -59, -56, -160, 261, 409, -34 ]
+```
+
+Note: When shrinking a failing test, "size" gets smaller. If the scale
+function returns a value that's not dependent on it's input, then the
+resulting Generator will not shrink.
+
+
+#### Parameters
+
+```
+g.scale(sizingFn)
+```
+
+* `sizingFn` A function which accepts a `size` number and returns a new size.
+
+#### Returns
+
+A new *Generator*.
+
+
+### Generator#neverShrink()
+
+Creates a new Generator which will never shrink.
+This is useful when shrinking is taking a long time or is not applicable.
+
+#### Returns
+
+A new *Generator*.
+
+
+### Generator#alwaysShrink()
+
+Creates a new Generator which will always consider shrinking, even if the
+property passes (up to one additional level).
+
+#### Returns
+
+A new *Generator*.
+
+
+Primitive Value Generators
+--------------------------
+
+### gen.any
+
+Generates any JS value, including Arrays and Objects (possibly nested).
+
+
+### gen.primitive
+
+Generates any primitive JS value: strings, numbers, booleans, `null`, `undefined`, or `NaN`.
+
+
+### gen.boolean
+
+Generates `true` or `false` values.
+
+
+### gen.null
+
+Generates only the value `null`.
+
+
+### gen.undefined
+
+Generates only the value `undefined`.
+
+
+### gen.NaN
+
+Generates only the value `NaN`.
+
+
+Number Generators
+-----------------
+
+### gen.number
+
+Generates floating point numbers (including `+Infinity`, `-Infinity`, and `NaN`).
+
+
+### gen.posNumber
+
+Generates only positive numbers (`0` though `+Infinity`), does not generate `NaN`.
+
+
+### gen.negNumber
+
+Generates only negative numbers (`0` though `-Infinity`), does not generate `NaN`.
+
+
+### gen.numberWithin()
+
+Generates a floating point number within the provided (inclusive) range.
+Does not generate `NaN` or `Infinity`.
+
+#### Parameters
+
+```
+gen.numberWithin(min, max)
+```
+
+* `min` The smallest possible number to generate (inclusive).
+
+* `max` The largest possible number to generate (inclusive).
+
 
   /**
    * A sized, shrinkable generator producing integers.
@@ -545,4 +603,24 @@ export const gen: {
    */
   sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
 
+}
+
+/**
+ * Options to be passed to array() or object()
+ */
+interface SizeOptions {
+  /**
+   * If provided, the exact size of the resulting collection.
+   */
+  size?: number,
+
+  /**
+   * If provided, the minimum size of the resulting collection.
+   */
+  minSize?: number,
+
+  /**
+   * If provided, the maximum size of the resulting collection.
+   */
+  maxSize?: number,
 }

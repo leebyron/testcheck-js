@@ -90,7 +90,7 @@ declare export class Generator<+T> {
   notEmpty(): Generator<T>;
 
   /**
-   * Creates a new Generator which ensures that all values Generated adhere to
+   * Creates a new Generator which ensures that all values generated adhere to
    * the given predicate function.
    *
    * For example, to create a Generator of any number except multiples of 5:
