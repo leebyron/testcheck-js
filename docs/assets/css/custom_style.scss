@@ -18,6 +18,7 @@ header nav ul li + li {
   float: inherit;
   height: auto;
   width: auto;
+  margin: 0.25em 0;
 }
 
 header nav ul li a {
@@ -25,8 +26,15 @@ header nav ul li a {
   font-size: inherit;
   height: auto;
   line-height: inherit;
-  margin: 10px 0;
   text-align: left;
+}
+
+header nav ul li.nav-H3 {
+  margin-top: 5px 0;
+}
+
+header nav ul li.nav-H3 a {
+  color: #888;
 }
 
 section h2 {
