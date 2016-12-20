@@ -7,8 +7,6 @@ toc: true
 API Documentation
 =================
 
-{:toc}
-
 check()
 -------
 
