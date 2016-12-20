@@ -273,14 +273,6 @@ We can test this example out ourselves, with the value `' '` generated for both
 fact get `2`, not `1`.
 
 
-Contribution
-------------
-
-Use [Github issues](https://github.com/leebyron/testcheck-js/issues) for requests.
-
-Pull requests actively welcomed. Learn how to [contribute](./CONTRIBUTING.md).
-
-
 License
 -------
 

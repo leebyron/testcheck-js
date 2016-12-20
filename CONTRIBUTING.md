@@ -1,4 +1,4 @@
-# Contributing to TestCheck-JS
+# Contributing to TestCheck.js
 
 We want to make contributing to this project as easy and transparent as
 possible. Hopefully this document makes the process for contributing clear and
@@ -12,7 +12,8 @@ your [pull requests](https://help.github.com/articles/creating-a-pull-request).
  1. Fork the repo and create your branch from `master`.
  2. If you've added code, add tests.
  3. If you've changed APIs, update the documentation.
- 4. Ensure all tests pass. (`npm test`)
+ 4. Ensure all dependencies are installed (you'll need `leiningen` and `node`).
+ 5. Ensure all tests pass. (`npm test`).
 
 ## `master` is unsafe
 
