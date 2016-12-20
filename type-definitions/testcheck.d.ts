@@ -256,12 +256,12 @@ export const gen: {
   number: Generator<number>;
 
   /**
-   * Only positive numbers (0 though +Infinity), does not generate NaN.
+   * Generates only positive numbers (0 though +Infinity), does not generate NaN.
    */
   posNumber: Generator<number>;
 
   /**
-   * Only negative numbers (0 though -Infinity), does not generate NaN.
+   * Generates only negative numbers (0 though -Infinity), does not generate NaN.
    */
   negNumber: Generator<number>;
 
@@ -272,27 +272,27 @@ export const gen: {
   numberWithin: (min: number, max: number) => Generator<number>;
 
   /**
-   * A sized, shrinkable generator producing integers.
+   * Generator integers (32-bit signed) including negative numbers and 0.
    */
   int: Generator<number>;
 
   /**
-   * Only positive integers (0 through +Inf)
+   * Generates only positive integers, including 0.
    */
   posInt: Generator<number>;
 
   /**
-   * Only negative integers (0 through -Inf)
+   * Generates only negative integers, including 0.
    */
   negInt: Generator<number>;
 
   /**
-   * Only strictly positive integers (1 through +Inf)
+   * Generates only strictly positive integers, not including 0.
    */
   strictPosInt: Generator<number>;
 
   /**
-   * Only strictly negative integers (1 through -Inf)
+   * Generates only strictly negative integers, not including 0.
    */
   strictNegInt: Generator<number>;
 
@@ -307,38 +307,40 @@ export const gen: {
   // -------
 
   /**
-   * Generates strings. Note: strings of arbitrary characters may result in
-   * Unicode characters and non-printable characters.
+   * Generates strings of arbitrary characters.
+   *
+   * Note: strings of arbitrary characters may result in higher-plane Unicode
+   * characters and non-printable characters.
    */
   string: Generator<string>;
 
   /**
-   * Generates strings of printable Ascii characters.
+   * Generates strings of printable ascii characters.
    */
   asciiString: Generator<string>;
 
   /**
-   * Generates strings of [a-zA-Z0-9]*
+   * Generates strings of only alpha-numeric characters: a-z, A-Z, 0-9.
    */
   alphaNumString: Generator<string>;
 
   /**
-   * Generates substrings of the original string, including the empty string.
+   * Generates substrings of an original string (including the empty string).
    */
   substring: (original: string) => Generator<string>;
 
   /**
-   * Generates ascii characters (code 0 through 255).
+   * Generates arbitrary 1-byte characters (code 0 through 255).
    */
   char: Generator<string>;
 
   /**
-   * Generates printable ascii characters (code 32 through 126).
+   * Generates only printable ascii characters (code 32 through 126).
    */
   asciiChar: Generator<string>;
 
   /**
-   * Generates ascii characters matching /a-zA-Z0-9/
+   * Generates only alpha-numeric characters: a-z, A-Z, 0-9.
    */
   alphaNumChar: Generator<string>;
 

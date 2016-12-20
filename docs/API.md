@@ -362,6 +362,8 @@ Generates only negative numbers (`0` though `-Infinity`), does not generate `NaN
 Generates a floating point number within the provided (inclusive) range.
 Does not generate `NaN` or `Infinity`.
 
+Note: The resulting *Generator* is not shrinkable.
+
 **Parameters**
 
 ```
@@ -373,80 +375,136 @@ gen.numberWithin(min, max)
 * `max` The largest possible number to generate (inclusive).
 
 
-  /**
-   * A sized, shrinkable generator producing integers.
-   */
-  int: Generator<number>;
+### gen.int
 
-  /**
-   * Only positive integers (0 through +Inf)
-   */
-  posInt: Generator<number>;
-
-  /**
-   * Only negative integers (0 through -Inf)
-   */
-  negInt: Generator<number>;
-
-  /**
-   * Only strictly positive integers (1 through +Inf)
-   */
-  strictPosInt: Generator<number>;
-
-  /**
-   * Only strictly negative integers (1 through -Inf)
-   */
-  strictNegInt: Generator<number>;
-
-  /**
-   * Generates an integer within the provided (inclusive) range.
-   * The resulting Generator is not shrinkable.
-   */
-  intWithin: (min: number, max: number) => Generator<number>;
+Generator integers (32-bit signed) including negative numbers and `0`.
 
 
-  // Strings
-  // -------
+### gen.posInt
 
-  /**
-   * Generates strings. Note: strings of arbitrary characters may result in
-   * Unicode characters and non-printable characters.
-   */
-  string: Generator<string>;
-
-  /**
-   * Generates strings of printable Ascii characters.
-   */
-  asciiString: Generator<string>;
-
-  /**
-   * Generates strings of [a-zA-Z0-9]*
-   */
-  alphaNumString: Generator<string>;
-
-  /**
-   * Generates substrings of the original string, including the empty string.
-   */
-  substring: (original: string) => Generator<string>;
-
-  /**
-   * Generates ascii characters (code 0 through 255).
-   */
-  char: Generator<string>;
-
-  /**
-   * Generates printable ascii characters (code 32 through 126).
-   */
-  asciiChar: Generator<string>;
-
-  /**
-   * Generates ascii characters matching /a-zA-Z0-9/
-   */
-  alphaNumChar: Generator<string>;
+Generates only positive integers, including 0.
 
 
-  // Collections: Arrays and Objects
-  // -------------------------------
+### gen.negInt
+
+Generates only negative integers, including 0.
+
+
+### gen.strictPosInt
+
+Generates only strictly positive integers, not including 0.
+
+
+### gen.strictNegInt
+
+Generates only strictly negative integers, not including 0.
+
+
+### gen.intWithin()
+
+Generates an integer within the provided (inclusive) range.
+
+Note: The resulting *Generator* is not shrinkable.
+
+**Parameters**
+
+```
+gen.intWithin(min, max)
+```
+
+* `min` The smallest possible integer to generate (inclusive).
+
+* `max` The largest possible integer to generate (inclusive).
+
+
+Strings
+-------
+
+
+### gen.string
+
+Generates strings of arbitrary characters.
+
+```js
+sample(gen.string)
+// [ '', 'c', '¸Ã', 'uq', 'd.', '', 'FÏs', 'Ú\u0019oÞ', 'Ô', 'ßÞ' ]
+```
+
+Note: strings of arbitrary characters may result in higher-plane Unicode
+characters and non-printable characters.
+
+
+### gen.asciiString
+
+Generates strings of printable ascii characters.
+
+```js
+sample(gen.asciiString)
+// [ '', 'j', ':o', 'EM5', 'I]', '', 'GCeTvG', '\'\\zB+', '8gc7y', 'g3Ei' ]
+```
+
+
+### gen.alphaNumString
+
+Generates strings of only alpha-numeric characters: a-z, A-Z, 0-9.
+
+```js
+sample(gen.alphaNumString)
+// [ '', 'N', 'T', 's9', 'wm', 'eT', '9', 'lNu', 'h', '81EvZX' ]
+```
+
+
+### gen.substring()
+
+Generates substrings of an original string (including the empty string).
+
+```js
+sample(gen.substring('abracadabra'))
+// [ 'ac', 'r', 'abra', 'braca', 'a', 'ad', 'b', 'r', '', 'abra' ]
+```
+
+**Parameters**
+
+```
+gen.substring(original)
+```
+
+* `original` The original string from which to generate substrings.
+
+
+
+### gen.char
+
+Generates arbitrary 1-byte characters (code 0 through 255).
+
+```js
+sample(gen.char)
+// [ 'ã', '}', '£', 'O', '\u000b', '±', '\n', '\u0007', 'ÿ', 'b' ]
+```
+
+
+### gen.asciiChar
+
+Generates only printable ascii characters (code 32 through 126).
+
+```js
+sample(gen.asciiChar)
+// [ 'q', '-', '8', 'I', 'O', ';', 'A', 'm', '3', '9' ]
+```
+
+
+### gen.alphaNumChar
+
+Generates only alpha-numeric characters: a-z, A-Z, 0-9.
+
+```js
+sample(gen.alphaNumChar)
+// [ 'x', '8', 'T', '9', '5', 'w', 'U', 'a', 'J', 'f' ]
+```
+
+
+Collections: Arrays and Objects
+-------------------------------
 
   /**
    * Generates Arrays of values. There are a few forms `gen.array` can be used:
