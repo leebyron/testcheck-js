@@ -72,3 +72,9 @@ section h3 {
   padding-top: 68px;
   margin-top: -38px;
 }
+
+@media print, screen and (max-width: 960px) {
+  section {
+    width: auto;
+  }
+}
