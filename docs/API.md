@@ -338,8 +338,8 @@ sample(gen.alphaNumChar)
 ```
 
 
-Collections: Arrays and Objects
--------------------------------
+Collection Generators
+---------------------
 
 ### gen.array()
 
@@ -518,66 +518,130 @@ gen.nested(collectionGenFn, valueGen)
 JSON Generators
 ---------------
 
-  /**
-   * Generates JSON objects where each key is a JSON value.
-   */
-  JSON: Generator<{[key: string]: any}>;
+### gen.JSON
 
-  /**
-   * Generates JSON values: primitives, or (possibly nested) arrays or objects.
-   */
-  JSONValue: Generator<any>;
-
-  /**
-   * Generates JSON primitives: strings, numbers, booleans and null.
-   */
-  JSONPrimitive: Generator<any>;
+Generates JSON Objects where each key is a JSON value.
 
 
-  // Generator Creators
-  // ------------------
+### gen.JSONValue
 
-  /**
-   * Creates a Generator which will generate values from one of the
-   * provided generators.
-   *
-   *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
-   *
-   */
-  oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
-
-  /**
-   * Similar to `oneOf`, except provides probablistic "weights" to
-   * each generator.
-   *
-   *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
-   */
-  oneOfWeighted: <T>(
-    generators: Array<[ number, Generator<T> | T ]>
-  ) => Generator<T>;
-
-  /**
-   * Creates a Generator which will always generate the provided value.
-   *
-   *     var alwaysBlue = gen.return('blue');
-   *
-   */
-  return: <T>(value: T) => Generator<T>;
-
-  /**
-   * Creates a Generator that relies on a size. Size allows for the "shrinking"
-   * of Generators. Larger "size" should result in a larger generated value.
-   *
-   * For example, `gen.int` is shrinkable because it is implemented as:
-   *
-   *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
-   *
-   */
-  sized: <T>(sizedGenFn: (size: number) => Generator<T>) => Generator<T>;
-
-}
+Generates JSON values: primitives, or (possibly nested) arrays or objects.
 
 
+### gen.JSONPrimitive
+
+Generates JSON primitives: strings, numbers, booleans and `null`.
+
+
+Generator Creators
+------------------
+
+### gen.oneOf()
+
+Creates a *Generator* which will generate one of the provided values or values
+from one of the provided *Generator*s.
+
+```js
+const numOrBool = gen.oneOf([ gen.int, gen.boolean ])
+
+sample(numOrBool)
+// [ false, true, 0, -3, -2, false, -3, false, 6, 8 ]
+```
+
+In addition to *Generators*, you can also provide normal values to `gen.oneOf()`,
+for example, picking one value from an Array of values:
+
+```js
+const colors = [ 'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Indigo', 'Violet' ]
+const genColors = gen.oneOf(colors)
+
+sample(genColors, 5)
+// [ 'Red', 'Blue', 'Blue', 'Violet', 'Red' ]
+```
+
+**Parameters**
+
+```
+gen.oneOf(arrayOfGens)
+```
+
+* `arrayOfGens`: An Array which contains either a *Generator* or value at each index.
+
+
+### gen.oneOfWeighted()
+
+Similar to `gen.oneOf()`, except provides probablistic "weights" to each generator.
+
+```js
+const numOrRarelyBool = gen.oneOfWeighted([[10, gen.int], [1, gen.boolean]])
+
+sample(numOrRarelyBool)
+// [ 0, 0, false, -1, 0, -3, -4, -7, 4, -4 ]
+```
+
+**Parameters**
+
+```
+gen.oneOfWeighted(arrayOfWeightsAndGens)
+```
+
+* `arrayOfWeightsAndGens`: An Array of "tuples" (two-sized Arrays):
+
+  * `[ weight, valueGen ]`
+
+    * `weight`: A number to determine how frequent this selection is relative
+      to other selections.
+
+    * `valueGen`: A *Generator* or value to use should this selection be chosen.
+
+
+### gen.return()
+
+Creates a *Generator* which will always generate the provided value.
+
+This is used very rarely since almost everywhere a *Generator* can be accepted,
+a regular value can be accepted as well, which implicitly is converted to a
+*Generator* using `gen.return()`. However you may wish to use `gen.return()`
+directly to either be explicit, or resolve an ambiguity.
+
+```js
+const alwaysBlue = gen.return('blue');
+
+sample(alwaysBlue)
+[ 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue' ]
+```
+
+**Parameters**
+
+```
+gen.return(value)
+```
+
+* `value`: The value to always generate.
+
+
+### gen.sized()
+
+Creates a *Generator* that relies on a `size`. Size allows for the "shrinking"
+of *Generators*. A larger "size" should result in a larger generated value.
+
+Typically `gen.sized()` is not used directly in a test, but may be used when
+building custom *Generator*s. Many of the *Generator*s in this library are built
+with `gen.sized()`.
+
+For example, `gen.int` is shrinkable because it is implemented as:
+
+```
+gen.int = gen.sized(size => gen.intWithin(-size, size))
+```
+
+**Parameters**
+
+```
+gen.sized(genFn)
+```
+
+* `genFn`: A Function which accepts a `size` and returns a *Generator*.
 
 
 *Generator*
@@ -585,8 +649,8 @@ JSON Generators
 
 A *Generator* object produces values of a particular kind. *Generator*s cannot
 be constructed directly, but instead are obtained by one of the `gen` values
-or functions, or as the result of calling one of the prototype methods of another
-*Generator* object.
+or functions described above, or as the result of calling one of the prototype
+methods of another *Generator* object.
 
 ```js
 // A generator of integers

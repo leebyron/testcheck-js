@@ -477,10 +477,10 @@ export const gen: {
   oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
 
   /**
-   * Similar to `oneOf`, except provides probablistic "weights" to
+   * Similar to `gen.oneOf()`, except provides probablistic "weights" to
    * each generator.
    *
-   *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
+   *     var numOrRarelyBool = gen.oneOfWeighted([[99, gen.int], [1, gen.boolean]])
    */
   oneOfWeighted: <T>(
     generators: Array<[ number, Generator<T> | T ]>
