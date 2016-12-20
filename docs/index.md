@@ -12,13 +12,20 @@ randomly generated cases. In the case of a test failure, the smallest possible
 failing test case is found.
 
 
+
 Getting started
 ---------------
 
-Install `testcheck` using npm
+Install `testcheck` using yarn
 
 ```sh
-npm install testcheck
+yarn add --dev testcheck
+```
+
+Or using npm
+
+```sh
+npm install --save-dev testcheck
 ```
 
 Then require it into your testing environment and start testing.
@@ -34,12 +41,6 @@ const result = check(
 )
 ```
 
-### Type definitions
-
-This module includes type definitions for [Flow type](http://flowtype.org/) and
-[Typescript](https://www.typescriptlang.org/). Simply require or import this
-module and enjoy type suggestions and corrections.
-
 ### Use Jasmine or Mocha?
 
 `TestCheck.js` is a testing utility and not a complete test-running software. It
@@ -52,6 +53,13 @@ Jasmine plugin.
 If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
 [`mocha-check`](https://github.com/leebyron/mocha-check/), a testcheck
 Mocha plugin.
+
+### Type definitions
+
+This module includes type definitions for [Flow type](http://flowtype.org/) and
+[Typescript](https://www.typescriptlang.org/). Simply require or import this
+module and enjoy type suggestions and corrections.
+
 
 
 Using TestCheck.js
@@ -273,14 +281,15 @@ We can test this example out ourselves, with the value `' '` generated for both
 fact get `2`, not `1`.
 
 
+
 License
 -------
 
-Copyright Lee Byron
+Copyright 2014-2016 Lee Byron
 
 TestCheck.js is distributed under the BSD-3-Clause license.
 
-### Atop the shoulders of giants
+#### Atop the shoulders of giants
 
 `TestCheck.js` is based on Clojure's [test.check](https://github.com/clojure/test.check)
 which is inspired by Haskell's [QuickCheck](https://hackage.haskell.org/package/QuickCheck). Many gracious thanks goes to all of the brilliance and hard work enabling this project to exist.

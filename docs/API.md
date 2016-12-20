@@ -24,6 +24,7 @@ const { check, property, sample, gen, Generator } = require('testcheck')
 * `Generator`: The class which all *Generator*s are instances of.
 
 
+
 Running Tests
 -------------
 
@@ -141,6 +142,7 @@ By default 10 samples are provided unless otherwise specified.
 An *Array* of values from `generator`.
 
 
+
 Primitive Value Generators
 --------------------------
 
@@ -172,6 +174,7 @@ Generates only the value `undefined`.
 ### gen.NaN
 
 Generates only the value `NaN`.
+
 
 
 Number Generators
@@ -250,6 +253,7 @@ gen.intWithin(min, max)
 * `min` The smallest possible integer to generate (inclusive).
 
 * `max` The largest possible integer to generate (inclusive).
+
 
 
 String Generators
@@ -336,6 +340,7 @@ Generates only alpha-numeric characters: a-z, A-Z, 0-9.
 sample(gen.alphaNumChar)
 // [ 'x', '8', 'T', '9', '5', 'w', 'U', 'a', 'J', 'f' ]
 ```
+
 
 
 Collection Generators
@@ -515,6 +520,7 @@ gen.nested(collectionGenFn, valueGen)
 * `valueGen`: A *Generator* which will produce the values within the resulting collections.
 
 
+
 JSON Generators
 ---------------
 
@@ -531,6 +537,7 @@ Generates JSON values: primitives, or (possibly nested) arrays or objects.
 ### gen.JSONPrimitive
 
 Generates JSON primitives: strings, numbers, booleans and `null`.
+
 
 
 Generator Creators
@@ -642,6 +649,7 @@ gen.sized(genFn)
 ```
 
 * `genFn`: A Function which accepts a `size` and returns a *Generator*.
+
 
 
 *Generator*
