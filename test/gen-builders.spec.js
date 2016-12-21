@@ -25,10 +25,6 @@ describe('gen builders', () => {
           return 'Expected ' + JSON.stringify(failedValue) + ' to pass ' + predicate
         }
         return pass
-      },
-      toBeApprx: function(value, epsilon) {
-        epsilon = epsilon || (value / 10)
-        return Math.abs(this.actual - value) < epsilon
       }
     })
   })
@@ -86,29 +82,28 @@ describe('gen builders', () => {
   })
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = sample(gen.oneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), 10000)
-    expect(vals.length).toBe(10000)
+    const vals = sample(gen.oneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), 1000)
+    expect(vals.length).toBe(1000)
     expect(vals).toAllPass(function (value) {
       return value === 'foo' || value === 'bar' || value === 'baz'
     })
-    const fooCount = vals.reduce(function (count, val) { return count + (val === 'foo'); }, 0)
-    const barCount = vals.reduce(function (count, val) { return count + (val === 'bar'); }, 0)
-    const bazCount = vals.reduce(function (count, val) { return count + (val === 'baz'); }, 0)
-    expect(fooCount / barCount).toBeApprx(2)
-    expect(bazCount / barCount).toBeApprx(6)
-    expect(bazCount / fooCount).toBeApprx(3)
+    const fooCount = vals.reduce((count, val) => count + (val === 'foo'), 0)
+    const barCount = vals.reduce((count, val) => count + (val === 'bar'), 0)
+    const bazCount = vals.reduce((count, val) => count + (val === 'baz'), 0)
+    expect(fooCount).toBeGreaterThan(barCount)
+    expect(bazCount).toBeGreaterThan(fooCount)
   })
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = sample(gen.oneOfWeighted([[2, gen.int], [1, gen.boolean]]), 10000)
-    expect(vals.length).toBe(10000)
+    const vals = sample(gen.oneOfWeighted([[2, gen.int], [1, gen.boolean]]), 1000)
+    expect(vals.length).toBe(1000)
     expect(vals).toAllPass(function (value) {
       const type = typeof value
       return type === 'number' || type === 'boolean'
     })
-    const intCount = vals.reduce(function (count, val) { return count + (typeof val === 'number'); }, 0)
-    const boolCount = vals.reduce(function (count, val) { return count + (typeof val === 'boolean'); }, 0)
-    expect(intCount / boolCount).toBeApprx(2)
+    const intCount = vals.reduce((count, val) => count + (typeof val === 'number'), 0)
+    const boolCount = vals.reduce((count, val) => count + (typeof val === 'boolean'), 0)
+    expect(intCount).toBeGreaterThan(boolCount)
   })
 
   it('.then() maps a generator value', () => {
