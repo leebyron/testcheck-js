@@ -1,5 +1,4 @@
 var testcheck = require('testcheck');
-var util = require('util');
 
 function install(globalObj) {
   globalObj = globalObj || global || window;
@@ -29,36 +28,30 @@ function check(options, argGens, propertyFn) {
   }
 
   // Return test function which runs testcheck and throws if it fails.
-  return function() {
-    // Intercept match results
-    var lastError;
-
+  return function () {
     // Build property
-    var thisArg = this;
-    var property = testcheck.property(argGens, function() {
-      try {
-        propertyFn.apply(thisArg, arguments);
-      } catch (error) {
-        lastError = error;
-        return false;
-      }
-      return true;
-    });
+    var property = testcheck.property(argGens, propertyFn.bind(this));
 
     // Run testcheck
     var checkResult = testcheck.check(property, options);
 
     // Report results
-    if (checkResult.result === false) {
-      lastError.check = checkResult;
-      lastError.message += ' ' + printValues(checkResult.shrunk.smallest);
-      throw lastError;
+    if (checkResult.fail) {
+      var shrunk = checkResult.shrunk;
+      var args = shrunk ? shrunk.smallest : checkResult.fail;
+      var result = shrunk ? shrunk.result : checkResult.result;
+
+      if (result instanceof Error) {
+        result.message += ' ' + printValues(args);
+        throw result
+      }
+      throw new Error('Failed with arguments: ' + printValues(args));
     }
   }
 }
 
 function printValues(values) {
-  return util.inspect(values, { depth: null, colors: true });
+  return require('util').inspect(values, { depth: null, colors: true });
 }
 
 exports.install = install;

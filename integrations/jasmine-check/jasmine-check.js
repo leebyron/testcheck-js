@@ -89,7 +89,7 @@ function checkIt(it) {
 
       // Run testcheck
       var checkResult = testcheck.check(property, options);
-      if (checkResult.result !== true) {
+      if (checkResult.fail) {
         var failingValues = printValues(checkResult.shrunk.smallest);
         spec.description += failingValues;
         if (spec.results) {
