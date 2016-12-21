@@ -47,11 +47,11 @@ const result = check(
 doesn't replace test frameworks like Jasmine or Mocha.
 
 If you use [Jasmine](http://jasmine.github.io/) then check out
-[`jasmine-check`](https://github.com/leebyron/jasmine-check/), a testcheck
+[`jasmine-check`](https://github.com/leebyron/testcheck-js/tree/master/integrations/jasmine-check), a testcheck
 Jasmine plugin.
 
 If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
-[`mocha-check`](https://github.com/leebyron/mocha-check/), a testcheck
+[`mocha-check`](https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-check), a testcheck
 Mocha plugin.
 
 ### Type definitions

@@ -2,7 +2,7 @@
   "name": "testcheck",
   "version": "0.1.4",
   "description": "Property testing for JavaScript",
-  "homepage": "https://github.com/leebyron/testcheck-js",
+  "homepage": "http://leebyron.com/testcheck-js",
   "license": "BSD-3-Clause",
   "author": {
     "name": "Lee Byron",

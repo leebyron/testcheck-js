@@ -2,17 +2,18 @@
   "name": "jasmine-check",
   "version": "0.1.5",
   "description": "Generative property tests for Jasmine",
-  "homepage": "https://github.com/leebyron/jasmine-check",
+  "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/jasmine-check",
+  "license": "BSD-3-Clause",
   "author": {
     "name": "Lee Byron",
     "url": "https://github.com/leebyron"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/leebyron/jasmine-check"
+    "url": "git://github.com/leebyron/testcheck-js"
   },
   "bugs": {
-    "url": "https://github.com/leebyron/jasmine-check/issues"
+    "url": "https://github.com/leebyron/testcheck-js/issues"
   },
   "main": "jasmine-check.js",
   "dependencies": {
@@ -36,6 +37,5 @@
   ],
   "scripts": {
     "test": "jasmine-node test"
-  },
-  "license": "BSD"
+  }
 }
