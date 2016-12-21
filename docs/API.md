@@ -35,7 +35,6 @@ Running Tests
 
 Given a property to check, return the result of the check.
 
-A "property" is a Generator of booleans which should always generate true.
 If the property generates a false value, check will shrink the generator
 and return a Result which includes the `shrunk` key.
 
@@ -52,12 +51,11 @@ check(property(gen.int, n => n - n === 0), { numTests: 1000 })
 check(property[, options])
 ```
 
-* `property`: A *Generator* which generates a `boolean`, typically created via
-  the `property()` function.
+* `property`: A *Property* created via the `property()` function.
 
 * `options`: An optional Object of options with the properties:
 
-  * `times`: Number of times to check the property. Default: `100`
+  * `numTests`: Number of times to check the property. Default: `100`
 
   * `maxSize`: The maximum "size" to provide to generators. Default: `200`
 
@@ -67,7 +65,7 @@ check(property[, options])
 
 An Object with the properties:
 
-  * `result`: `true` if the check passed, otherwise `false`.
+  * `result`: `true` if the check passed, otherwise `false` or any *Error* thrown.
 
   * `numTests`: The number of times the `property` was tested with generated values.
 
@@ -83,7 +81,7 @@ An Object with the properties:
 
     * `smallest`: The smallest arguments with this result.
 
-    * `result`: `true` if the check passed, otherwise `false`.
+    * `result`: `true` if the check passed, otherwise `false` or any *Error* thrown.
 
     * `depth`: The depth of the shrunk result.
 
@@ -92,15 +90,31 @@ An Object with the properties:
 
 ### property()
 
-Creates a "property" as needed by `check()`.
+Creates a *Property* as needed by `check()`.
 
 Accepts any number of value generators, the results of which become the
 arguments of the property function. The property function should return
-true if the property is upheld, or false if it fails.
+`true` if the property is upheld, or `false` if it fails.
 
 ```js
 const numGoUp = property(gen.int, gen.posInt, (a, b) => a + b > a);
 check(numGoUp);
+```
+
+Property functions may also throw an *Error* when a property fails, which is
+helpful for testing code that uses assertions or testing with checking libraries
+such as [chai](http://chaijs.com/).
+
+```js
+const { expect } = require('chai')
+
+const allIntsArePositive = property(gen.int, num => {
+  expect(num).to.be.at.least(0);
+})
+
+const test = check(allIntsArePositive)
+console.log(test.shrunk.result)
+// AssertionError: expected -1 to be at least 0
 ```
 
 **Parameters**
@@ -115,7 +129,7 @@ property(gen[, gen2[, ...genN]], propertyFn)
 
 **Returns**
 
-A *Generator* of boolean values.
+A *Property* to be used by `check()`.
 
 
 ### sample()

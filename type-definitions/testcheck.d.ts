@@ -101,9 +101,14 @@ export class Generator<T> {
 
 
 /**
+ * Properties created by property()
+ */
+interface Property<TArgs> {}
+
+
+/**
  * Given a property to check, return the result of the check.
  *
- * A "property" is a Generator of booleans which should always generate true.
  * If the property generates a false value, check will shrink the generator
  * and return a Result which includes the `shrunk` key.
  *
@@ -112,7 +117,7 @@ export class Generator<T> {
  *     {numTests: 100, maxSize: 200, seed: <Random>}
  *
  */
-export function check(property: Generator<boolean>, options?: {
+export function check<TArgs>(property: Property<TArgs>, options?: {
 
   // Number of times to run `check`.
   numTests?: number,
@@ -124,8 +129,8 @@ export function check(property: Generator<boolean>, options?: {
   seed?: number,
 }): {
 
-  // True if the check passed.
-  result: boolean,
+  // True if the check passed, otherwise false or a thrown Error.
+  result: boolean | Error,
 
   // The number of generated checks ran.
   numTests: number,
@@ -134,7 +139,7 @@ export function check(property: Generator<boolean>, options?: {
   seed?: number,
 
   // The arguments generated when and if this check failed.
-  fail?: Array<any>,
+  fail?: TArgs,
 
   // The size used when and if this check failed
   failingSize?: number,
@@ -144,11 +149,11 @@ export function check(property: Generator<boolean>, options?: {
    * value that fails.
    */
   shrunk?: {
-    // True if the check passed, otherwise false.
-    result: boolean,
+    // True if the check passed, otherwise false or a thrown Error.
+    result: boolean | Error,
 
     // The smallest arguments with this result.
-    smallest: Array<any>,
+    smallest: TArgs,
 
     // The depth of the shrunk result.
     depth: number,
@@ -157,6 +162,7 @@ export function check(property: Generator<boolean>, options?: {
     totalNodesVisited: number,
   }
 };
+
 
 /**
  * Creates a "property" as needed by `check`.
@@ -171,34 +177,34 @@ export function check(property: Generator<boolean>, options?: {
  */
 export function property<A>(
   genA: Generator<A>,
-  f: (a: A) => boolean
-): Generator<boolean>;
+  f: (a: A) => boolean | void
+): Property<[A]>;
 export function property<A,B>(
   genA: Generator<A>,
   genB: Generator<B>,
-  f: (a: A, b: B) => boolean
-): Generator<boolean>;
+  f: (a: A, b: B) => boolean | void
+): Property<[A, B]>;
 export function property<A,B,C>(
   genA: Generator<A>,
   genB: Generator<B>,
   genC: Generator<C>,
-  f: (a: A, b: B, c: C) => boolean
-): Generator<boolean>;
+  f: (a: A, b: B, c: C) => boolean | void
+): Property<[A, B, C]>;
 export function property<A,B,C,D>(
   genA: Generator<A>,
   genB: Generator<B>,
   genC: Generator<C>,
   genD: Generator<D>,
-  f: (a: A, b: B, c: C, d: D) => boolean
-): Generator<boolean>;
+  f: (a: A, b: B, c: C, d: D) => boolean | void
+): Property<[A, B, C, D]>;
 export function property<A,B,C,D,E>(
   genA: Generator<A>,
   genB: Generator<B>,
   genC: Generator<C>,
   genD: Generator<D>,
   genE: Generator<E>,
-  f: (a: A, b: B, c: C, d: D, e: E) => boolean
-): Generator<boolean>;
+  f: (a: A, b: B, c: C, d: D, e: E) => boolean | void
+): Property<[A, B, C, D, E]>;
 
 /**
  * Handy tool for checking the output of your generators. Given a generator,

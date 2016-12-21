@@ -65,10 +65,19 @@
                             resultRenamed)]
     (clj->js resultRenamedDeep))))
 
+; For properties that only use assertions, forgetting to "return true" results
+; in failing tests, if a function results in the value "undefined", then
+; consider it a passing result.
+(defn undefined-passes
+  [f]
+  (fn []
+    (let [result (.apply f nil (js-arguments))]
+      (if (identical? js/undefined result) true result))))
+
 (defexport property (fn
   []
   (let [gen-len (- (alength (js-arguments)) 1)
-        gen-fn (aget (js-arguments) gen-len)]
+        gen-fn (undefined-passes (aget (js-arguments) gen-len))]
     (if (and (identical? 1 gen-len) (array? (aget (js-arguments) 0)))
       (prop/for-all* (map ->gen (aget (js-arguments) 0)) gen-fn)
       (let [gens (array)]
