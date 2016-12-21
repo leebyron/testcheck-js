@@ -1,5 +1,4 @@
 var testcheck = require('testcheck');
-var util = require('util');
 var jasmine;
 var isJasmineV1;
 
@@ -25,8 +24,6 @@ function install(globalObj) {
   globalObj.gen = testcheck.gen;
   globalObj.check = check;
 }
-
-var jasmine, jasmineEnv;
 
 function checkIt(it) {
   return function(specName, options, argGens, propertyFn) {
@@ -93,7 +90,7 @@ function checkIt(it) {
       // Run testcheck
       var checkResult = testcheck.check(property, options);
       if (checkResult.result === false) {
-        var failingValues = ' ' + printValues(checkResult.shrunk.smallest);
+        var failingValues = printValues(checkResult.shrunk.smallest);
         spec.description += failingValues
         if (spec.results) {
           spec.results().description += failingValues;
@@ -131,7 +128,7 @@ function logException(e) {
 }
 
 function printValues(values) {
-  return util.inspect(values, { depth: null, colors: true });
+  return require('util').inspect(values, { depth: null, colors: true });
 }
 
 exports.install = install;
