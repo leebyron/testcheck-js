@@ -20,7 +20,7 @@ describe('check', () => {
         calls++
         return intValue >= 0
       }
-    ), { times: 100, seed: seedVal })
+    ), { numTests: 100, seed: seedVal })
 
     expect(calls).toBe(100)
     expect(result.result).toBe(true)
@@ -40,7 +40,7 @@ describe('check', () => {
         calls++
         return intValue >= 0 && intValue < 42
       }
-    ), { times: 100, seed: seedVal })
+    ), { numTests: 100, seed: seedVal })
 
     expect(calls).toBeLessThan(100)
     const shrunk = result.shrunk
@@ -64,10 +64,19 @@ describe('check', () => {
         calls++
         return intValue >= 0 && typeof string === 'string'
       }
-    ), { times: 100 })
+    ))
 
     expect(calls).toBe(100)
     expect(result.result).toBe(true)
+    expect(result.numTests).toBe(100)
+  })
+
+  it('accepts deprecated options', () => {
+    let calls = 0
+
+    // $ExpectError
+    const result = check(property(gen.int, () => true), { times: 100 })
+
     expect(result.numTests).toBe(100)
   })
 

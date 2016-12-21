@@ -51,7 +51,7 @@
 (defexport check (fn
   [property options]
   (let [opt (or options (js-obj))
-        num-tests (or (aget opt "times") 100)
+        num-tests (or (aget opt "numTests") (aget opt "times") 100)
         max-size (or (aget opt "maxSize") 200)
         seed (aget opt "seed")
         result (tc/quick-check num-tests property :max-size max-size :seed seed)

@@ -140,7 +140,7 @@ const result = check(
     // the property function to test
     x => x - x === 0
   ),
-  { times: 1000 }
+  { numTests: 1000 }
 )
 ```
 

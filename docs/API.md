@@ -42,7 +42,7 @@ and return a Result which includes the `shrunk` key.
 ```js
 const { check, property, gen } = require('testcheck')
 
-check(property(gen.int, n => n - n === 0), { times: 1000 })
+check(property(gen.int, n => n - n === 0), { numTests: 1000 })
 // { result: true, seed: 1482203464997, numTests: 1000 }
 ```
 

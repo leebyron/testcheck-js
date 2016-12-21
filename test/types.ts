@@ -97,7 +97,7 @@ check(
     string => string + string === 'abcabc'
   ),
   // Ok to provide options to check
-  { times: 1000 }
+  { numTests: 1000 }
 )
 
 // Test: Options Typo

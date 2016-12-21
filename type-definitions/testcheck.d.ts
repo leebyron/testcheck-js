@@ -109,13 +109,13 @@ export class Generator<T> {
  *
  * If no options are provided, they default to:
  *
- *     {times: 100, maxSize: 200, seed: <Random>}
+ *     {numTests: 100, maxSize: 200, seed: <Random>}
  *
  */
 export function check(property: Generator<boolean>, options?: {
 
   // Number of times to run `check`.
-  times?: number,
+  numTests?: number,
 
   // The maximum "size" to provide to sized generators. Default: 200
   maxSize?: number,
