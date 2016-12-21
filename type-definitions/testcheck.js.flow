@@ -117,10 +117,17 @@ declare export class Generator<+T> {
   @@iterator(): Iterator<T>;
 };
 
+
+/**
+ * Properties created by property()
+ */
+declare class testcheck$Property<+TArgs> {};
+type Property<TArgs> = Class<testcheck$Property<TArgs>>;
+
+
 /**
  * Given a property to check, return the result of the check.
  *
- * A "property" is a Generator of booleans which should always generate true.
  * If the property generates a false value, check will shrink the generator
  * and return a Result which includes the `shrunk` key.
  *
@@ -129,7 +136,7 @@ declare export class Generator<+T> {
  *     {numTests: 100, maxSize: 200, seed: <Random>}
  *
  */
-declare export function check(prop: Generator<boolean>, options?: {|
+declare export function check<TArgs>(prop: Property<TArgs>, options?: {|
 
   // Number of times to run `check`.
   numTests?: number,
@@ -141,7 +148,7 @@ declare export function check(prop: Generator<boolean>, options?: {|
   seed?: number,
 |}): {|
 
-  // True if the check passed.
+  // True if the check passed, otherwise false or a thrown Error.
   result: boolean,
 
   // The number of generated checks ran.
@@ -151,7 +158,7 @@ declare export function check(prop: Generator<boolean>, options?: {|
   seed?: number,
 
   // The arguments generated when and if this check failed.
-  fail?: Array<any>,
+  fail?: TArgs,
 
   // The size used when and if this check failed
   failingSize?: number,
@@ -161,11 +168,11 @@ declare export function check(prop: Generator<boolean>, options?: {|
    * value that fails.
    */
   shrunk?: {|
-    // True if the check passed, otherwise false.
+    // True if the check passed, otherwise false or a thrown Error.
     result: boolean,
 
     // The smallest arguments with this result.
-    smallest: Array<any>,
+    smallest: TArgs,
 
     // The depth of the shrunk result.
     depth: number,
@@ -189,34 +196,34 @@ declare export function check(prop: Generator<boolean>, options?: {|
 declare export var property: {
   <A>(
     genA: Generator<A>,
-    f: (a: A) => boolean
-  ): Generator<boolean>;
+    f: (a: A) => boolean | void
+  ): Property<[A]>;
   <A,B>(
     genA: Generator<A>,
     genB: Generator<B>,
-    f: (a: A, b: B) => boolean
-  ): Generator<boolean>;
+    f: (a: A, b: B) => boolean | void
+  ): Property<[A, B]>;
   <A,B,C>(
     genA: Generator<A>,
     genB: Generator<B>,
     genC: Generator<C>,
-    f: (a: A, b: B, c: C) => boolean
-  ): Generator<boolean>;
+    f: (a: A, b: B, c: C) => boolean | void
+  ): Property<[A, B, C]>;
   <A,B,C,D>(
     genA: Generator<A>,
     genB: Generator<B>,
     genC: Generator<C>,
     genD: Generator<D>,
-    f: (a: A, b: B, c: C, d: D) => boolean
-  ): Generator<boolean>;
+    f: (a: A, b: B, c: C, d: D) => boolean | void
+  ): Property<[A, B, C, D]>;
   <A,B,C,D,E>(
     genA: Generator<A>,
     genB: Generator<B>,
     genC: Generator<C>,
     genD: Generator<D>,
     genE: Generator<E>,
-    f: (a: A, b: B, c: C, d: D, e: E) => boolean
-  ): Generator<boolean>;
+    f: (a: A, b: B, c: C, d: D, e: E) => boolean | void
+  ): Property<[A, B, C, D, E]>;
 };
 
 /**

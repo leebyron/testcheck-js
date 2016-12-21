@@ -67,8 +67,44 @@ describe('check', () => {
     ))
 
     expect(calls).toBe(100)
+    expect(result.fail).toBe(undefined)
     expect(result.result).toBe(true)
     expect(result.numTests).toBe(100)
+  })
+
+  it('tests properties that throw', () => {
+    const result = check(property(
+      gen.int,
+      function (intValue) {
+        if (intValue < -10) {
+          throw new Error('Expected ' + intValue + ' to be at least -10')
+        }
+      }
+    ))
+
+    expect(result.shrunk).toEqual(jasmine.any(Object))
+    expect(result.fail).toEqual(jasmine.any(Array))
+    expect(result.result instanceof Error).toBe(true)
+
+    const shrunk = result.shrunk
+    if (shrunk && shrunk.result instanceof Error) { // flow
+      expect(shrunk.result.message).toBe('Expected -11 to be at least -10')
+      expect(shrunk.smallest).toEqual([ -11 ])
+    }
+  })
+
+  it('tests properties that throw and pass', () => {
+    const result = check(property(
+      gen.posInt,
+      function (intValue) {
+        if (intValue < 0) {
+          throw new Error('Expected ' + intValue + ' to be at least 0')
+        }
+      }
+    ))
+
+    expect(result.fail).toBe(undefined)
+    expect(result.result).toBe(true)
   })
 
   it('accepts deprecated options', () => {
