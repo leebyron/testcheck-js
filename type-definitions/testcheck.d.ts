@@ -1,58 +1,4 @@
 /**
- * Optional arguments to `check`.
- */
-export interface Options {
-
-  // Number of times to run `check`.
-  times?: number;
-
-  // The maximum "size" to provide to sized generators. Default: 200
-  maxSize?: number;
-
-  // The seed to use for the random number generator. Default: Random
-  seed?: number;
-}
-
-/**
- * The result of running `check`.
- */
-export interface Result {
-
-  // True if the check passed.
-  result: boolean;
-
-  // The number of generated checks ran.
-  numTests: number;
-
-  // The seed used for this check.
-  seed?: number;
-
-  // The arguments generated when and if this check failed.
-  fail?: Array<any>;
-
-  // The size used when and if this check failed
-  failingSize?: number;
-
-  /**
-   * When a check fails, the failing arguments shrink to find the smallest
-   * value that fails.
-   */
-  shrunk?: {
-    // True if the check passed, otherwise false.
-    result: boolean;
-
-    // The smallest arguments with this result.
-    smallest: Array<any>;
-
-    // The depth of the shrunk result.
-    depth: number;
-
-    // The number of nodes shrunk to result in this smallest failing value.
-    totalNodesVisited: number;
-  }
-}
-
-/**
  * Options to be passed to array() or object()
  */
 interface SizeOptions {
@@ -166,7 +112,51 @@ export class Generator<T> {
  *     {times: 100, maxSize: 200, seed: <Random>}
  *
  */
-export function check(property: Generator<boolean>, options?: Options): Result;
+export function check(property: Generator<boolean>, options?: {
+
+  // Number of times to run `check`.
+  times?: number,
+
+  // The maximum "size" to provide to sized generators. Default: 200
+  maxSize?: number,
+
+  // The seed to use for the random number generator. Default: Random
+  seed?: number,
+}): {
+
+  // True if the check passed.
+  result: boolean,
+
+  // The number of generated checks ran.
+  numTests: number,
+
+  // The seed used for this check.
+  seed?: number,
+
+  // The arguments generated when and if this check failed.
+  fail?: Array<any>,
+
+  // The size used when and if this check failed
+  failingSize?: number,
+
+  /**
+   * When a check fails, the failing arguments shrink to find the smallest
+   * value that fails.
+   */
+  shrunk?: {
+    // True if the check passed, otherwise false.
+    result: boolean,
+
+    // The smallest arguments with this result.
+    smallest: Array<any>,
+
+    // The depth of the shrunk result.
+    depth: number,
+
+    // The number of nodes shrunk to result in this smallest failing value.
+    totalNodesVisited: number,
+  }
+};
 
 /**
  * Creates a "property" as needed by `check`.
