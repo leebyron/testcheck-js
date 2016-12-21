@@ -35,7 +35,7 @@
     "test"
   ],
   "scripts": {
-    "test": "jasmine-node spec/"
+    "test": "jasmine-node test"
   },
   "license": "BSD"
 }
