@@ -31,7 +31,7 @@ npm install --save-dev testcheck
 Then require it into your testing environment and start testing.
 
 ```js
-const { check, gen, property, sample } = require('testcheck');
+const { check, gen, property } = require('testcheck');
 
 const result = check(
   property(
@@ -225,11 +225,16 @@ a corner case.
 ### Sampling Test Data
 
 Visualizing the data `check` generates may help diagnose the quality of a test.
-Use `sample` to get a look at what a generator produces:
+Use `sample` and `sampleOne` to get a look at what a generator produces:
 
 ```js
+const { gen, sample, sampleOne } = require('testcheck')
+
 sample(gen.int)
 // [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
+
+sampleOne(gen.int)
+// -23
 ```
 
 
