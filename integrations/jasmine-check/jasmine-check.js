@@ -90,13 +90,13 @@ function checkIt(it) {
       // Run testcheck
       var checkResult = testcheck.check(property, options);
       if (checkResult.fail) {
-        var failingValues = printValues(checkResult.shrunk.smallest);
-        spec.description += failingValues;
+        var failingArgs = printArgs(checkResult.shrunk.smallest);
+        spec.description += failingArgs;
         if (spec.results) {
-          spec.results().description += failingValues;
+          spec.results().description += failingArgs;
         } else {
-          spec.result.description += failingValues;
-          spec.result.fullName += failingValues;
+          spec.result.description += failingArgs;
+          spec.result.fullName += failingArgs;
         }
         spec.check = checkResult;
       }
@@ -127,8 +127,8 @@ function logException(e) {
   }
 }
 
-function printValues(values) {
-  return require('util').inspect(values, { depth: null, colors: true });
+function printArgs(args) {
+  return ' (' + require('util').inspect(args, { depth: null, colors: true }).slice(1, -1) + ')';
 }
 
 exports.install = install;
