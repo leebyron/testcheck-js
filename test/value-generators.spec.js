@@ -126,7 +126,7 @@ describe('value generator', () => {
   })
 
   it('generates strictly negative ints', () => {
-    const vals = sample(gen.strictNegInt, 100)
+    const vals = sample(gen.sNegInt, 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Math.floor(value) === value && !isNaN(value) && value < 0
