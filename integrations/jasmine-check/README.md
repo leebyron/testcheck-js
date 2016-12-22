@@ -64,7 +64,7 @@ To use these options with your check, include an options object after
 the description:
 
 ```js
-check.it('runs 10 times', {times: 10}, gen.strictPosInt, x => {
+check.it('runs 10 times', {times: 10}, gen.sPosInt, x => {
   expect(x).toBeGreaterThan(0);
 });
 ```

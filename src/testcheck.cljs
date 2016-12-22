@@ -38,12 +38,13 @@
 
 (def warned-map #js{})
 (defn deprecated!
-  [msg]
-  (when-not (aget warned-map msg)
-    (aset warned-map msg true)
-    (js/console.warn (str
-      "DEPRECATED: " msg "\n"
-      (join "\n" (drop 2 (split (aget (js/Error.) "stack") #"\n")))))))
+  ([msg] (deprecated! 3 msg))
+  ([stack-depth msg]
+    (when-not (aget warned-map msg)
+      (aset warned-map msg true)
+      (js/console.warn (str
+        "DEPRECATED: " msg "\n"
+        (get (split (aget (js/Error.) "stack") #"\n") stack-depth))))))
 
 
 ;; API
@@ -134,7 +135,8 @@
 
 ;; Generators
 
-(defexport gen (js-obj))
+(def gen (js-obj))
+(defexport gen gen)
 
 
 ;; Primitives
@@ -168,8 +170,8 @@
 (defexport gen.int (Generator. gen/int))
 (defexport gen.posInt (Generator. gen/pos-int))
 (defexport gen.negInt (Generator. gen/neg-int))
-(defexport gen.strictPosInt (Generator. gen/s-pos-int))
-(defexport gen.strictNegInt (Generator. gen/s-neg-int))
+(defexport gen.sPosInt (Generator. gen/s-pos-int))
+(defexport gen.sNegInt (Generator. gen/s-neg-int))
 (defexport gen.intWithin (fn
   [lower, upper]
   (Generator. (gen/choose lower upper))))
@@ -374,6 +376,16 @@
 
 
 ;; Deprecated
+
+(js/Object.defineProperty gen "strictPosInt" #js {
+  :get (fn []
+    (deprecated! 4 "Use gen.sPosInt instead of gen.strictPosInt")
+    (Generator. gen/s-pos-int))})
+
+(js/Object.defineProperty gen "strictNegInt" #js {
+  :get (fn []
+    (deprecated! 4 "Use gen.sNegInt instead of gen.strictNegInt")
+    (Generator. gen/s-neg-int))})
 
 (defexport gen.suchThat (fn
   [pred gen]

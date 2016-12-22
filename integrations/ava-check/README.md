@@ -54,7 +54,7 @@ For example, here's a test which we expect would fail:
 const test = require('ava')
 const { check, gen } = require('ava-check')
 
-test('division is commutative', check(gen.strictPosInt, gen.strictPosInt, (t, numA, numB) => {
+test('division is commutative', check(gen.sPosInt, gen.sPosInt, (t, numA, numB) => {
   t.true(numA / numB === numB / numA)
 }));
 ```

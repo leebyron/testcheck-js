@@ -264,20 +264,20 @@ Generator integers (32-bit signed) including negative numbers and `0`.
 
 ### gen.posInt
 
-Generates only positive integers, including 0.
+Generates positive integers, including 0.
 
 
 ### gen.negInt
 
-Generates only negative integers, including 0.
+Generates negative integers, including 0.
 
 
-### gen.strictPosInt
+### gen.sPosInt
 
 Generates only strictly positive integers, not including 0.
 
 
-### gen.strictNegInt
+### gen.sNegInt
 
 Generates only strictly negative integers, not including 0.
 

@@ -286,24 +286,24 @@ export const gen: {
   int: Generator<number>;
 
   /**
-   * Generates only positive integers, including 0.
+   * Generates positive integers, including 0.
    */
   posInt: Generator<number>;
 
   /**
-   * Generates only negative integers, including 0.
+   * Generates negative integers, including 0.
    */
   negInt: Generator<number>;
 
   /**
    * Generates only strictly positive integers, not including 0.
    */
-  strictPosInt: Generator<number>;
+  sPosInt: Generator<number>;
 
   /**
    * Generates only strictly negative integers, not including 0.
    */
-  strictNegInt: Generator<number>;
+  sNegInt: Generator<number>;
 
   /**
    * Generates an integer within the provided (inclusive) range.

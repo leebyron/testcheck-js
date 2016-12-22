@@ -16,7 +16,7 @@ describe('check', function () {
     expect(y).toEqual(jasmine.any(String));
   })
 
-  check.it('generates with options', {times: 100}, gen.strictPosInt, x => {
+  check.it('generates with options', {times: 100}, gen.sPosInt, x => {
     expect(x).toBeGreaterThan(0);
   })
 
