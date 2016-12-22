@@ -37,21 +37,41 @@ function check(options, argGens, propertyFn) {
 
     // Report results
     if (checkResult.fail) {
-      var shrunk = checkResult.shrunk;
-      var args = shrunk ? shrunk.smallest : checkResult.fail;
-      var result = shrunk ? shrunk.result : checkResult.result;
-
-      if (result instanceof Error) {
-        result.message += ' ' + printValues(args);
-        throw result
-      }
-      throw new Error('Failed with arguments: ' + printValues(args));
+      throw new CheckFailure(checkResult);
     }
   }
 }
 
-function printValues(values) {
-  return require('util').inspect(values, { depth: null, colors: true });
+function CheckFailure(checkResult) {
+  var shrunk = checkResult.shrunk;
+  var args = shrunk ? shrunk.smallest : checkResult.fail;
+  var result = shrunk ? shrunk.result : checkResult.result;
+  this.check = checkResult
+  this.message = printArgs(args) + ' => ' + String(result);
+
+  if (result instanceof Error) {
+    // Edit stack
+    this.stack = this.name + ': ' + this.message + '\n' + stackFrames(result);
+
+    // Copy over other properties
+    for (var p in result) {
+      if (p !== 'message' && result.hasOwnProperty(p)) {
+        this[p] = result[p]
+      }
+    }
+  }
+}
+
+CheckFailure.prototype = Object.create(Error.prototype);
+CheckFailure.prototype.name = 'CheckFailure';
+CheckFailure.prototype.constructor = CheckFailure;
+
+function printArgs(args) {
+  return '(' + require('util').inspect(args).slice(1, -1) + ')'
+}
+
+function stackFrames(error) {
+  return String(error.stack).split('\n').slice(1).join('\n')
 }
 
 exports.install = install;
