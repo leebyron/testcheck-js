@@ -28,13 +28,13 @@ Example
 
 ```javascript
 require('mocha-testcheck').install();
-var assert = require('assert');
+const { expect } = require('chai');
 
-describe('MySpec', function () {
+describe('MySpec', () => {
 
-  check.it('accepts an int and a string', [gen.int, gen.string], function (x, y) {
-    assert(typeof x === 'number');
-    assert(typeof y === 'string');
+  check.it('accepts an int and a string', gen.int, gen.string, (x, y) => {
+    expect(x).to.be.a('number');
+    expect(y).to.be.a('string');
   });
 
 });
@@ -83,11 +83,11 @@ Mocha test interfaces
 
 ```javascript
 require('mocha-testcheck').install();
-var assert = require('assert');
+const { expect } = require('chai');
 
-describe('MySpec', function () {
-  check.it('accepts an int', [gen.int], function (x) {
-    assert(typeof x === 'number');
+describe('MySpec', () => {
+  check.it('accepts an int', gen.int, x => {
+    expect(x).to.be.a('number');
   });
 });
 ```
@@ -96,11 +96,11 @@ describe('MySpec', function () {
 
 ```javascript
 require('mocha-testcheck').install();
-var assert = require('assert');
+const { expect } = require('chai');
 
-suite('MySpec', function () {
-  check.test('accepts an int', [gen.int], function (x) {
-    assert(typeof x === 'number');
+suite('MySpec', () => {
+  check.test('accepts an int', gen.int, x => {
+    expect(x).to.be.a('number');
   });
 });
 ```
@@ -109,12 +109,12 @@ suite('MySpec', function () {
 
 ```javascript
 require('mocha-testcheck').install();
-var assert = require('assert');
+const { expect } = require('chai');
 
 module.exports = {
   'MySpec': {
-    'accepts an int': check([gen.int], function (x) {
-      assert(typeof x === 'number');
+    'accepts an int': check(gen.int, x => {
+      expect(x).to.be.a('number');
     })
   }
 };
@@ -125,15 +125,13 @@ module.exports = {
 This interface is useful if you want to avoid global variables in your tests.
 
 ```javascript
-var describe = require('mocha').describe
-var assertions = require('mocha').assertions
-var check = require('mocha-testcheck').check;
-var gen = require('mocha-testcheck').gen;
-var assert = require('assert');
+const { describe, it } = require('mocha');
+const { check, gen } = require('mocha-testcheck');
+const { expect } = require('chai');
 
-describe('MySpec', function() {
-  assertions('accepts an int', check([gen.int], function (x) {
-    assert(typeof x === 'number');
+describe('MySpec', () => {
+  it('accepts an int', check(gen.int, x => {
+    expect(x).to.be.a('number');
   });
 });
 ```

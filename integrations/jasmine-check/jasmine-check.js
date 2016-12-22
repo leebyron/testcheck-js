@@ -26,7 +26,27 @@ function install(globalObj) {
 }
 
 function checkIt(it) {
-  return function(specName, options, argGens, propertyFn) {
+  return function(/* specName, [options,] ...args, propertyFn */) {
+    // Gather arguments:
+    // - name, options, genArray, propFn
+    // - name, genArray, propFn
+    // - name, options, gen, gen, propFn
+    // - name, gen, gen, propFn
+    var i = 0;
+    var n = arguments.length - 1;
+    var specName = arguments[i++];
+    var options = arguments[i].constructor === Object ? arguments[i++] : {};
+    var propertyFn = arguments[n];
+    var argGens;
+    if (n - i === 1 && Array.isArray(arguments[i])) {
+      argGens = arguments[i]
+    } else {
+      argGens = [];
+      for (; i < n; i++) {
+        argGens.push(arguments[i]);
+      }
+    }
+
     if (!propertyFn) {
       propertyFn = argGens;
       argGens = options;
