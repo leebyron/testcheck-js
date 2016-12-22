@@ -1,0 +1,11 @@
+{
+  "name": "mocha2",
+  "version": "2.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "mocha": "2"
+  },
+  "bin": {
+    "mocha2": "./node_modules/.bin/mocha"
+  }
+}
