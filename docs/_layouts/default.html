@@ -14,12 +14,12 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1><a href="{{ '/' | relative_url }}">{{ site.title | default: site.github.repository_name }}</a></h1>
+        <h1>{{ site.title | default: site.github.repository_name }}</h1>
         <p>{{ site.description | default: site.github.project_tagline }}</p>
 
           <ul>
+            <li><a href="{{ '/' | relative_url }}">Walkthrough <strong>Guide</strong></a></li>
             <li><a href="{{ '/api' | relative_url }}">API <strong>Docs</strong></a></li>
-            <li><a href="{{ '/guide' | relative_url }}">Walkthrough <strong>Guide</strong></a></li>
             <li><a href="{{ site.github.repository_url }}">View On <strong>GitHub</strong></a></li>
           </ul>
 
