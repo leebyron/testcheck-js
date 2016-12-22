@@ -16,14 +16,19 @@
     "url": "https://github.com/leebyron/testcheck-js/issues"
   },
   "main": "ava-check.js",
+  "typings": "ava-check.d.ts",
   "dependencies": {
     "testcheck": "^0.1.0"
   },
   "devDependencies": {
-    "ava": "^0.17.0"
+    "ava": "^0.17.0",
+    "flow-bin": "^0.37.4",
+    "typescript": "^2.1.4"
   },
   "files": [
     "ava-check.js",
+    "ava-check.js.flow",
+    "ava-check.d.ts",
     "README.md",
     "LICENSE"
   ],
@@ -36,6 +41,10 @@
     "test"
   ],
   "scripts": {
-    "test": "ava test"
+    "test": "npm run testonly && npm run flow-check && npm run ts-check",
+    "testonly": "ava test",
+    "flow-check": "flow check test",
+    "ts-check": "DIFF=$(tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts | diff test/types.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
+    "ts-check-update": "tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts > test/types.ts.expected; exit 0"
   }
 }

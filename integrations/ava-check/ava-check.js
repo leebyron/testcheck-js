@@ -5,22 +5,15 @@ exports.check = check;
 
 function check(/* [options,] ...args, propertyFn */) {
   // Gather arguments:
-  // - options, genArray, propFn
-  // - genArray, propFn
   // - options, gen, gen, propFn
   // - gen, gen, propFn
   var i = 0;
   var n = arguments.length - 1;
   var options = arguments[i].constructor === Object ? arguments[i++] : {};
   var propertyFn = arguments[n];
-  var argGens;
-  if (n - i === 1 && Array.isArray(arguments[i])) {
-    argGens = arguments[i]
-  } else {
-    argGens = [];
-    for (; i < n; i++) {
-      argGens.push(arguments[i]);
-    }
+  var argGens = [];
+  for (; i < n; i++) {
+    argGens.push(arguments[i]);
   }
 
   // Current stack used for failing tests without errors.

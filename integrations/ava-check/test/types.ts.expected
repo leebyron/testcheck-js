@@ -1,0 +1,6 @@
+node_modules/ava/types/generated.d.ts(13,60): error TS2304: Cannot find name 'Iterator'.
+node_modules/ava/types/generated.d.ts(14,80): error TS2304: Cannot find name 'Iterator'.
+node_modules/ava/types/generated.d.ts(81,77): error TS2304: Cannot find name 'Promise'.
+node_modules/ava/types/generated.d.ts(86,57): error TS2304: Cannot find name 'Promise'.
+test/types.ts(5,5): error TS2339: Property 'true' does not exist on type '{}'.
+test/types.ts(5,14): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.

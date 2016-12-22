@@ -1,5 +1,2 @@
 [options]
 suppress_comment=\\(.\\|\n\\)*\\$ExpectError
-
-[ignore]
-.*/integrations/.*

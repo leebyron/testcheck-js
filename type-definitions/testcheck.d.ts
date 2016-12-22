@@ -103,8 +103,22 @@ export class Generator<T> {
 /**
  * Properties created by property()
  */
-interface Property<TArgs> {}
+export interface Property<TArgs> {}
 
+/**
+ * The options accepted by check()
+ */
+export interface CheckOptions {
+
+  // Number of times to run `check`.
+  numTests?: number,
+
+  // The maximum "size" to provide to sized generators. Default: 200
+  maxSize?: number,
+
+  // The seed to use for the random number generator. Default: Random
+  seed?: number,
+}
 
 /**
  * Given a property to check, return the result of the check.
@@ -117,17 +131,7 @@ interface Property<TArgs> {}
  *     {numTests: 100, maxSize: 200, seed: <Random>}
  *
  */
-export function check<TArgs>(property: Property<TArgs>, options?: {
-
-  // Number of times to run `check`.
-  numTests?: number,
-
-  // The maximum "size" to provide to sized generators. Default: 200
-  maxSize?: number,
-
-  // The seed to use for the random number generator. Default: Random
-  seed?: number,
-}): {
+export function check<TArgs>(property: Property<TArgs>, options?: CheckOptions): {
 
   // True if the check passed, otherwise false or a thrown Error.
   result: boolean | Error,
