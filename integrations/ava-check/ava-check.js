@@ -21,10 +21,15 @@ function check(/* [options,] ...args, propertyFn */) {
   Error.captureStackTrace(callingStack, check);
 
   return function (api) {
-    var fn = propertyFn.bind(this, api);
     var test = this;
 
+    // Detect unsupported cases
+    if (test.metadata.callback) {
+      throw new TypeError('ava-check cannot check tests with callbacks.');
+    }
+
     // Build property
+    var fn = propertyFn.bind(test, api);
     var property = testcheck.property(argGens, function testcheck$property() {
       // Reset assertions and plan before every run.
       test.assertError = undefined;
@@ -33,6 +38,11 @@ function check(/* [options,] ...args, propertyFn */) {
       test.planStack = null;
 
       var result = fn.apply(null, arguments);
+      if (typeof result === 'object' &&
+          (typeof result.then === 'function' ||
+           typeof result.subscribe === 'function')) {
+        throw new TypeError('ava-check cannot check async tests.');
+      }
 
       // Check plan after every run.
       test._checkPlanCount();
@@ -46,6 +56,11 @@ function check(/* [options,] ...args, propertyFn */) {
 
     // Run testcheck
     var checkResult = testcheck.check(property, options);
+
+    // Check for async assertions
+    if (!this.sync) {
+      throw new TypeError('ava-check cannot check tests with async assertions.');
+    }
 
     // Report results
     if (checkResult.fail) {
