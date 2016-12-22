@@ -1,0 +1,1 @@
+test/types.ts(6,14): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.

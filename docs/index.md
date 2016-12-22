@@ -58,6 +58,10 @@ If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
 [mocha-testcheck](https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-testcheck), a testcheck
 Mocha plugin.
 
+If you use [Tape](https://github.com/substack/tape/) then check out
+[tape-check](https://github.com/leebyron/testcheck-js/tree/master/integrations/tape-check), a testcheck
+Tape plugin.
+
 ### Type definitions
 
 This module includes type definitions for [Flow type](http://flowtype.org/) and

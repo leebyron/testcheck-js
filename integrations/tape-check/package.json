@@ -1,0 +1,52 @@
+{
+  "name": "tape-check",
+  "version": "0.1.2",
+  "description": "Generative property tests for Mocha",
+  "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/tape-check",
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Lee Byron",
+    "url": "https://github.com/leebyron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/leebyron/testcheck-js"
+  },
+  "bugs": {
+    "url": "https://github.com/leebyron/testcheck-js/issues"
+  },
+  "main": "tape-check.js",
+  "typings": "tape-check.d.ts",
+  "dependencies": {
+    "testcheck": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/tape": "^4.2.28",
+    "flow-bin": "^0.37.4",
+    "tape": "^4.6.3",
+    "typescript": "^2.1.4"
+  },
+  "files": [
+    "tape-check.js",
+    "tape-check.js.flow",
+    "tape-check.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "tape",
+    "tap",
+    "quickcheck",
+    "testcheck",
+    "generative",
+    "property",
+    "test"
+  ],
+  "scripts": {
+    "test": "npm run testonly && npm run flow-check && npm run ts-check",
+    "testonly": "tape test/*.test.js",
+    "flow-check": "flow check",
+    "ts-check": "DIFF=$(tsc -m commonjs -t ES2015 --noEmit --noImplicitAny --strictNullChecks test/types.ts | diff test/types.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
+    "ts-check-update": "tsc -m commonjs -t ES2015 --noEmit --noImplicitAny --strictNullChecks test/types.ts > test/types.ts.expected; exit 0"
+  }
+}
