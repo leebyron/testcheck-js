@@ -2,7 +2,7 @@
   "name": "mocha-testcheck",
   "version": "0.1.2",
   "description": "Generative property tests for Mocha",
-  "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-check",
+  "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-testcheck",
   "license": "BSD-3-Clause",
   "author": {
     "name": "Lee Byron",

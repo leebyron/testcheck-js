@@ -1,7 +1,7 @@
 Generative property testing for Mocha
 =====================================
 
-`mocha-check` adds the generative testing power of [`testcheck-js`](https://github.com/leebyron/testcheck-js)
+`mocha-testcheck` adds the generative testing power of [`testcheck`](https://github.com/leebyron/testcheck-js)
 to [Mocha](http://visionmedia.github.io/mocha/). This allows some of your Mocha tests
 to accept arguments and ensure your tests pass not just under your contrived
 test cases but also pass for hundreds of randomly generated test cases.
@@ -40,7 +40,7 @@ describe('MySpec', () => {
 });
 ```
 
-The `gen` global object is provided directly by `testcheck-js` and defines what
+The `gen` global object is provided directly by `testcheck` and defines what
 type of random values to generate. The test will be run numerous times with
 different random values, ensuring all expectations are met for every run. If a
 test expectation fails, then the test will re-run with "smaller" values until
@@ -65,13 +65,13 @@ To use these options with your check, include an options object after
 the description:
 
 ```js
-check.it('runs 10 times', {times: 10}, [gen.strictPosInt], function (x) {
+check.it('runs 10 times', {times: 10}, gen.strictPosInt, num => {
   assert(x > 0);
 });
 ```
 
 To learn more about property testing, or to learn about the available value
-generators, check out [`testcheck-js`](https://github.com/leebyron/testcheck-js).
+generators, check out [`testcheck`](https://github.com/leebyron/testcheck-js).
 
 
 Mocha test interfaces

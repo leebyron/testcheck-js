@@ -41,17 +41,21 @@ const result = check(
 )
 ```
 
-### Use Jasmine or Mocha?
+### Have a favorite test framework?
 
-`TestCheck.js` is a testing utility and not a complete test-running software. It
-doesn't replace test frameworks like Jasmine or Mocha.
+`TestCheck.js` is a testing utility and not a complete test-running framework. It
+doesn't replace test frameworks like AVA, Jasmine, or Mocha.
+
+If you use [AVA](https://github.com/avajs/ava/) then check out
+[`ava-check`](https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check), a testcheck
+AVA plugin.
 
 If you use [Jasmine](http://jasmine.github.io/) then check out
 [`jasmine-check`](https://github.com/leebyron/testcheck-js/tree/master/integrations/jasmine-check), a testcheck
 Jasmine plugin.
 
 If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
-[`mocha-check`](https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-check), a testcheck
+[`mocha-testcheck`](https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-testcheck), a testcheck
 Mocha plugin.
 
 ### Type definitions
