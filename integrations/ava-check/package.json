@@ -1,0 +1,41 @@
+{
+  "name": "ava-testcheck",
+  "version": "0.1.0",
+  "description": "Generative property tests for AVA",
+  "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check",
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Lee Byron",
+    "url": "https://github.com/leebyron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/leebyron/testcheck-js"
+  },
+  "bugs": {
+    "url": "https://github.com/leebyron/testcheck-js/issues"
+  },
+  "main": "ava-check.js",
+  "dependencies": {
+    "testcheck": "^0.1.0"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0"
+  },
+  "files": [
+    "ava-check.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ava",
+    "quickcheck",
+    "testcheck",
+    "generative",
+    "property",
+    "test"
+  ],
+  "scripts": {
+    "test": "ava test"
+  }
+}
