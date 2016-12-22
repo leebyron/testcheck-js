@@ -44,7 +44,7 @@
     "test": "npm run testonly && npm run flow-check && npm run ts-check",
     "testonly": "ava test",
     "flow-check": "flow check test",
-    "ts-check": "DIFF=$(tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts | diff test/types.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
-    "ts-check-update": "tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts > test/types.ts.expected; exit 0"
+    "ts-check": "DIFF=$(tsc -m commonjs -t ES2015 --noEmit --noImplicitAny --strictNullChecks test/types.ts | diff test/types.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
+    "ts-check-update": "tsc -m commonjs -t ES2015 --noEmit --noImplicitAny --strictNullChecks test/types.ts > test/types.ts.expected; exit 0"
   }
 }
