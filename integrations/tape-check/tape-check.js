@@ -33,6 +33,7 @@ function check(/* [options,] ...args, propertyFn */) {
       testAndListen._ok = true;
       testAndListen._plan = undefined;
       testAndListen._assertions = [];
+      testAndListen.calledEnd = false;
 
       var result = fn.apply(null, arguments);
 
@@ -75,10 +76,7 @@ function planWrap(num) {
 }
 
 function endWrap() {
-  if (this._plan !== undefined && this._plan !== this._assertions.length) {
-    this._assert(false);
-  }
-  if (!this.ended) {
+  if (this._plan === undefined ? !this.calledEnd : this._plan !== this._assertions.length) {
     this._assert(false);
   }
 }
@@ -86,9 +84,6 @@ function endWrap() {
 function assertWrap(ok, opts) {
   this._assertions.push([ ok, opts ]);
   this._ok = this._ok && ok;
-  if (this._plan !== undefined && this._plan === this._assertions.length) {
-    this.ended = true;
-  }
 }
 
 function printArgs(args) {
