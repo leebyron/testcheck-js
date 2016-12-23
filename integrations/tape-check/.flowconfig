@@ -1,2 +1,5 @@
 [options]
 suppress_comment=\\(.\\|\n\\)*\\$ExpectError
+
+[ignore]
+.*/integrations/[^t][^a][^p][^e].*
