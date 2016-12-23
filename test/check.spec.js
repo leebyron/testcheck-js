@@ -1,136 +1,125 @@
 // @flow
 
-/*:: declare function describe(name: string, fn: () => void): void; */
-/*:: declare function it(name: string, fn: () => void): void; */
-/*:: declare function expect(val: any): any; */
-/*:: declare var jasmine: any; */
-
+const test = require('ava');
 const { check, property, gen } = require('../')
 
-describe('check', () => {
+test('checks true properties', t => {
+  const seedVal = 1234567890
+  let calls = 0
 
-  it('checks true properties', () => {
-
-    const seedVal = 1234567890
-    let calls = 0
-
-    const result = check(property(
-      gen.posInt,
-      function (intValue) {
-        calls++
-        return intValue >= 0
-      }
-    ), { numTests: 100, seed: seedVal })
-
-    expect(calls).toBe(100)
-    expect(result.result).toBe(true)
-    expect(result.numTests).toBe(100)
-    expect(result.seed).toBe(seedVal)
-
-  })
-
-  it('checks false properties', () => {
-
-    const seedVal = 1234567890
-    let calls = 0
-
-    const result = check(property(
-      gen.posInt,
-      function (intValue) {
-        calls++
-        return intValue >= 0 && intValue < 42
-      }
-    ), { numTests: 100, seed: seedVal })
-
-    expect(calls).toBeLessThan(100)
-    const shrunk = result.shrunk
-    const fail = result.fail
-    expect(shrunk).toEqual(jasmine.any(Object))
-    expect(fail).toEqual(jasmine.any(Array))
-    if (shrunk != null && fail != null) { // flow
-      expect(calls).toBe(result.numTests + shrunk.totalNodesVisited)
-      expect(result.result).toBe(false)
-      expect(fail.length).toBe(1)
-      expect(shrunk.smallest).toEqual([42])
+  const result = check(property(
+    gen.posInt,
+    function (intValue) {
+      calls++
+      return intValue >= 0
     }
-  })
+  ), { numTests: 100, seed: seedVal })
 
-  it('accepts multiple generators as arguments', () => {
-    let calls = 0
+  t.true(calls === 100)
+  t.true(result.result === true)
+  t.true(result.numTests === 100)
+  t.true(result.seed === seedVal)
+})
 
-    const result = check(property(
-      gen.posInt, gen.string,
-      function (intValue, string) {
-        calls++
-        return intValue >= 0 && typeof string === 'string'
-      }
-    ))
+test('checks false properties', t => {
+  const seedVal = 1234567890
+  let calls = 0
 
-    expect(calls).toBe(100)
-    expect(result.fail).toBe(undefined)
-    expect(result.result).toBe(true)
-    expect(result.numTests).toBe(100)
-  })
-
-  it('tests properties that throw', () => {
-    const result = check(property(
-      gen.int,
-      function (intValue) {
-        if (intValue < -10) {
-          throw new Error('Expected ' + intValue + ' to be at least -10')
-        }
-      }
-    ))
-
-    expect(result.shrunk).toEqual(jasmine.any(Object))
-    expect(result.fail).toEqual(jasmine.any(Array))
-    expect(result.result instanceof Error).toBe(true)
-
-    const shrunk = result.shrunk
-    if (shrunk && shrunk.result instanceof Error) { // flow
-      expect(shrunk.result.message).toBe('Expected -11 to be at least -10')
-      expect(shrunk.smallest).toEqual([ -11 ])
+  const result = check(property(
+    gen.posInt,
+    function (intValue) {
+      calls++
+      return intValue >= 0 && intValue < 42
     }
-  })
+  ), { numTests: 100, seed: seedVal })
 
-  it('tests properties that throw and pass', () => {
-    const result = check(property(
-      gen.posInt,
-      function (intValue) {
-        if (intValue < 0) {
-          throw new Error('Expected ' + intValue + ' to be at least 0')
-        }
+  t.true(calls < 100)
+  const shrunk = result.shrunk
+  const fail = result.fail
+  t.true(typeof shrunk === 'object')
+  t.true(Array.isArray(fail))
+  if (shrunk != null && fail != null) { // flow
+    t.true(calls === result.numTests + shrunk.totalNodesVisited)
+    t.true(result.result === false)
+    t.true(fail.length === 1)
+    t.deepEqual(shrunk.smallest, [ 42 ])
+  }
+})
+
+test('accepts multiple generators as arguments', t => {
+  let calls = 0
+
+  const result = check(property(
+    gen.posInt, gen.string,
+    function (intValue, string) {
+      calls++
+      return intValue >= 0 && typeof string === 'string'
+    }
+  ))
+
+  t.true(calls === 100)
+  t.true(result.fail === undefined)
+  t.true(result.result === true)
+  t.true(result.numTests === 100)
+})
+
+test('tests properties that throw', t => {
+  const result = check(property(
+    gen.int,
+    function (intValue) {
+      if (intValue < -10) {
+        throw new Error('Expected ' + intValue + ' to be at least -10')
       }
-    ))
+    }
+  ))
 
-    expect(result.fail).toBe(undefined)
-    expect(result.result).toBe(true)
-  })
+  t.true(typeof result.shrunk === 'object')
+  t.true(Array.isArray(result.fail))
+  t.true(result.result instanceof Error)
 
-  it('accepts deprecated options', () => {
-    let calls = 0
+  const shrunk = result.shrunk
+  if (shrunk && shrunk.result instanceof Error) { // flow
+    t.true(shrunk.result.message === 'Expected -11 to be at least -10')
+    t.deepEqual(shrunk.smallest, [ -11 ])
+  }
+})
 
-    // $ExpectError
-    const result = check(property(gen.int, () => true), { times: 100 })
-
-    expect(result.numTests).toBe(100)
-  })
-
-  it('supports deprecated array properties', () => {
-    let calls = 0
-
-    // $ExpectError
-    const result = check(property(
-      [gen.posInt, gen.string],
-      function (intValue, string) {
-        calls++
-        return intValue >= 0 && typeof string === 'string'
+test('tests properties that throw and pass', t => {
+  const result = check(property(
+    gen.posInt,
+    function (intValue) {
+      if (intValue < 0) {
+        throw new Error('Expected ' + intValue + ' to be at least 0')
       }
-    ), { times: 100 })
+    }
+  ))
 
-    expect(calls).toBe(100)
-    expect(result.result).toBe(true)
-    expect(result.numTests).toBe(100)
-  })
+  t.true(result.fail === undefined)
+  t.true(result.result === true)
+})
 
+test('accepts deprecated options', t => {
+  let calls = 0
+
+  // $ExpectError
+  const result = check(property(gen.int, () => true), { times: 100 })
+
+  t.true(result.numTests === 100)
+})
+
+test('supports deprecated array properties', t => {
+  let calls = 0
+
+  // $ExpectError
+  const result = check(property(
+    [gen.posInt, gen.string],
+    function (intValue, string) {
+      calls++
+      return intValue >= 0 && typeof string === 'string'
+    }
+  ), { times: 100 })
+
+  t.true(calls === 100)
+  t.true(result.result === true)
+  t.true(result.numTests === 100)
 })
