@@ -405,7 +405,7 @@ declare export var gen: {
    *
    */
   array: {
-    <Elem, T:Array<Generator<Elem> | Elem>>(tupleGens: T): Generator<$TupleMap<T,<V>(Generator<V>) => V>>;
+    <Elem, T:Array<Generator<Elem> | Elem>>(tupleGens: T): Generator<$TupleMap<T,<V>(Generator<V> | V) => V>>;
     <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
   };
 
@@ -445,9 +445,9 @@ declare export var gen: {
    *
    */
   object: {
-    <Elem, T:{[key: string]: Generator<Elem> | Elem}>(recordGens: T): Generator<$ObjMap<T,<V>(Generator<V>) => V>>;
     <V>(valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: string]: V}>;
     <K,V>(keyGen: Generator<K>, valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: K]: V}>;
+    <Elem, T:{[key: string]: Generator<Elem> | Elem}>(recordGens: T): Generator<$ObjMap<T,<V>(Generator<V> | V) => V>>;
   };
 
   /**
