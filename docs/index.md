@@ -50,9 +50,9 @@ If you use [AVA](https://github.com/avajs/ava/) then check out
 [ava-check](https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check), a testcheck
 AVA plugin.
 
-If you use [Jasmine](http://jasmine.github.io/) then check out
+If you use [Jasmine](http://jasmine.github.io/) or [Jest](https://facebook.github.io/jest/) then check out
 [jasmine-check](https://github.com/leebyron/testcheck-js/tree/master/integrations/jasmine-check), a testcheck
-Jasmine plugin.
+Jasmine (or Jest) plugin.
 
 If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
 [mocha-testcheck](https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-testcheck), a testcheck

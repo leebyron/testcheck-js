@@ -8,6 +8,11 @@ function install(globalObj) {
     throw new Error('Make sure install is called after jasmine is available.');
   }
 
+  // Don't install more than once.
+  if (globalObj.check) {
+    return;
+  }
+
   jasmine = globalObj.jasmine;
   var jasmineEnv = jasmine.getEnv();
   isJasmineV1 = jasmineEnv.version && jasmineEnv.version().major === 1;

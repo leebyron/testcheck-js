@@ -21,7 +21,8 @@
   },
   "devDependencies": {
     "jasmine": "^2.5.2",
-    "jasmine-node": "^1.14.5"
+    "jasmine-node": "^1.14.5",
+    "jest-cli": "^18.0.0"
   },
   "files": [
     "jasmine-check.js",
@@ -37,6 +38,6 @@
     "test"
   ],
   "scripts": {
-    "test": "jasmine && jasmine-node spec"
+    "test": "jasmine && jasmine-node spec && jest"
   }
 }
