@@ -50,17 +50,57 @@ If you use [AVA](https://github.com/avajs/ava/) then check out
 [ava-check](https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check), a testcheck
 AVA plugin.
 
+```js
+const test = require('ava')
+const { check, gen } = require('ava-check')
+
+test('addition is commutative', check(gen.int, gen.int, (t, numA, numB) => {
+  t.true(numA + numB === numB + numA)
+}))
+```
+
 If you use [Jasmine](http://jasmine.github.io/) or [Jest](https://facebook.github.io/jest/) then check out
 [jasmine-check](https://github.com/leebyron/testcheck-js/tree/master/integrations/jasmine-check), a testcheck
 Jasmine (or Jest) plugin.
+
+```js
+require('jasmine-check').install()
+
+describe('Maths', () => {
+  check.it('addition is commutative', gen.int, gen.int, (numA, numB) => {
+    expect(numA + numB).toEqual(numB + numA)
+  })
+})
+```
 
 If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
 [mocha-testcheck](https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-testcheck), a testcheck
 Mocha plugin.
 
+```js
+require('mocha-testcheck').install();
+const { expect } = require('chai');
+
+describe('Maths', () => {
+  check.it('addition is commutative', gen.int, gen.int, (numA, numB) => {
+    expect(numA + numB).to.equal(numB + numA)
+  })
+})
+```
+
 If you use [Tape](https://github.com/substack/tape/) then check out
 [tape-check](https://github.com/leebyron/testcheck-js/tree/master/integrations/tape-check), a testcheck
 Tape plugin.
+
+```js
+const test = require('tape')
+const { check, gen } = require('tape-check')
+
+test('addition is commutative', check(gen.int, gen.int, (t, numA, numB) => {
+  t.plan(1)
+  t.equal(numA + numB, numB + numA)
+}));
+```
 
 ### Type definitions
 
