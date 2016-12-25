@@ -10,6 +10,10 @@
   [obj n & fn-tail]
   `(aset (.-prototype ~obj) ~(if (seq? n) (last n) (name n)) (fn ~@fn-tail)))
 
-(defmacro jsfn?
+(defmacro function?
   [x]
   (with-meta (list 'js* "typeof ~{} === 'function'" x) {:tag 'boolean}))
+
+(defmacro invariant
+  [condition, msg]
+  `(if (not ~condition) (throw (js/Error. ~msg))))

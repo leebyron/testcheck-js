@@ -1,4 +1,4 @@
-(require-macros '[macros :refer [defexport defproto jsfn?]])
+(require-macros '[macros :refer [defexport defproto function?, invariant]])
 (require
   '[clojure.test.check :as tc]
   '[clojure.test.check.generators :as gen]
@@ -13,8 +13,7 @@
 (js-comment "@constructor")
 (defexport Generator (fn
   [gen]
-  (if (not (gen/generator? gen))
-    (throw (js/Error. "Generator cannot be constructed directly.")))
+  (invariant (gen/generator? gen) "Generator cannot be constructed directly.")
   (this-as this (js/Object.defineProperty this "__clj_gen" #js{ "value" gen }))))
 
 ; Note: Exporting first, then defining the local var from the export ensures
@@ -26,7 +25,7 @@
 (defn ->gen
   [x]
   (assert (not (gen/generator? x)))
-  (if (exists? (aget x "__clj_gen"))
+  (if (and ^boolean x (exists? (aget x "__clj_gen")))
     (aget x "__clj_gen")
     (gen/return x)))
 
@@ -40,7 +39,7 @@
 (defn deprecated!
   ([msg] (deprecated! 3 msg))
   ([stack-depth msg]
-    (when-not (aget warned-map msg)
+    (when-not ^boolean (aget warned-map msg)
       (aset warned-map msg true)
       (js/console.warn (str
         "DEPRECATED: " msg "\n"
@@ -115,9 +114,9 @@
 
 (defn gen-object-args
   [args]
-  { :num-elements (and args (aget args "size"))
-    :min-elements (and args (aget args "minSize"))
-    :max-elements (and args (aget args "maxSize")) })
+  { :num-elements (and ^boolean args (aget args "size"))
+    :min-elements (and ^boolean args (aget args "minSize"))
+    :max-elements (and ^boolean args (aget args "maxSize")) })
 
 (defn gen-record
   [obj]
@@ -165,6 +164,8 @@
 (defexport gen.negNumber (Generator. (gen/double* {:max 0, :NaN? false})))
 (defexport gen.numberWithin (fn
   [from, to]
+  (invariant (number? from) "gen.numberWithin: must provide a number for a minimum size")
+  (invariant (number? to) "gen.numberWithin: must provide a number for a maximum size")
   (Generator. (gen/double* {:min from, :max to, :NaN? false}))))
 
 (defexport gen.int (Generator. gen/int))
@@ -174,6 +175,8 @@
 (defexport gen.sNegInt (Generator. gen/s-neg-int))
 (defexport gen.intWithin (fn
   [lower, upper]
+  (invariant (number? lower) "gen.intWithin: must provide a number for a minimum size")
+  (invariant (number? upper) "gen.intWithin: must provide a number for a maximum size")
   (Generator. (gen/choose lower upper))))
 
 
@@ -189,6 +192,7 @@
 
 (defexport gen.substring (fn
   [string]
+  (invariant (string? string) "gen.substring: must provide a string to make subtrings from")
   (Generator.
     (gen/fmap
       substring
@@ -206,6 +210,7 @@
 
 (defexport gen.array (fn
   [a b c]
+  (invariant (<= 1 (.-length (js-arguments))) "gen.array: must provide a value generator or array of generators")
   (cond
     (number? c)
     (deprecated! "Use gen.array(vals, { minSize: num, maxSize: num })")
@@ -255,8 +260,9 @@
 
 (defexport gen.uniqueArray (fn
   [val-gen fn-or-opts opts]
+  (invariant (<= 1 (.-length (js-arguments))) "gen.uniqueArray: must provide a value generator")
   (Generator. (gen/fmap to-array
-    (if (jsfn? fn-or-opts)
+    (if (function? fn-or-opts)
       (gen/list-distinct-by
         fn-or-opts
         (->gen val-gen)
@@ -267,6 +273,7 @@
 
 (defexport gen.object (fn
   [a b c]
+  (invariant (<= 1 (.-length (js-arguments))) "gen.object: must provide a value generator or object of generators")
   (Generator. (gen/fmap to-object
     (cond
       ; gen.object({ record: gen.int })
@@ -284,10 +291,13 @@
 
 (defexport gen.arrayOrObject (fn
   [val-gen]
+  (invariant (<= 1 (.-length (js-arguments))) "gen.arrayOrObject: must provide a value generator")
   (Generator. (gen-array-or-object (->gen val-gen)))))
 
 (defexport gen.nested (fn
   [collection-gen val-gen]
+  (invariant (identical? 2 (.-length (js-arguments))) "gen.nested: must provide a value generator")
+  (invariant (function? collection-gen) "gen.nested: must provide a function that produces a collection generator")
   (collection-gen (Generator. (gen/recursive-gen (->genfn collection-gen) (->gen val-gen))))))
 
 
@@ -310,10 +320,12 @@
 
 (defexport gen.oneOf (fn
   [gens]
+  (invariant (exists? gens) "gen.oneOf: must provide generators to choose from")
   (Generator. (gen/one-of (map ->gen gens)))))
 
 (defexport gen.oneOfWeighted (fn
   [pairs]
+  (invariant (exists? pairs) "gen.oneOf: must provide generators to choose from")
   (Generator. (gen/frequency (map (fn [[weight, gen]] (array weight (->gen gen))) pairs)))))
 
 (defexport gen.return (fn
@@ -322,6 +334,7 @@
 
 (defexport gen.sized (fn
   [f]
+  (invariant (function? f) "gen.sized: must provide function that returns a generator")
   (Generator. (gen/sized (comp ->gen f)))))
 
 
@@ -352,22 +365,25 @@
 
 (defproto Generator suchThat
   [pred]
+  (invariant (function? pred) ".suchThat(): must provide function that returns a boolean")
   (this-as this (Generator. (gen/such-that pred (->gen this)))))
 
 (defproto Generator then
   [f]
+  (invariant (function? f) ".then(): must provide function that returns a value or a generator")
   (this-as this (Generator. (gen/bind (->gen this) (comp ->gen f)))))
 
 (defproto Generator scale
   [f]
+  (invariant (function? f) ".then(): must provide function that returns a new size")
   (this-as this (Generator. (gen/scale f (->gen this)))))
 
 (defproto Generator neverShrink
-  [pred]
+  []
   (this-as this (Generator. (gen/no-shrink (->gen this)))))
 
 (defproto Generator alwaysShrink
-  [pred]
+  []
   (this-as this (Generator. (gen/shrink-2 (->gen this)))))
 
 (defproto Generator ~ITER_SYMBOL
