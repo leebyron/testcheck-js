@@ -1,4 +1,4 @@
-(require-macros '[macros :refer [defexport defproto function?, invariant]])
+(require-macros '[macros :refer [defexport defproto function? invariant]])
 (require
   '[clojure.test.check :as tc]
   '[clojure.test.check.generators :as gen]
@@ -393,61 +393,59 @@
 
 ;; Deprecated
 
-(js/Object.defineProperty gen "strictPosInt" #js {
-  :get (fn []
-    (deprecated! 4 "Use gen.sPosInt instead of gen.strictPosInt")
-    (Generator. gen/s-pos-int))})
+(defexport gen.strictPosInt
+  "Use gen.sPosInt instead of gen.strictPosInt"
+  (Generator. gen/s-pos-int))
 
-(js/Object.defineProperty gen "strictNegInt" #js {
-  :get (fn []
-    (deprecated! 4 "Use gen.sNegInt instead of gen.strictNegInt")
-    (Generator. gen/s-neg-int))})
+(defexport gen.strictNegInt
+  "Use gen.sNegInt instead of gen.strictNegInt"
+  (Generator. gen/s-neg-int))
 
-(defexport gen.suchThat (fn
-  [pred gen]
-  (deprecated! "Use generator.where() instead of gen.suchThat(generator)")
-  (Generator. (gen/such-that pred (->gen gen)))))
+(defexport gen.suchThat
+  "Use generator.where() instead of gen.suchThat(generator)"
+  (fn [pred gen]
+    (Generator. (gen/such-that pred (->gen gen)))))
 
-(defexport gen.notEmpty (fn
-  [gen max-tries]
-  (deprecated! "Use generator.notEmpty() instead of gen.notEmpty(generator)")
-  (Generator.
-    (gen/such-that
-      js-not-empty
-      (->gen gen)
-      (or max-tries 10)))))
+(defexport gen.notEmpty
+  "Use generator.notEmpty() instead of gen.notEmpty(generator)"
+  (fn [gen max-tries]
+    (Generator.
+      (gen/such-that
+        js-not-empty
+        (->gen gen)
+        (or max-tries 10)))))
 
-(defexport gen.map (fn
-  [f gen]
-  (deprecated! "Use generator.then() instead of gen.map(generator)")
-  (Generator. (gen/fmap f (->gen gen)))))
+(defexport gen.map
+  "Use generator.then() instead of gen.map(generator)"
+  (fn [f gen]
+    (Generator. (gen/fmap f (->gen gen)))))
 
-(defexport gen.bind (fn
-  [gen f]
-  (deprecated! "Use generator.then() instead of gen.bind(generator)")
-  (Generator. (gen/bind (->gen gen) (fn [value] (->gen (f value)))))))
+(defexport gen.bind
+  "Use generator.then() instead of gen.bind(generator)"
+  (fn [gen f]
+    (Generator. (gen/bind (->gen gen) (fn [value] (->gen (f value)))))))
 
-(defexport gen.resize (fn
-  [size gen]
-  (deprecated! "Use generator.scale(() => size) instead of gen.resize(generator, size)")
-  (Generator. (gen/resize size (->gen gen)))))
+(defexport gen.resize
+  "Use generator.scale(() => size) instead of gen.resize(generator, size)"
+  (fn [size gen]
+    (Generator. (gen/resize size (->gen gen)))))
 
-(defexport gen.noShrink (fn
-  [gen]
-  (deprecated! "Use generator.neverShrink() instead of gen.noShrink(generator)")
-  (Generator. (gen/no-shrink (->gen gen)))))
+(defexport gen.noShrink
+  "Use generator.neverShrink() instead of gen.noShrink(generator)"
+  (fn [gen]
+    (Generator. (gen/no-shrink (->gen gen)))))
 
-(defexport gen.shrink (fn
-  [gen]
-  (deprecated! "Use generator.alwaysShrink() instead of gen.shrink(generator)")
-  (Generator. (gen/shrink-2 (->gen gen)))))
+(defexport gen.shrink
+  "Use generator.alwaysShrink() instead of gen.shrink(generator)"
+  (fn [gen]
+    (Generator. (gen/shrink-2 (->gen gen)))))
 
-(defexport gen.returnOneOf (fn
-  [values]
-  (deprecated! "Use gen.oneOf() instead of gen.returnOneOf()")
-  (Generator. (gen/elements values))))
+(defexport gen.returnOneOf
+  "Use gen.oneOf() instead of gen.returnOneOf()"
+  (fn [values]
+    (Generator. (gen/elements values))))
 
-(defexport gen.returnOneOfWeighted (fn
-  [pairs]
-  (deprecated! "Use gen.oneOfWeighted() instead of gen.returnOneOfWeighted()")
-  (Generator. (gen/frequency (map (fn [[weight, value]] (array weight (gen/return value))) pairs)))))
+(defexport gen.returnOneOfWeighted
+  "Use gen.oneOfWeighted() instead of gen.returnOneOfWeighted()"
+  (fn [pairs]
+    (Generator. (gen/frequency (map (fn [[weight, value]] (array weight (gen/return value))) pairs)))))

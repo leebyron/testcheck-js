@@ -1,10 +1,22 @@
 (ns macros)
-(require '[clojure.string :as str])
+(require
+  '[clojure.string :as str]
+  '[cljs.core :as cljs]
+  '[cljs.tagged-literals :as tags])
 
 (defmacro defexport
-  [n val]
-  (let [parts (str/split (name n) #"\.")]
+  ([n val]
+    (let [parts (str/split (name n) #"\.")]
     `(aset js/exports ~@parts ~val)))
+  ([n msg val]
+    (let [parts (str/split (name n) #"\.")]
+      `(js/Object.defineProperty
+        (aget js/exports ~@(butlast parts))
+        ~(last parts)
+        ~(tags/->JSValue {
+          :get `(fn []
+            (cljs.user/deprecated! 4 ~msg)
+            ~val)})))))
 
 (defmacro defproto
   [obj n & fn-tail]
