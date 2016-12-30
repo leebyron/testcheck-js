@@ -121,7 +121,20 @@ describe('gen builders', () => {
   it('.then() creates a new generator from an existing one', () => {
     const genNotEmptyList = gen.array(gen.int).notEmpty()
     const genListAndItem = genNotEmptyList.then(
-      list => gen.array([ list, gen.oneOf(list) ])
+      list => gen.shape([ list, gen.oneOf(list) ])
+    )
+    const vals = sample(genListAndItem, 100)
+    expect(vals).toAllPass(function (pair) {
+      const list = pair[0]
+      const item = pair[1]
+      return Array.isArray(list) && typeof item === 'number' && list.indexOf(item) !== -1
+    })
+  })
+
+  it('.then() return value gets converted to a generator', () => {
+    const genNotEmptyList = gen.array(gen.int).notEmpty()
+    const genListAndItem = genNotEmptyList.then(
+      list => [ list, gen.oneOf(list) ]
     )
     const vals = sample(genListAndItem, 100)
     expect(vals).toAllPass(function (pair) {
