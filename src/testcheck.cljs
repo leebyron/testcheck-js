@@ -37,13 +37,12 @@
 
 (def warned-map #js{})
 (defn deprecated!
-  ([msg] (deprecated! 3 msg))
-  ([stack-depth msg]
-    (when-not ^boolean (aget warned-map msg)
-      (aset warned-map msg true)
-      (js/console.warn (str
-        "DEPRECATED: " msg "\n"
-        (get (split (aget (js/Error.) "stack") #"\n") stack-depth))))))
+  [msg]
+  (when-not ^boolean (aget warned-map msg)
+    (aset warned-map msg true)
+    (js/console.warn (str
+      "DEPRECATED: " msg "\n"
+      (get (split (aget (js/Error.) "stack") #"\n") 3)))))
 
 
 ;; API
@@ -134,8 +133,7 @@
 
 ;; Generators
 
-(def gen (js-obj))
-(defexport gen gen)
+(defexport gen (js-obj))
 
 
 ;; Primitives

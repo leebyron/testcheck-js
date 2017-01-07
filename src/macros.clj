@@ -15,7 +15,7 @@
         ~(last parts)
         ~(tags/->JSValue {
           :get `(fn []
-            (cljs.user/deprecated! 4 ~msg)
+            (cljs.user/deprecated! ~msg)
             ~val)})))))
 
 (defmacro defproto
