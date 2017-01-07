@@ -13,7 +13,7 @@
 (js-comment "@constructor")
 (defexport Generator (fn
   [gen]
-  (invariant (gen/generator? gen) "Generator cannot be constructed directly.")
+  (invariant ^boolean (gen/generator? gen) "Generator cannot be constructed directly.")
   (this-as this (js/Object.defineProperty this "__clj_gen" #js{ "value" gen }))))
 
 ; Note: Exporting first, then defining the local var from the export ensures
@@ -24,7 +24,7 @@
 ; Converts a Generator into a gen/generator
 (defn ->gen
   [x]
-  (assert (not (gen/generator? x)))
+  (assert (not ^boolean (gen/generator? x)))
   (if (and ^boolean x (exists? (aget x "__clj_gen")))
     (aget x "__clj_gen")
     (gen/return x)))
