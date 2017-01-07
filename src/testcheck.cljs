@@ -7,7 +7,126 @@
   '[clojure.string :refer [split join]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Generators
+;; Internal Helpers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn- to-object
+  [from-seq]
+  (let [obj (js-obj)]
+    (doseq [[k v] from-seq] (aset obj k v))
+    obj))
+
+(defn- js-substring
+  [[ string from to ]]
+  (.substring string from to))
+
+(defn- js-not-empty
+  [x]
+  (cond
+    (coercive-not x)
+    false
+
+    (number? (.-length x))
+    (> (.-length x) 0)
+
+    (identical? (.-constructor x) js/Object)
+    (> (.-length (js/Object.keys x)) 0)
+
+    :else true
+  ))
+
+; For properties that only use assertions, forgetting to "return true" results
+; in failing tests, if a function results in the value "undefined", then
+; consider it a passing result.
+(defn- undefined-passes
+  [f]
+  (fn []
+    (let [result (.apply f nil (js-arguments))]
+      (if (identical? js/undefined result) true result))))
+
+
+;; Deprecation
+
+(def warned-map #js{})
+(defn- deprecated!
+  [msg]
+  (when-not ^boolean (aget warned-map msg)
+    (aset warned-map msg true)
+    (js/console.warn (str
+      "DEPRECATED: " msg "\n"
+      (get (split (aget (js/Error.) "stack") #"\n") 3)))))
+
+
+;; Intermediate generators
+
+(def gen-primitive (gen/frequency [
+  [1 (gen/return js/undefined)]
+  [2 (gen/return nil)]
+  [4 gen/boolean]
+  [6 gen/double]
+  [20 gen/int]
+  [20 gen/string]]))
+
+(defn- gen-array
+  [val-gen]
+  (gen/fmap to-array (gen/vector val-gen)))
+
+(defn- gen-object
+  [val-gen]
+  (gen/fmap to-object (gen/map (gen/not-empty gen/string-alphanumeric) val-gen)))
+
+(defn- gen-array-or-object
+  [val-gen]
+  (gen/one-of [(gen-array val-gen) (gen-object val-gen)]))
+
+(defn- gen-object-args
+  [args]
+  { :num-elements (and ^boolean args (aget args "size"))
+    :min-elements (and ^boolean args (aget args "minSize"))
+    :max-elements (and ^boolean args (aget args "maxSize")) })
+
+(declare ->gen)
+(defn- gen-record
+  [obj]
+  (let [ks (js-keys obj)
+        vs (array)]
+    (doseq [k ks] (.push vs (->gen (aget obj k))))
+    (gen/fmap
+      (partial zipmap ks)
+      (apply gen/tuple vs))))
+
+(def gen-json-primitive (gen/frequency [
+  [1 (gen/return nil)]
+  [2 gen/boolean]
+  [3 (gen/double* {:infinite? false, :NaN? false})]
+  [10 gen/int]
+  [10 gen/string]]))
+
+(def gen-json-value (gen/recursive-gen gen-array-or-object gen-json-primitive))
+
+
+;; Converting between Generator and gen/generator
+
+(declare Generator)
+
+; Converts a Generator into a gen/generator
+(defn- ->gen
+  [x]
+  (assert (not ^boolean (gen/generator? x)))
+  (if (and ^boolean x (exists? (aget x "__clj_gen")))
+    (aget x "__clj_gen")
+    (gen/return x)))
+
+; Converts a function which accepts a Generator and returns a Generator
+; into a function which accepts a gen/generator and returns a gen/generator
+(defn- ->genfn
+  [f]
+  (fn [g] (->gen (f (Generator. g)))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generator
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (js-comment "@constructor")
@@ -21,31 +140,11 @@
 ; minified function names.
 (def Generator (aget js/exports "Generator"))
 
-; Converts a Generator into a gen/generator
-(defn ->gen
-  [x]
-  (assert (not ^boolean (gen/generator? x)))
-  (if (and ^boolean x (exists? (aget x "__clj_gen")))
-    (aget x "__clj_gen")
-    (gen/return x)))
-
-; Converts a function which accepts a Generator and returns a Generator
-; into a function which accepts a gen/generator and returns a gen/generator
-(defn ->genfn
-  [f]
-  (fn [g] (->gen (f (Generator. g)))))
-
-(def warned-map #js{})
-(defn deprecated!
-  [msg]
-  (when-not ^boolean (aget warned-map msg)
-    (aset warned-map msg true)
-    (js/console.warn (str
-      "DEPRECATED: " msg "\n"
-      (get (split (aget (js/Error.) "stack") #"\n") 3)))))
 
 
-;; API
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Usage API
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defexport check (fn
   [property options]
@@ -63,15 +162,6 @@
                               {:total-nodes-visited :totalNodesVisited})
                             resultRenamed)]
     (clj->js resultRenamedDeep))))
-
-; For properties that only use assertions, forgetting to "return true" results
-; in failing tests, if a function results in the value "undefined", then
-; consider it a passing result.
-(defn undefined-passes
-  [f]
-  (fn []
-    (let [result (.apply f nil (js-arguments))]
-      (if (identical? js/undefined result) true result))))
 
 (defexport property (fn
   []
@@ -95,56 +185,15 @@
   (gen/generate (->gen generator) (or size 30))))
 
 
-;; Internal
 
-(defn gen-array
-  [val-gen]
-  (gen/fmap to-array (gen/vector val-gen)))
-
-(defn to-object
-  [from-seq]
-  (let [obj (js-obj)]
-    (doseq [[k v] from-seq] (aset obj k v))
-    obj))
-
-(defn gen-object
-  [val-gen]
-  (gen/fmap to-object (gen/map (gen/not-empty gen/string-alphanumeric) val-gen)))
-
-(defn gen-object-args
-  [args]
-  { :num-elements (and ^boolean args (aget args "size"))
-    :min-elements (and ^boolean args (aget args "minSize"))
-    :max-elements (and ^boolean args (aget args "maxSize")) })
-
-(defn gen-record
-  [obj]
-  (let [ks (js-keys obj)
-        vs (array)]
-    (doseq [k ks] (.push vs (->gen (aget obj k))))
-    (gen/fmap
-      (partial zipmap ks)
-      (apply gen/tuple vs))))
-
-(defn gen-array-or-object
-  [val-gen]
-  (gen/one-of [(gen-array val-gen) (gen-object val-gen)]))
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generators
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defexport gen (js-obj))
 
 
 ;; Primitives
-
-(def gen-primitive (gen/frequency [
-  [1 (gen/return js/undefined)]
-  [2 (gen/return nil)]
-  [4 gen/boolean]
-  [6 gen/double]
-  [20 gen/int]
-  [20 gen/string]]))
 
 (defexport gen.any (Generator. (gen/recursive-gen gen-array-or-object gen-primitive)))
 (defexport gen.primitive (Generator. gen-primitive))
@@ -184,16 +233,12 @@
 (defexport gen.asciiString (Generator. gen/string-ascii))
 (defexport gen.alphaNumString (Generator. gen/string-alphanumeric))
 
-(defn substring
-  [[ string from to ]]
-  (.substring string from to))
-
 (defexport gen.substring (fn
   [string]
   (invariant (string? string) "gen.substring: must provide a string to make subtrings from")
   (Generator.
     (gen/fmap
-      substring
+      js-substring
       (gen/tuple
         (gen/return string)
         (gen/choose 0 (alength string))
@@ -301,14 +346,6 @@
 
 ;; JSON
 
-(def gen-json-primitive (gen/frequency [
-  [1 (gen/return nil)]
-  [2 gen/boolean]
-  [3 (gen/double* {:infinite? false, :NaN? false})]
-  [10 gen/int]
-  [10 gen/string]]))
-(def gen-json-value (gen/recursive-gen gen-array-or-object gen-json-primitive))
-
 (defexport gen.JSON (Generator. (gen-object gen-json-value)))
 (defexport gen.JSONValue (Generator. gen-json-value))
 (defexport gen.JSONPrimitive (Generator. gen-json-primitive))
@@ -336,22 +373,10 @@
   (Generator. (gen/sized (comp ->gen f)))))
 
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generator Prototype
-
-(defn js-not-empty
-  [x]
-  (cond
-    (coercive-not x)
-    false
-
-    (number? (.-length x))
-    (> (.-length x) 0)
-
-    (identical? (.-constructor x) js/Object)
-    (> (.-length (js/Object.keys x)) 0)
-
-    :else true
-  ))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defproto Generator nullable
   []
@@ -389,7 +414,10 @@
   (this-as this (es6-iterator (gen/sample-seq (->gen this)))))
 
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defexport gen.strictPosInt
   "Use gen.sPosInt instead of gen.strictPosInt"
