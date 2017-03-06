@@ -372,7 +372,12 @@
   (invariant (function? f) "gen.sized: must provide function that returns a generator")
   (Generator. (gen/sized (comp ->gen f)))))
 
+(defexport gen.recursive (fn
+  [recur-gen val-gen]
+  (invariant (identical? 2 (.-length (js-arguments))) "gen.recursive must provide a recur-gen and val-gen")
+  (invariant (function? recur-gen) "gen.recursive must provide a function that produces a generator")
 
+  (Generator. (gen/recursive-gen (->genfn recur-gen) (->gen val-gen)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generator Prototype

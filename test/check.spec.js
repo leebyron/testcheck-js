@@ -133,4 +133,14 @@ describe('check', () => {
     expect(result.numTests).toBe(100)
   })
 
+  it('supports recursive generators', () => {
+    const result = check(property(
+      gen.recursive(gen.array, gen.int),
+      (v) => Array.isArray(v) || typeof v === 'number'
+    ))
+
+    expect(result.fail).toBe(undefined)
+    expect(result.result).toBe(true)
+  })
+
 })
