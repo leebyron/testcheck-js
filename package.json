@@ -1,6 +1,6 @@
 {
   "name": "testcheck",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Property testing for JavaScript",
   "homepage": "http://leebyron.com/testcheck-js",
   "license": "BSD-3-Clause",
@@ -43,7 +43,8 @@
     "ts-check": "DIFF=$(tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts | diff test/types.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
     "ts-check-update": "tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts > test/types.ts.expected; exit 0",
     "build": "rm -f dist/* && lein do clean, cljsbuild once && cp type-definitions/* dist/",
-    "rebuild": "lein do cljsbuild once && cp type-definitions/* dist/"
+    "rebuild": "lein do cljsbuild once && cp type-definitions/* dist/",
+    "prepublish": "npm run build"
   },
   "dependencies": {}
 }
