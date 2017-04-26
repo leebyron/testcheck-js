@@ -1,6 +1,6 @@
 {
   "name": "testcheck",
-  "version": "1.0.0-rc.0",
+  "version": "1.0.0-rc.1",
   "description": "Property testing for JavaScript",
   "homepage": "http://leebyron.com/testcheck-js",
   "license": "BSD-3-Clause",
