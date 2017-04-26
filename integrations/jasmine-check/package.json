@@ -1,6 +1,6 @@
 {
   "name": "jasmine-check",
-  "version": "0.1.5",
+  "version": "1.0.0-rc.0",
   "description": "Generative property tests for Jasmine",
   "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/jasmine-check",
   "license": "BSD-3-Clause",
@@ -17,7 +17,7 @@
   },
   "main": "jasmine-check.js",
   "dependencies": {
-    "testcheck": "^0.1.0"
+    "testcheck": "^1.0.0-rc"
   },
   "devDependencies": {
     "jasmine": "^2.5.2",

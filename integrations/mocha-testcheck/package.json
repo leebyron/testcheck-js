@@ -1,6 +1,6 @@
 {
   "name": "mocha-testcheck",
-  "version": "0.1.2",
+  "version": "1.0.0-rc.0",
   "description": "Generative property tests for Mocha",
   "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-testcheck",
   "license": "BSD-3-Clause",
@@ -17,7 +17,7 @@
   },
   "main": "mocha-check.js",
   "dependencies": {
-    "testcheck": "^0.1.0"
+    "testcheck": "^1.0.0-rc"
   },
   "devDependencies": {
     "chai": "^3.5.0",

@@ -1,6 +1,6 @@
 {
   "name": "tape-check",
-  "version": "0.1.2",
+  "version": "1.0.0-rc.0",
   "description": "Generative property tests for Mocha",
   "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/tape-check",
   "license": "BSD-3-Clause",
@@ -18,7 +18,7 @@
   "main": "tape-check.js",
   "typings": "tape-check.d.ts",
   "dependencies": {
-    "testcheck": "^0.1.0"
+    "testcheck": "^1.0.0-rc"
   },
   "devDependencies": {
     "@types/tape": "^4.2.28",

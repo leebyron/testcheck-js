@@ -1,6 +1,6 @@
 {
   "name": "ava-testcheck",
-  "version": "0.1.0",
+  "version": "1.0.0-rc.0",
   "description": "Generative property tests for AVA",
   "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check",
   "license": "BSD-3-Clause",
@@ -18,7 +18,7 @@
   "main": "ava-check.js",
   "typings": "ava-check.d.ts",
   "dependencies": {
-    "testcheck": "^0.1.0"
+    "testcheck": "^1.0.0-rc"
   },
   "devDependencies": {
     "ava": "^0.17.0",
