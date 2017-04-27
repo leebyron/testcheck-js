@@ -47,12 +47,12 @@ const result = check(
 doesn't replace test frameworks like AVA, Jasmine, or Mocha.
 
 If you use [AVA](https://github.com/avajs/ava/) then check out
-[ava-check](https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check), a testcheck
+[ava-testcheck](https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check), a testcheck
 AVA plugin.
 
 ```js
 const test = require('ava')
-const { check, gen } = require('ava-check')
+const { check, gen } = require('ava-testcheck')
 
 test('addition is commutative', check(gen.int, gen.int, (t, numA, numB) => {
   t.true(numA + numB === numB + numA)
