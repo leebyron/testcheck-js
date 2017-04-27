@@ -1,5 +1,5 @@
 {
-  "name": "ava-testcheck",
+  "name": "ava-check",
   "version": "1.0.0-rc.0",
   "description": "Generative property tests for AVA",
   "homepage": "https://github.com/leebyron/testcheck-js/tree/master/integrations/ava-check",
