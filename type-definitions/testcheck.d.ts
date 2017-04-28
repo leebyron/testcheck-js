@@ -518,4 +518,9 @@ export const gen: {
    */
   sized: <T>(sizedGenFn: (size: number) => Generator<T> | T) => Generator<T>;
 
+  /**
+   * Creates a recursive Generator.
+   */
+   recursive: <T>(genFn: (gen: Generator<T>) => Generator<T>, gen: Generator<T>) => Generator<T>;
+
 }
