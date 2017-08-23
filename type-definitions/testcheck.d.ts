@@ -431,7 +431,7 @@ export const gen: {
   object: {
     <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
     <T>(keyGen: Generator<string>, valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
-    (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
+    <T, V = { [K in keyof T]: Generator<T[K]> }, W = Generator<T>>(genMap: V): W;
   };
 
   /**
