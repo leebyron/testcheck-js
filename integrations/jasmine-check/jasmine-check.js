@@ -58,10 +58,18 @@ function checkIt(it) {
       options = {};
     }
 
-    var spec = it(specName, checkRunner);
+    // Function.prototype.length returns the arity of a function
+    // If there are more args than generators, then pass in done
+    var fnHasDone = propertyFn.length > argGens.length;
+
+    var spec = fnHasDone ? it(specName, checkRunner) : it(specName, checkRunnerWithoutDone);
     return spec;
 
-    function checkRunner() {
+    function checkRunnerWithoutDone() {
+      checkRunner.apply(this, arguments);
+    }
+
+    function checkRunner(done) {
       // Intercept match results
       var matchFailed = false;
       var matchResults = [];
@@ -99,7 +107,8 @@ function checkIt(it) {
         matchFailed = false;
         matchResults = [];
         try {
-          propertyFn.apply(thisArg, arguments);
+          var args = [].slice.call(arguments).concat(done);
+          propertyFn.apply(thisArg, args);
         } catch (error) {
           spec.fail(error);
         }
@@ -127,7 +136,7 @@ function checkIt(it) {
       }
 
       // Report results
-      (failingMatchResults || matchResults).forEach(function (matchResult) {
+      (failingMatchResults || matchResults).forEach(function(matchResult) {
         addResult(matchResult);
       });
     }
