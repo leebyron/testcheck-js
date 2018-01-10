@@ -74,7 +74,7 @@ check(property(
     string.toUpperCase() + array[0].toUpperCase() === 'ABCABC'
 ))
 
-// Test: Object records Error (TODO, Typescript currently treats this as "any")
+// Test: Object records Error
 check(property(
   gen.object({ aString: gen.string, aNumber: gen.number }),
   ({ aString, aNumber }) =>
@@ -109,3 +109,13 @@ check(
   // $ExpectError catches mistyped options
   { numTimes: 1000 }
 )
+
+// Test: Object with some types ok
+check(property(
+  gen.object({ anInt: gen.int, anArrayOfInts: gen.array(gen.int) }),
+  ({ anInt, anArrayOfInts }) =>
+    // can do something typed with these arguments
+    anArrayOfInts.concat([anInt]) === [1,2,3]
+))
+
+
