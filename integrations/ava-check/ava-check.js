@@ -33,7 +33,7 @@ function check(/* [options,] ...args, propertyFn */) {
     var property = testcheck.property(argGens, function testcheck$property() {
       // Reset assertions and plan before every run.
       test.assertError = undefined;
-      test.assertions = [];
+      test.assertCount = 0;
       test.planCount = null;
       test.planStack = null;
 
@@ -45,7 +45,7 @@ function check(/* [options,] ...args, propertyFn */) {
       }
 
       // Check plan after every run.
-      test._checkPlanCount();
+      test.verifyPlan();
 
       if (test.assertError) {
         throw test.assertError;
@@ -56,11 +56,6 @@ function check(/* [options,] ...args, propertyFn */) {
 
     // Run testcheck
     var checkResult = testcheck.check(property, options);
-
-    // Check for async assertions
-    if (!this.sync) {
-      throw new TypeError('ava-check cannot check tests with async assertions.');
-    }
 
     // Report results
     if (checkResult.fail) {
@@ -97,3 +92,4 @@ function cleanStack(error) {
   error.stack = stack.slice(0, i).join('\n');
   return error;
 }
+
