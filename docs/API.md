@@ -808,7 +808,7 @@ For example, to create a *Generator* which first generates an Array of
 integers, and then returns both that Array and a sampled value from it:
 
 ```js
-var genList = gen.notEmpty(gen.array(gen.int))
+var genList = gen.array(gen.int).notEmpty();
 var genListAndItem = genList.then(
   list => gen.array([ list, gen.oneOf(list) ])
 );
