@@ -11,7 +11,7 @@ for integration in *; do
   printf "\e[43;30m Test Integration: ${integration} \e[0m\n\n"
   pushd ${integration} > /dev/null
   npm link testcheck > /dev/null
-  npm install
+  yarn
   npm test
   popd > /dev/null
 done
