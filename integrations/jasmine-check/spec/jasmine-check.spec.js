@@ -61,8 +61,9 @@ describe('jasmine-check', () => {
     let spec = runSpec()
     
     expect(specResult.passed()).toBe(false)
-    expect(spec.description).toBe('a failing test ( \u001b[33m0\u001b[39m )')
-    expect(spec.result.description).toBe('a failing test ( \u001b[33m0\u001b[39m )')
-    expect(spec.result.fullName).toBe('a failing test ( \u001b[33m0\u001b[39m )')
+    const resultRe = new RegExp('a failing test \\( \\u001b\\[33m0\\u001b\\[39m \\) Seed: \\u001b\\[33m\\d+\\u001b\\[39m ')
+    expect(spec.description).toMatch(resultRe)
+    expect(spec.result.description).toMatch(resultRe)
+    expect(spec.result.fullName).toMatch(resultRe)
 	})
 })
