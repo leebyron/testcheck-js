@@ -18,7 +18,7 @@
   "main": "dist/testcheck.js",
   "types": "dist/testcheck.d.ts",
   "devDependencies": {
-    "flow-bin": "^0.37.3",
+    "flow-bin": "0.68.0",
     "jasmine-node": "^1.14.5",
     "typescript": "2.4.2"
   },
