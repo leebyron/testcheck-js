@@ -24,7 +24,7 @@
     "@types/tape": "^4.2.28",
     "flow-bin": "^0.37.4",
     "tape": "^4.6.3",
-    "typescript": "^2.1.4"
+    "typescript": "2.4.2"
   },
   "files": [
     "tape-check.js",

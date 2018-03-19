@@ -20,7 +20,7 @@
   "devDependencies": {
     "flow-bin": "^0.37.3",
     "jasmine-node": "^1.14.5",
-    "typescript": "^2.4.2"
+    "typescript": "2.4.2"
   },
   "files": [
     "dist",
@@ -37,7 +37,7 @@
     "generative"
   ],
   "scripts": {
-    "test": "npm run rebuild && npm run testonly && npm run flow-check && npm run ts-check",
+    "test": "npm run rebuild && npm run testonly && npm run flow-check && npm run ts-check && integrations/test-all",
     "testonly": "jasmine-node test",
     "flow-check": "flow check test",
     "ts-check": "DIFF=$(tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts | diff test/types.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
