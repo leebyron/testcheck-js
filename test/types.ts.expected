@@ -5,11 +5,11 @@ test/types.ts(58,15): error TS2363: The right-hand side of an arithmetic operati
 test/types.ts(82,5): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type.
 test/types.ts(110,5): error TS2345: Argument of type '{ numTimes: number; }' is not assignable to parameter of type 'CheckOptions | undefined'.
   Object literal may only specify known properties, and 'numTimes' does not exist in type 'CheckOptions | undefined'.
-test/types.ts(125,20): error TS2345: Argument of type '{ name: Generator<string>; }' is not assignable to parameter of type '{ name: Generator<string>; age: Generator<number>; }'.
+test/types.ts(133,20): error TS2345: Argument of type '{ name: Generator<string>; }' is not assignable to parameter of type '{ name: Generator<string>; age: Generator<number>; }'.
   Property 'age' is missing in type '{ name: Generator<string>; }'.
-test/types.ts(133,3): error TS2345: Argument of type '{ name: Generator<string>; age: Generator<number>; likesDancing: Generator<boolean>; }' is not assignable to parameter of type '{ name: Generator<string>; age: Generator<number>; }'.
+test/types.ts(141,3): error TS2345: Argument of type '{ name: Generator<string>; age: Generator<number>; likesDancing: Generator<boolean>; }' is not assignable to parameter of type '{ name: Generator<string>; age: Generator<number>; }'.
   Object literal may only specify known properties, and 'likesDancing' does not exist in type '{ name: Generator<string>; age: Generator<number>; }'.
-test/types.ts(146,20): error TS2345: Argument of type '{ child: Generator<{}>; }' is not assignable to parameter of type '{ child: Generator<Person>; }'.
+test/types.ts(154,20): error TS2345: Argument of type '{ child: Generator<{}>; }' is not assignable to parameter of type '{ child: Generator<Person>; }'.
   Types of property 'child' are incompatible.
     Type 'Generator<{}>' is not assignable to type 'Generator<Person>'.
       Type '{}' is not assignable to type 'Person'.
