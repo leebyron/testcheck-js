@@ -7,4 +7,3 @@ before_install:
 script:
   - npm run build
   - npm test
-  - integrations/test-all

@@ -126,7 +126,7 @@ describe('check', () => {
         calls++
         return intValue >= 0 && typeof string === 'string'
       }
-    ), { times: 100 })
+    ), { numTests: 100 })
 
     expect(calls).toBe(100)
     expect(result.result).toBe(true)

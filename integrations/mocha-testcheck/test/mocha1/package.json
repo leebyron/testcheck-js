@@ -6,6 +6,6 @@
     "mocha": "1"
   },
   "bin": {
-    "mocha1": "./node_modules/.bin/mocha"
+    "mocha1": "./node_modules/mocha/bin/mocha"
   }
 }
