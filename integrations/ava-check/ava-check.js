@@ -94,4 +94,3 @@ function cleanStack(error) {
   error.stack = stack.slice(0, i).join('\n');
   return error;
 }
-
