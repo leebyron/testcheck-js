@@ -1,4 +1,4 @@
-import { check, property, gen } from '../'
+import { check, property, gen, Generator } from '../'
 
 // Test: single arg Error
 check(property(
@@ -155,4 +155,9 @@ gen.object<Parent>({
   child: gen.object({
     name: gen.string
   })
+});
+
+// $ExpectError string is not a number
+var test: Generator<{ name: number }> = gen.object({
+  name: gen.string
 });
