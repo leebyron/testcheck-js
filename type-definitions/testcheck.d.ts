@@ -253,11 +253,11 @@ export const gen: {
    * Generates any primitive JS value:
    * strings, numbers, booleans, null, undefined, or NaN.
    */
-  primitive: Generator<any>;
+  primitive: Generator<string | number | boolean | null | undefined>;
 
   boolean: Generator<boolean>;
-  null: Generator<void>;
-  undefined: Generator<void>;
+  null: Generator<null>;
+  undefined: Generator<undefined>;
   NaN: Generator<number>;
 
   // Numbers
@@ -431,7 +431,7 @@ export const gen: {
   object: {
     <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
     <T>(keyGen: Generator<string>, valueGen: Generator<T>, options?: SizeOptions): Generator<{[key: string]: T}>;
-    <T, V = { [K in keyof T]: Generator<T[K]> }, W = Generator<T>>(genMap: V): W;
+    <T>(genMap: {[Key in keyof T]: Generator<T[Key]>}): Generator<T>;
   };
 
   /**

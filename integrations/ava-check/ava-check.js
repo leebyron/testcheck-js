@@ -33,7 +33,7 @@ function check(/* [options,] ...args, propertyFn */) {
     var property = testcheck.property(argGens, function testcheck$property() {
       // Reset assertions and plan before every run.
       test.assertError = undefined;
-      test.assertions = [];
+      test.assertCount = 0;
       test.planCount = null;
       test.planStack = null;
 
