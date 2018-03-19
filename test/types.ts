@@ -118,4 +118,41 @@ check(property(
     anArrayOfInts.concat([anInt]) === [1,2,3]
 ))
 
+type Person = {
+  name: string,
+  age: number
+}
 
+// Test: Everything OK
+const personGen = gen.object<Person>({
+  name: gen.string,
+  age: gen.number
+});
+
+// $ExpectError missing 'age' key in generator
+gen.object<Person>({
+  name: gen.string
+});
+
+// $ExpectError 'likesDancing' is not part of a person
+gen.object<Person>({
+  name: gen.string,
+  age: gen.number,
+  likesDancing: gen.boolean
+});
+
+type Parent = {
+  child: Person
+};
+
+// Test: Works with composite generators
+gen.object<Parent>({
+  child: personGen
+});
+
+// $ExpectError child generator is not a Person
+gen.object<Parent>({
+  child: gen.object({
+    name: gen.string
+  })
+});
