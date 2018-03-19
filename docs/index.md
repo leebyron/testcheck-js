@@ -338,7 +338,7 @@ fact get `2`, not `1`.
 License
 -------
 
-Copyright 2014-2017 Lee Byron
+Copyright 2014-Present Lee Byron
 
 TestCheck.js is distributed under the BSD-3-Clause license.
 
