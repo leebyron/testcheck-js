@@ -73,7 +73,7 @@ describe('Maths', () => {
 })
 ```
 
-If you use [Mocha](http://visionmedia.github.io/mocha/) then check out
+If you use [Mocha](http://mochajs.org/) then check out
 [mocha-testcheck](https://github.com/leebyron/testcheck-js/tree/master/integrations/mocha-testcheck), a testcheck
 Mocha plugin.
 
@@ -338,7 +338,7 @@ fact get `2`, not `1`.
 License
 -------
 
-Copyright 2014-2016 Lee Byron
+Copyright 2014-Present Lee Byron
 
 TestCheck.js is distributed under the BSD-3-Clause license.
 

@@ -5,16 +5,18 @@ const { check, property, gen } = require('../')
 // Test: single arg Error
 check(property(
   gen.boolean,
-  value =>
+  value => {
     // $ExpectError The operand of an arithmetic operation must be a number.
-    value * 2 === 2
+    return value * 2 === 2
+  }
 ))
 
 // Test: single arg ok
 check(property(
   gen.number,
-  value =>
-    value * 2 === 2
+  value => {
+    return value * 2 === 2
+  }
 ))
 
 // Test: multiple args Error
@@ -55,41 +57,46 @@ check(property(
 // Test: normal arg + tuple arg Error
 check(property(
   gen.number, gen.array([ gen.string, gen.int ]),
-  (aNumber, [aString, anInt]) =>
+  (aNumber, [aString, anInt]) => {
     // $ExpectError cannot multiply a number and string
-    aNumber * aString === 123
+    return aNumber * aString === 123
+  }
 ))
 
 // Test: normal arg + tuple arg OK
 check(property(
   gen.number, gen.array([ gen.string, gen.int ]),
-  (number, array) =>
+  (number, array) => {
     // However numbers can be multiplied
-    number * array[1] === 123
+    return number * array[1] === 123
+  }
 ))
 
 // Test: normal arg + tuple arg OK
 check(property(
   gen.string, gen.array([ gen.string, gen.int ]),
-  (string, array) =>
+  (string, array) => {
     // Strings can be uppercased and added
-    string.toUpperCase() + array[0].toUpperCase() === 'ABCABC'
+    return string.toUpperCase() + array[0].toUpperCase() === 'ABCABC'
+  }
 ))
 
 // Test: Object records Error
 check(property(
   gen.object({ aString: gen.string, aNumber: gen.number }),
-  ({ aString, aNumber }) =>
+  ({ aString, aNumber }) => {
     // $ExpectError cannot multiply a number and string
-    aString * aNumber === 123
+    return aString * aNumber === 123
+  }
 ))
 
 // Test: Object records Ok
 check(property(
   gen.object({ anInt: gen.int, aNumber: gen.number }),
-  ({ anInt, aNumber }) =>
+  ({ anInt, aNumber }) => {
     // However numbers can be multiplied
-    anInt * aNumber === 123
+    return anInt * aNumber === 123
+  }
 ))
 
 // Test: Options OK

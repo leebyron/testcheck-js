@@ -16,6 +16,7 @@
     "url": "https://github.com/leebyron/testcheck-js/issues"
   },
   "main": "jasmine-check.js",
+  "types": "type-definitions/jasmine-check.d.ts",
   "dependencies": {
     "testcheck": "^1.0.0-rc"
   },
