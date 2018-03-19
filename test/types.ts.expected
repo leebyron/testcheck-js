@@ -11,6 +11,6 @@ test/types.ts(141,3): error TS2345: Argument of type '{ name: Generator<string>;
   Object literal may only specify known properties, and 'likesDancing' does not exist in type '{ name: Generator<string>; age: Generator<number>; }'.
 test/types.ts(154,20): error TS2345: Argument of type '{ child: Generator<{}>; }' is not assignable to parameter of type '{ child: Generator<Person>; }'.
   Types of property 'child' are incompatible.
-    Type 'Generator<{}>' is not assignable to type 'Generator<Person>'.
-      Type '{}' is not assignable to type 'Person'.
-        Property 'name' is missing in type '{}'.
+    Type 'Generator<{ name: string; }>' is not assignable to type 'Generator<Person>'.
+      Type '{ name: string; }' is not assignable to type 'Person'.
+        Property 'name' is missing in type '{ name: string; }'.
