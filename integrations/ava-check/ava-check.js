@@ -44,9 +44,6 @@ function check(/* [options,] ...args, propertyFn */) {
         throw new TypeError('ava-check cannot check async tests.');
       }
 
-      // Check plan after every run.
-      test._checkPlanCount();
-
       if (test.assertError) {
         throw test.assertError;
       }
@@ -58,8 +55,8 @@ function check(/* [options,] ...args, propertyFn */) {
     var checkResult = testcheck.check(property, options);
 
     // Check for async assertions
-    if (!this.sync) {
-      throw new TypeError('ava-check cannot check tests with async assertions.');
+    if (this.planCount) {
+      throw new TypeError(`ava-check cannot check tests with async assertions. Please remove \`t.plan(${this.planCount})\`.`);
     }
 
     // Report results
