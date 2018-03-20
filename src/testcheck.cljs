@@ -32,8 +32,26 @@
     (identical? (.-constructor x) js/Object)
     (> (.-length (js/Object.keys x)) 0)
 
-    :else true
-  ))
+    :else true))
+
+; To determine "distinctness" clj uses a Set. The set's key-fn needs to
+; translate JS objects into something clj can use to determine distinctiveness.
+(defn- js-key-fn
+  [x]
+  (cond
+    (identical? js/undefined x)
+    :undef
+
+    (identical? nil x)
+    :null
+
+    (not (identical? x x))
+    :NaN
+
+    (or ^boolean (js/Array.isArray x) (identical? (.-constructor x) js/Object))
+    (js->clj x)
+
+    :else x))
 
 ; For properties that only use assertions, forgetting to "return true" results
 ; in failing tests, if a function results in the value "undefined", then
@@ -307,10 +325,11 @@
   (Generator. (gen/fmap to-array
     (if (function? fn-or-opts)
       (gen/list-distinct-by
-        fn-or-opts
+        (comp js-key-fn fn-or-opts)
         (->gen val-gen)
         (gen-object-args opts))
-      (gen/list-distinct
+      (gen/list-distinct-by
+        js-key-fn
         (->gen val-gen)
         (gen-object-args fn-or-opts)))))))
 

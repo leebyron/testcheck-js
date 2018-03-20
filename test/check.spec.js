@@ -133,4 +133,44 @@ describe('check', () => {
     expect(result.numTests).toBe(100)
   })
 
+  it('generates unique arrays', () => {
+    const uniqueWithNils = gen.uniqueArray(
+      gen.oneOf([gen.null, gen.undefined, gen.NaN, gen.boolean, gen.number])
+    );
+    const result = check(property(uniqueWithNils, arr => {
+      const numNull = arr.filter(val => val === null).length;
+      const numUndef = arr.filter(val => val === undefined).length;
+      const numNaN = arr.filter(val => val !== val).length;
+      const numTrue = arr.filter(val => val === true).length;
+      const numFalse = arr.filter(val => val === false).length;
+      return numNull <= 1 && numUndef <= 1 && numNaN <= 1 && numTrue <= 1 && numFalse <= 1;
+    }), { numTests: 200 });
+
+    if (result.result !== true) {
+      console.error(result)
+    }
+    expect(result.result).toBe(true)
+  })
+
+  it('generates unique arrays of complex values', () => {
+    const uniqueComplex = gen.uniqueArray(gen.array([gen.posInt]));
+    const result = check(property(uniqueComplex, arr => {
+      const keyCount = {};
+      arr.forEach(complex => {
+        const key = JSON.stringify(complex);
+        keyCount[key] = (keyCount[key] || 0) + 1;
+      });
+      Object.keys(keyCount).forEach(key => {
+        if (key !== 1) {
+          return false;
+        }
+      });
+    }), { numTests: 200 });
+
+    if (result.result !== true) {
+      console.error(result)
+    }
+    expect(result.result).toBe(true)
+  })
+
 })
