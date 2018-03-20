@@ -60,5 +60,34 @@
       } catch(err) {}
     </script>
   {% endif %}
+  <script type="text/javascript">var exports = {};</script>
+  <script src="https://unpkg.com/testcheck"></script>
+  <script type="text/javascript">
+    (function () {
+      console.log(
+        '              ______          __\n' +
+        '       ====  /_  __/__  _____/ /_\n' +
+        '              / / / _ \\/ ___/ __/\n' +
+        '             / / /  __(__  ) /_\n' +
+        '   ======   /_/  \\___/____/\\__/\n' +
+        '           ________              __\n' +
+        ' ======   / ____/ /_  ___  _____/ /__\n' +
+        '         / /   / __ \\/ _ \\/ ___/ //_/\n' +
+        '        / /___/ / / /  __/ /__/ ,<\n' +
+        '  ====  \\____/_/ /_/\\___/\\___/_/|_|\n\n'
+      );
+      const $m = 'color:#ab0f8f';
+      const $b = 'color:#1a1ba8';
+      const $o = 'color:#984500';
+      const $r = 'color:#c51a16';
+      const $d = 'color:default;';
+      console.log(
+        '%cconst %c{ %ccheck%c, %cproperty%c, %csample%c, %csampleOne%c, %cgen%c, %cGenerator%c } %c=%c require(%c"testcheck"%c)',
+         $m,     $d, $b,    $d, $b,       $d, $b,     $d, $b,        $d, $b,  $d, $b,        $d,  $o,$d,        $r,          $d
+      );
+    })();
+    const { check, property, sample, sampleOne, gen, Generator } = exports;
+    exports = undefined;
+  </script>
   </body>
 </html>
