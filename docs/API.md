@@ -26,6 +26,7 @@ const {
 * `gen`: A collection of *Generator*s and functions that return *Generator*s.
 * `Generator`: The class which all *Generator*s are instances of.
 
+> Try it! Open the developer console to take the API for a test run.
 
 
 Running Tests
