@@ -377,8 +377,21 @@ export const gen: {
    *
    *     gen.array(gen.int, { minSize: 2, maxSize: 10 })
    *
+   *  - Generate Arrays of specific lengths with different kinds of values at
+   *    each index (e.g. tuples). (ex. tuples of [int, bool] like `[3, true]`).
+   *
+   *     gen.array([ gen.int, gen.boolean ])
+   *
    */
-  array: <T>(valueGen: ValueGenerator<T>, options?: SizeOptions) => ValueGenerator<Array<T>>;
+  array: {
+    <T>(valueGen: ValueGenerator<T>): ValueGenerator<Array<T>>;
+    <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<Array<T>>;
+    <T1, T2, T3, T4, T5>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>, T5 | ValueGenerator<T5>]): ValueGenerator<[T1, T2, T3, T4, T5]>;
+    <T1, T2, T3, T4>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>]): ValueGenerator<[T1, T2, T3, T4]>;
+    <T1, T2, T3>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>]): ValueGenerator<[T1, T2, T3]>;
+    <T1, T2>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>]): ValueGenerator<[T1, T2]>;
+    <T1>(tupleGens: [T1 | ValueGenerator<T1>]): ValueGenerator<[T1]>;
+  };
 
   /**
    * Generates Arrays of unique values.
@@ -403,6 +416,11 @@ export const gen: {
    *    (ex. numeric keys)
    *
    *     gen.object(gen.int, gen.int)
+   *
+   *  - Generate Objects with specific keys with different kinds of values at
+   *    each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
+   *
+   *     gen.object({ x: gen.posInt, y: gen.posInt })
    *
    */
   object: {
@@ -485,7 +503,7 @@ export const gen: {
     <T1, T2, T3>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>]): Generator<[T1, T2, T3]>;
     <T1, T2>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>]): Generator<[T1, T2]>;
     <T1>(tupleGens: [T1 | Generator<T1>]): Generator<[T1]>;
-    (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
+    <T>(genMap: {[Key in keyof T]: Generator<T[Key]>}): Generator<T>;
   };
 
 
@@ -531,20 +549,20 @@ export const gen: {
   ) => ValueGenerator<T>;
 
   /**
-   * Creates a ValueGenerator which will always generate clones of the provided value.
-   *
-   *     var threeThings = gen.clone([1,2,3]);
-   *
-   */
-  clone: <T>(value: T) => ValueGenerator<T>;
-
-  /**
    * Creates a ValueGenerator which will always generate references of the provided value.
    *
    *     var alwaysBlue = gen.return('blue');
    *
    */
   return: <T>(value: T) => ValueGenerator<T>;
+
+  /**
+   * Creates a ValueGenerator which will always generate clones of the provided value.
+   *
+   *     var threeThings = gen.clone([1,2,3]);
+   *
+   */
+  clone: <T>(value: T) => ValueGenerator<T>;
 
   /**
    * Creates a ValueGenerator that relies on a size. Size allows for the "shrinking"

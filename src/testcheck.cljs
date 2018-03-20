@@ -510,13 +510,13 @@
   (invariant (exists? pairs) "gen.oneOf: must provide generators to choose from")
   (ValueGenerator. (gen/frequency (map (fn [[weight, gen]] (array weight (->gen gen))) pairs)))))
 
-(defexport gen.clone (fn
-  [value]
-  (Generator. (gen-clone value))))
-
 (defexport gen.return (fn
   [value]
   (ValueGenerator. (gen/return value))))
+
+(defexport gen.clone (fn
+  [value]
+  (Generator. (gen-clone value))))
 
 (defexport gen.sized (fn
   [f]
