@@ -197,7 +197,7 @@ declare export function check<TArgs>(prop: Property<TArgs>, options?: CheckOptio
  *     check(numGoUp, {times: 1000});
  *
  */
-declare export var property: {
+declare export var property: $ReadOnly<{|
   <A>(
     genA: Generator<A>,
     f: (a: A) => boolean | void
@@ -228,7 +228,7 @@ declare export var property: {
     genE: Generator<E>,
     f: (a: A, b: B, c: C, d: D, e: E) => boolean | void
   ): Property<[A, B, C, D, E]>;
-};
+|}>;
 
 /**
  * Handy tool for checking the output of your generators. Given a generator,
@@ -259,7 +259,7 @@ declare export function sampleOne<T>(gen: Generator<T>, size?: number): T;
 // Generator Builders
 // ------------------
 
-declare export var gen: {
+declare export var gen: $ReadOnly<{|
 
   // JS Primitives
   // -------------
@@ -404,10 +404,10 @@ declare export var gen: {
    *     gen.array([ gen.int, gen.boolean ])
    *
    */
-  array: {
+  array: $ReadOnly<{|
     <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
     <T: Array<any>>(tupleGens: T): Generator<$TupleMap<T, <V>(Generator<V> | V) => V>>;
-  };
+  |}>;
 
   /**
    * Generates Arrays of unique values.
@@ -421,10 +421,10 @@ declare export var gen: {
    *     var genUniquePoints = gen.uniqueArray(genPoint, point => point.join())
    *
    */
-  uniqueArray: {
+  uniqueArray: $ReadOnly<{|
     <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
     <T>(valueGen: Generator<T>, uniqueBy: (value: T) => any, options?: SizeOptions): Generator<Array<T>>;
-  };
+  |}>;
 
   /**
    * Generates Objects of values. There are a few forms `gen.object` can be used:
@@ -444,11 +444,11 @@ declare export var gen: {
    *     gen.object({ x: gen.posInt, y: gen.posInt })
    *
    */
-  object: {
+  object: $ReadOnly<{|
     <V>(valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: string]: V}>;
     <K,V>(keyGen: Generator<K>, valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: K]: V}>;
     <T: {[key: string]: any}>(recordGens: T): Generator<$ObjMap<T, <V>(Generator<V> | V) => V>>;
-  };
+  |}>;
 
   /**
    * Generates either an Array or an Object with values of the provided kind.
@@ -533,4 +533,4 @@ declare export var gen: {
    */
   sized: <T>(sizedGenFn: (size: number) => Generator<T> | T) => Generator<T>;
 
-}
+|}>;

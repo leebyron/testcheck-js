@@ -118,3 +118,6 @@ check(
   // $ExpectError catches mistyped options
   { numTimes: 1000 }
 )
+
+// $ExpectError cannot override properties.
+gen.string = ('overridden': any);
