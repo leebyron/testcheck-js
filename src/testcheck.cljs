@@ -4,7 +4,9 @@
   '[clojure.test.check.generators :as gen]
   '[clojure.test.check.properties :as prop]
   '[clojure.set :refer [rename-keys]]
-  '[clojure.string :refer [split join]])
+  '[clojure.string :refer [split join]]
+  '[promesa-check.core :as pc]
+  '[promesa.core :as p])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Internal Helpers
@@ -163,6 +165,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Usage API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defexport checkAsync (fn
+  [property options]
+  (let [opt (or options (js-obj))
+        num-tests (or (aget opt "numTests") (aget opt "times") 100)
+        max-size (or (aget opt "maxSize") 200)
+        seed (aget opt "seed")
+        result (pc/quick-check num-tests property :max-size max-size :seed seed)]
+        (p/map (fn
+          [res]
+          (let [
+            resultRenamed (rename-keys res {:failing-size :failingSize :num-tests :numTests})
+            resultRenamedDeep (if (contains? resultRenamed :shrunk)
+                            (update
+                              resultRenamed
+                              :shrunk
+                              rename-keys
+                              {:total-nodes-visited :totalNodesVisited})
+                            resultRenamed)
+            ]
+    (clj->js resultRenamedDeep))) result))))
 
 (defexport check (fn
   [property options]
