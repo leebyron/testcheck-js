@@ -112,7 +112,7 @@ check(
 
 // Test: Object with some types ok
 check(property(
-  gen.object({ anInt: gen.int, anArrayOfInts: gen.array(gen.int) }),
+  gen({ anInt: gen.int, anArrayOfInts: gen.array(gen.int) }),
   ({ anInt, anArrayOfInts }) =>
     // can do something typed with these arguments
     anArrayOfInts.concat([anInt]) === [1,2,3]
@@ -124,18 +124,18 @@ type Person = {
 }
 
 // Test: Everything OK
-const personGen = gen.object<Person>({
+const personGen = gen<Person>({
   name: gen.string,
   age: gen.number
 });
 
 // $ExpectError missing 'age' key in generator
-gen.object<Person>({
+gen<Person>({
   name: gen.string
 });
 
 // $ExpectError 'likesDancing' is not part of a person
-gen.object<Person>({
+gen<Person>({
   name: gen.string,
   age: gen.number,
   likesDancing: gen.boolean
@@ -146,18 +146,18 @@ type Parent = {
 };
 
 // Test: Works with composite generators
-gen.object<Parent>({
+gen<Parent>({
   child: personGen
 });
 
 // $ExpectError child generator is not a Person
-gen.object<Parent>({
-  child: gen.object({
+gen<Parent>({
+  child: gen({
     name: gen.string
   })
 });
 
 // $ExpectError string is not a number
-var test: ValueGenerator<{ name: number }> = gen.object({
+var test: ValueGenerator<{ name: number }> = gen({
   name: gen.string
 });

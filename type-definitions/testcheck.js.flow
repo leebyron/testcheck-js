@@ -305,8 +305,8 @@ declare export var gen: $ReadOnly<{|
    *   ```
    */
   // Note: this only models one layer deep shapes, not recursive shapes.
-  <T: Array<any>>(tupleGens: T): Generator<$TupleMap<T, <V>(Generator<V> | V) => V>>;
-  <T: {[key: string]: any}>(recordGens: T): Generator<$ObjMap<T, <V>(Generator<V> | V) => V>>;
+  <T: Array<any>>(tupleGens: T): ValueGenerator<$TupleMap<T, <V>(ValueGenerator<V> | V) => V>>;
+  <T: {[key: string]: any}>(recordGens: T): ValueGenerator<$ObjMap<T, <V>(ValueGenerator<V> | V) => V>>;
 
 
   // JS Primitives
@@ -446,16 +446,8 @@ declare export var gen: $ReadOnly<{|
    *
    *     gen.array(gen.int, { minSize: 2, maxSize: 10 })
    *
-   *  - Generate Arrays of specific lengths with different kinds of values at
-   *    each index (e.g. tuples). (ex. tuples of [int, bool] like `[3, true]`)
-   *
-   *     gen.array([ gen.int, gen.boolean ])
-   *
    */
-  array: $ReadOnly<{|
-    <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<Array<T>>;
-    <T: Array<any>>(tupleGens: T): ValueGenerator<$TupleMap<T, <V>(ValueGenerator<V> | V) => V>>;
-  |}>;
+  array: <T>(valueGen: ValueGenerator<T>, options?: SizeOptions) => ValueGenerator<Array<T>>;
 
   /**
    * Generates Arrays of unique values.
@@ -481,16 +473,10 @@ declare export var gen: $ReadOnly<{|
    *
    *     gen.object(gen.int, gen.int)
    *
-   *  - Generate Objects with specific keys with different kinds of values at
-   *    each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
-   *
-   *     gen.object({ x: gen.posInt, y: gen.posInt })
-   *
    */
   object: $ReadOnly<{|
     <V>(valueGen: ValueGenerator<V>, options?: SizeOptions): ValueGenerator<{[key: string]: V}>;
     <K,V>(keyGen: ValueGenerator<K>, valueGen: ValueGenerator<V>, options?: SizeOptions): ValueGenerator<{[key: K]: V}>;
-    <T: {[key: string]: any}>(recordGens: T): ValueGenerator<$ObjMap<T, <V>(ValueGenerator<V> | V) => V>>;
   |}>;
 
   /**
@@ -498,9 +484,7 @@ declare export var gen: $ReadOnly<{|
    *
    * Note: Objects will be produced with alpha-numeric keys.
    */
-  arrayOrObject: <T>(
-    valueGen: ValueGenerator<T>
-  ) => ValueGenerator<{[key: string]: T} | Array<T>>;
+  arrayOrObject: <T>(valueGen: ValueGenerator<T>) => ValueGenerator<{[key: string]: T} | Array<T>>;
 
   /**
    * Given a function which takes a generator and returns a generator (such as
@@ -565,12 +549,12 @@ declare export var gen: $ReadOnly<{|
    */
   return: <T>(value: T) => ValueGenerator<T>;
 
-                                                                                                                            /**
-                                                                                                                             * Creates a ValueGenerator which will always generate deep copies of the provided value.
-                                                                                                                             *
-                                                                                                                             *     var threeThings = gen.returnDeepCopy([1,2,3]);
-                                                                                                                             *
-                                                                                                                             */
+  /**
+   * Creates a ValueGenerator which will always generate deep copies of the provided value.
+   *
+   *     var threeThings = gen.returnDeepCopy([1,2,3]);
+   *
+   */
   returnDeepCopy: <T>(value: T) => ValueGenerator<T>;
 
   /**

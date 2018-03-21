@@ -285,12 +285,12 @@ export const gen: {
    *   ```
    */
   // Note: this only models one layer deep shapes, not recursive shapes, and does not model records.
-  <T1, T2, T3, T4, T5>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>, T5 | Generator<T5>]): Generator<[T1, T2, T3, T4, T5]>;
-  <T1, T2, T3, T4>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>]): Generator<[T1, T2, T3, T4]>;
-  <T1, T2, T3>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>]): Generator<[T1, T2, T3]>;
-  <T1, T2>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>]): Generator<[T1, T2]>;
-  <T1>(tupleGens: [T1 | Generator<T1>]): Generator<[T1]>;
-  <T>(genMap: {[Key in keyof T]: Generator<T[Key]>}): Generator<T>;
+  <T1, T2, T3, T4, T5>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>, T5 | ValueGenerator<T5>]): ValueGenerator<[T1, T2, T3, T4, T5]>;
+  <T1, T2, T3, T4>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>]): ValueGenerator<[T1, T2, T3, T4]>;
+  <T1, T2, T3>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>]): ValueGenerator<[T1, T2, T3]>;
+  <T1, T2>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>]): ValueGenerator<[T1, T2]>;
+  <T1>(tupleGens: [T1 | ValueGenerator<T1>]): ValueGenerator<[T1]>;
+  <T>(genMap: {[Key in keyof T]: ValueGenerator<T[Key]>}): ValueGenerator<T>;
 
 
   // JS Primitives
@@ -429,21 +429,8 @@ export const gen: {
    *
    *     gen.array(gen.int, { minSize: 2, maxSize: 10 })
    *
-   *  - Generate Arrays of specific lengths with different kinds of values at
-   *    each index (e.g. tuples). (ex. tuples of [int, bool] like `[3, true]`).
-   *
-   *     gen.array([ gen.int, gen.boolean ])
-   *
    */
-  array: {
-    <T>(valueGen: ValueGenerator<T>): ValueGenerator<Array<T>>;
-    <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<Array<T>>;
-    <T1, T2, T3, T4, T5>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>, T5 | ValueGenerator<T5>]): ValueGenerator<[T1, T2, T3, T4, T5]>;
-    <T1, T2, T3, T4>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>]): ValueGenerator<[T1, T2, T3, T4]>;
-    <T1, T2, T3>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>]): ValueGenerator<[T1, T2, T3]>;
-    <T1, T2>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>]): ValueGenerator<[T1, T2]>;
-    <T1>(tupleGens: [T1 | ValueGenerator<T1>]): ValueGenerator<[T1]>;
-  };
+  array: <T>(valueGen: ValueGenerator<T>, options?: SizeOptions) => ValueGenerator<Array<T>>;
 
   /**
    * Generates Arrays of unique values.
@@ -469,16 +456,10 @@ export const gen: {
    *
    *     gen.object(gen.int, gen.int)
    *
-   *  - Generate Objects with specific keys with different kinds of values at
-   *    each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
-   *
-   *     gen.object({ x: gen.posInt, y: gen.posInt })
-   *
    */
   object: {
     <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<{[key: string]: T}>;
     <T>(keyGen: ValueGenerator<string>, valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<{[key: string]: T}>;
-    <T>(genMap: {[Key in keyof T]: ValueGenerator<T[Key]>}): ValueGenerator<T>;
   };
 
   /**

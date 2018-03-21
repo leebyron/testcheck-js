@@ -233,7 +233,7 @@
 (defn convert-gen
   [x]
   (cond
-    (Generator? x) (aget x "__clj_gen")
+    (ValueGenerator? x) (aget x "__clj_gen")
     (array? x) (convert-array-gen x)
     (object? x) (convert-object-gen x)
     :else x
@@ -244,7 +244,7 @@
 ; Clojure gen/generator.
 (defn ->gen
   [x]
-  (if (Generator? x)
+  (if (ValueGenerator? x)
     (aget x "__clj_gen") ; Short-circuit common case
     (do
       (assert (not ^boolean (gen/generator? x)))
@@ -330,7 +330,7 @@
 
 (defexport gen (fn
   [x]
-  (Generator. (->gen x))))
+  (ValueGenerator. (->gen x))))
 
 
 ;; Primitives
@@ -402,13 +402,8 @@
     (deprecated! "Use gen.array(vals, { size: num })")
 
     (and (identical? 1 (.-length (js-arguments))) ^boolean (js/Array.isArray a))
-<<<<<<< HEAD
-    (deprecated! "Just provide [ gen, gen ] directly without gen.array(), or use gen.shape()."))
-  (ValueGenerator. (gen/fmap to-array
-=======
     (deprecated! "Just provide the array of generators directly without gen.array(), or use gen()."))
-  (Generator. (gen/fmap to-array
->>>>>>> Rename methods gen.shape -> gen, gen.clone -> gen.returnDeepCopy
+  (ValueGenerator. (gen/fmap to-array
     (cond
       ; gen.array([ gen.int, gen.string ])
       (and (identical? 1 (.-length (js-arguments))) ^boolean (js/Array.isArray a))
@@ -520,7 +515,7 @@
 
 (defexport gen.returnDeepCopy (fn
   [value]
-  (Generator. (gen-return-deep-copy value))))
+  (ValueGenerator. (gen-return-deep-copy value))))
 
 (defexport gen.sized (fn
   [f]
