@@ -39,7 +39,7 @@
   "scripts": {
     "test": "npm run rebuild && npm run testonly && npm run flow-check && npm run ts-check && integrations/test-all",
     "testonly": "jasmine-node test",
-    "flow-check": "flow check test",
+    "flow-check": "flow check",
     "ts-check": "DIFF=$(tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts | diff test/types.ts.expected -); if [ -n \"$DIFF\" ]; then echo \"$DIFF\"; exit 1; fi;",
     "ts-check-update": "tsc --noEmit --noImplicitAny --strictNullChecks test/types.ts > test/types.ts.expected; exit 0",
     "build": "rm -f dist/* && lein do clean, cljsbuild once && cp type-definitions/* dist/",
