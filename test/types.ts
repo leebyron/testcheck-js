@@ -34,7 +34,7 @@ check(property(
 
 // Test: tuples Error
 check(property(
-  gen.shape([ gen.string, gen.int ]),
+  gen([ gen.string, gen.int ]),
   ([ aString, anInt ]) => {
     // $ExpectError cannot multiply a number and string
     return aString * anInt === 123
@@ -43,7 +43,7 @@ check(property(
 
 // Test: tuples Ok
 check(property(
-  gen.shape([ gen.number, gen.int ]),
+  gen([ gen.number, gen.int ]),
   ([ aNumber, anInt ]) => {
     // Numbers can be multiplied
     return aNumber * anInt === 123
@@ -52,7 +52,7 @@ check(property(
 
 // Test: normal arg + tuple arg Error
 check(property(
-  gen.number, gen.shape([ gen.string, gen.int ]),
+  gen.number, gen([ gen.string, gen.int ]),
   (aNumber, [aString, anInt]) =>
     // $ExpectError cannot multiply a number and string
     aNumber * aString === 123
@@ -60,7 +60,7 @@ check(property(
 
 // Test: normal arg + tuple arg OK
 check(property(
-  gen.number, gen.shape([ gen.string, gen.int ]),
+  gen.number, gen([ gen.string, gen.int ]),
   (number, array) =>
     // However numbers can be multiplied
     number * array[1] === 123
@@ -68,7 +68,7 @@ check(property(
 
 // Test: normal arg + tuple arg OK
 check(property(
-  gen.string, gen.shape([ gen.string, gen.int ]),
+  gen.string, gen([ gen.string, gen.int ]),
   (string, array) =>
     // Strings can be uppercased and added
     string.toUpperCase() + array[0].toUpperCase() === 'ABCABC'
@@ -76,7 +76,7 @@ check(property(
 
 // Test: Object records Error
 check(property(
-  gen.shape({ aString: gen.string, aNumber: gen.number }),
+  gen({ aString: gen.string, aNumber: gen.number }),
   ({ aString, aNumber }) =>
     // $ExpectError cannot multiply a number and string
     aString * aNumber === 123
@@ -84,7 +84,7 @@ check(property(
 
 // Test: Object records Ok
 check(property(
-  gen.shape({ anInt: gen.int, aNumber: gen.number }),
+  gen({ anInt: gen.int, aNumber: gen.number }),
   ({ anInt, aNumber }) =>
     // However numbers can be multiplied
     anInt * aNumber === 123

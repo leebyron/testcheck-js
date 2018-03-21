@@ -64,11 +64,11 @@
           (recur (inc i)))))
     new-obj))
 
-(defn- deep-clone
+(defn- deep-copy
   [x]
   (cond
-    (array? x) (.map x deep-clone)
-    (object? x) (map-obj x deep-clone)
+    ^boolean (js/Array.isArray x) (.map x deep-copy)
+    (identical? (.-constructor x) js/Object) (map-obj x deep-copy)
     :else x))
 
 ; For properties that only use assertions, forgetting to "return true" results
@@ -140,9 +140,9 @@
 
 (def gen-json-value (gen/recursive-gen gen-array-or-object gen-json-primitive))
 
-(defn- gen-clone
+(defn- gen-return-deep-copy
   [x]
-  (gen/fmap deep-clone (gen/return x)))
+  (gen/fmap deep-copy (gen/return x)))
 
 
 ;; Converting between ValueGenerator and gen/generator
@@ -172,7 +172,7 @@
               ; Wrap previous indices
               (loop [j 0]
                 (when (< j i)
-                  (aset gens j (gen-clone (aget x j)))
+                  (aset gens j (gen-return-deep-copy (aget x j)))
                   (recur (inc j))))
 
               ; Set
@@ -183,7 +183,7 @@
                 (if (< j l)
                   (let [v2 (aget x j)
                         r2 (convert-gen v2)]
-                    (aset gens j (if (identical? v2 r2) (gen-clone v2) r2))
+                    (aset gens j (if (identical? v2 r2) (gen-return-deep-copy v2) r2))
                     (recur (inc j)))))
 
               ; Return tuple generator
@@ -207,7 +207,7 @@
               ; Wrap previous indices
               (loop [j 0]
                 (when (< j i)
-                  (aset gens j (gen-clone (aget x (aget ks j))))
+                  (aset gens j (gen-return-deep-copy (aget x (aget ks j))))
                   (recur (inc j))))
 
               ; Set
@@ -218,7 +218,7 @@
                 (if (< j l)
                   (let [v2 (aget x (aget ks j))
                         r2 (convert-gen v2)]
-                    (aset gens j (if (identical? v2 r2) (gen-clone v2) r2))
+                    (aset gens j (if (identical? v2 r2) (gen-return-deep-copy v2) r2))
                     (recur (inc j)))))
 
               ; Return record generator
@@ -228,7 +228,8 @@
 
 ; Common point of the recursive production of ValueGenerators from values.
 ; If it's a collection, walk through the collection lazily converting to gens
-; until it finds one. then gen-clone all previous entries. otherwise return wo gens
+; until it finds one, then gen-return-deep-copy all previous entries. Otherwise
+; return the original value.
 (defn convert-gen
   [x]
   (cond
@@ -248,7 +249,7 @@
     (do
       (assert (not ^boolean (gen/generator? x)))
       (let [r (convert-gen x)]
-        (if (identical? x r) (gen-clone x) r)))))
+        (if (identical? x r) (gen-return-deep-copy x) r)))))
 
 ; Converts a function which accepts a ValueGenerator and returns a ValueGenerator
 ; into a function which accepts a gen/generator and returns a gen/generator
@@ -327,7 +328,9 @@
 ;; Value ValueGenerators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defexport gen (js-obj))
+(defexport gen (fn
+  [x]
+  (Generator. (->gen x))))
 
 
 ;; Primitives
@@ -399,8 +402,13 @@
     (deprecated! "Use gen.array(vals, { size: num })")
 
     (and (identical? 1 (.-length (js-arguments))) ^boolean (js/Array.isArray a))
+<<<<<<< HEAD
     (deprecated! "Just provide [ gen, gen ] directly without gen.array(), or use gen.shape()."))
   (ValueGenerator. (gen/fmap to-array
+=======
+    (deprecated! "Just provide the array of generators directly without gen.array(), or use gen()."))
+  (Generator. (gen/fmap to-array
+>>>>>>> Rename methods gen.shape -> gen, gen.clone -> gen.returnDeepCopy
     (cond
       ; gen.array([ gen.int, gen.string ])
       (and (identical? 1 (.-length (js-arguments))) ^boolean (js/Array.isArray a))
@@ -459,7 +467,7 @@
   [a b c]
   (invariant (<= 1 (.-length (js-arguments))) "gen.object: must provide a value generator")
   (if (and (identical? 1 (.-length (js-arguments))) (object? a))
-    (deprecated! "Just provide { key: gen } directly without gen.object(), or use gen.shape()."))
+    (deprecated! "Just provide the object with generator values directly without gen.object(), or use gen()."))
   (ValueGenerator. (gen/fmap to-object
     (cond
       ; gen.object({ record: gen.int })
@@ -486,10 +494,6 @@
   (invariant (function? collection-gen) "gen.nested: must provide a function that produces a collection generator")
   (collection-gen (ValueGenerator. (gen/recursive-gen (->genfn collection-gen) (->gen val-gen))))))
 
-(defexport gen.shape (fn
-  [x]
-  (Generator. (->gen x))))
-
 
 ;; JSON
 
@@ -514,9 +518,9 @@
   [value]
   (ValueGenerator. (gen/return value))))
 
-(defexport gen.clone (fn
+(defexport gen.returnDeepCopy (fn
   [value]
-  (Generator. (gen-clone value))))
+  (Generator. (gen-return-deep-copy value))))
 
 (defexport gen.sized (fn
   [f]

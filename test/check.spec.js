@@ -153,7 +153,7 @@ describe('check', () => {
   })
 
   it('generates unique arrays of complex values', () => {
-    const uniqueComplex = gen.uniqueArray(gen.array([gen.posInt]));
+    const uniqueComplex = gen.uniqueArray(gen([gen.posInt]));
     const result = check(property(uniqueComplex, arr => {
       const keyCount = {};
       arr.forEach(complex => {

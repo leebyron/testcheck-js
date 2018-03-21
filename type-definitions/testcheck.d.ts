@@ -241,6 +241,58 @@ export function sampleOne<T>(gen: ValueGenerator<T>, size?: number): T;
 
 export const gen: {
 
+  /**
+   * Generates a specific shape of values given an initial nested Array or Object which
+   * contain *Generators*. Any values within the provided shape which don't contain
+   * generators will be *copied* (with `gen.returnDeepCopy()`).
+   *
+   * Note: Whenever a non-*Generator* is provided to a function which expects a *Generator*,
+   * it is converted to a *Generator* with `gen()`. That makes calling this function
+   * optional for most cases, unless trying to be explicit.
+   *
+   * There are a few forms `gen()` can be used:
+   *
+   * - Generate an Array shape with different values at each index (also known as "tuples")
+   *
+   *   For example, a tuples of [ "constant", *int*, *bool* ] like `['foo', 3, true]`:
+   *
+   *   ```js
+   *   gen([ 'foo', gen.int, gen.boolean ])
+   *   ```
+   *
+   * - Generate an Object shape with different values for each key (also known as "records")
+   *
+   *   For example, a record of { x: "constant", y: *int*, z: *bool* } like `{ x: 'foo', y: -4, z: false }`:
+   *
+   *   ```js
+   *   gen({ x: 'foo', y: gen.int, z: gen.boolean })
+   *   ```
+   *
+   * - Combinations of Array and Object shapes with generators at any point:
+   *
+   *   For example, a data shape for a complex "place" data shape might look like:
+   *
+   *   ```js
+   *   gen({
+   *     type: 'Place',
+   *     name: gen.string,
+   *     location: [ gen.number, gen.number ],
+   *     address: {
+   *       street: gen.string,
+   *       city: gen.string
+   *     }
+   *   })
+   *   ```
+   */
+  // Note: this only models one layer deep shapes, not recursive shapes, and does not model records.
+  <T1, T2, T3, T4, T5>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>, T5 | Generator<T5>]): Generator<[T1, T2, T3, T4, T5]>;
+  <T1, T2, T3, T4>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>]): Generator<[T1, T2, T3, T4]>;
+  <T1, T2, T3>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>]): Generator<[T1, T2, T3]>;
+  <T1, T2>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>]): Generator<[T1, T2]>;
+  <T1>(tupleGens: [T1 | Generator<T1>]): Generator<[T1]>;
+  <T>(genMap: {[Key in keyof T]: Generator<T[Key]>}): Generator<T>;
+
+
   // JS Primitives
   // -------------
 
@@ -453,60 +505,6 @@ export const gen: {
   ) => ValueGenerator<C>;
 
 
-  /**
-   * Generates a specific shape of values given an initial nested Array or Object which
-   * contain *Generators*. Any values within the provided shape which don't contain
-   * generators will be *cloned* (with `gen.clone()`).
-   *
-   * Note: Whenever a non-*Generator* is provided to a function which expects a *Generator*,
-   * it is converted to a *Generator* with `gen.shape()`. That makes calling this function
-   * optional for most cases, unless trying to be explicit.
-   *
-   * There are a few forms `gen()` can be used:
-   *
-   * - Generate an Array shape with different values at each index (also known as "tuples")
-   *
-   *   For example, a tuples of [ "constant", *int*, *bool* ] like `['foo', 3, true]`:
-   *
-   *   ```js
-   *   gen.shape([ 'foo', gen.int, gen.boolean ])
-   *   ```
-   *
-   * - Generate an Object shape with different values for each key (also known as "records")
-   *
-   *   For example, a record of { x: "constant", y: *int*, z: *bool* } like `{ x: 'foo', y: -4, z: false }`:
-   *
-   *   ```js
-   *   gen.shape({ x: 'foo', y: gen.int, z: gen.boolean })
-   *   ```
-   *
-   * - Combinations of Array and Object shapes with generators at any point:
-   *
-   *   For example, a data shape for a complex "place" data shape might look like:
-   *
-   *   ```js
-   *   gen.shape({
-   *     type: 'Place',
-   *     name: gen.string,
-   *     location: [ gen.number, gen.number ],
-   *     address: {
-   *       street: gen.string,
-   *       city: gen.string
-   *     }
-   *   })
-   *   ```
-   */
-  shape: {
-    // Note: this only models one layer deep shapes, not recursive shapes, and does not model records.
-    <T1, T2, T3, T4, T5>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>, T5 | Generator<T5>]): Generator<[T1, T2, T3, T4, T5]>;
-    <T1, T2, T3, T4>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>, T4 | Generator<T4>]): Generator<[T1, T2, T3, T4]>;
-    <T1, T2, T3>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>, T3 | Generator<T3>]): Generator<[T1, T2, T3]>;
-    <T1, T2>(tupleGens: [T1 | Generator<T1>, T2 | Generator<T2>]): Generator<[T1, T2]>;
-    <T1>(tupleGens: [T1 | Generator<T1>]): Generator<[T1]>;
-    <T>(genMap: {[Key in keyof T]: Generator<T[Key]>}): Generator<T>;
-  };
-
-
   // JSON
   // ----
 
@@ -557,12 +555,12 @@ export const gen: {
   return: <T>(value: T) => ValueGenerator<T>;
 
   /**
-   * Creates a ValueGenerator which will always generate clones of the provided value.
+   * Creates a ValueGenerator which will always generate deep copies of the provided value.
    *
-   *     var threeThings = gen.clone([1,2,3]);
+   *     var threeThings = gen.returnDeepCopy([1,2,3]);
    *
    */
-  clone: <T>(value: T) => ValueGenerator<T>;
+  returnDeepCopy: <T>(value: T) => ValueGenerator<T>;
 
   /**
    * Creates a ValueGenerator that relies on a size. Size allows for the "shrinking"

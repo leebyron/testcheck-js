@@ -121,7 +121,7 @@ describe('gen builders', () => {
   it('.then() creates a new generator from an existing one', () => {
     const genNotEmptyList = gen.array(gen.int).notEmpty()
     const genListAndItem = genNotEmptyList.then(
-      list => gen.shape([ list, gen.oneOf(list) ])
+      list => gen([ list, gen.oneOf(list) ])
     )
     const vals = sample(genListAndItem, 100)
     expect(vals).toAllPass(function (pair) {

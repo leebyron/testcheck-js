@@ -206,7 +206,7 @@ describe('value generator', () => {
   })
 
   it('generates arrays shapes from a specific definition', () => {
-    const vals = sample(gen.shape([true, gen.return(false)]), 100)
+    const vals = sample(gen([true, gen.return(false)]), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -215,7 +215,7 @@ describe('value generator', () => {
   })
 
   it('generates larger tuples', () => {
-    const vals = sample(gen.shape([gen.int, gen.char, gen.boolean]), 100)
+    const vals = sample(gen([gen.int, gen.char, gen.boolean]), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
@@ -247,7 +247,7 @@ describe('value generator', () => {
 
   it('generates unique arrays with custom unique function', () => {
     const uniqueFn = point => point.join()
-    const genPoint = gen.shape([ gen.int, gen.int ])
+    const genPoint = gen([ gen.int, gen.int ])
     const genUniquePoints = gen.uniqueArray(genPoint, uniqueFn)
 
     const vals = sample(genUniquePoints, 100)
@@ -327,7 +327,7 @@ describe('value generator', () => {
   })
 
   it('generates object shapes from a specific definition', () => {
-    const vals = sample(gen.shape({t: true, f: gen.return(false)}), 100)
+    const vals = sample(gen({t: true, f: gen.return(false)}), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       const keys = Object.keys(value)
@@ -374,35 +374,35 @@ describe('value generator', () => {
   })
 
   it('generates shapes', () => {
-    const genShape = gen.shape({
-      clone: { x: 1, y: 2 },
+    const genShape = gen({
+      copy: { x: 1, y: 2 },
       gen: { x: gen.int, y: gen.int },
       char: gen.alphaNumChar
     })
 
     const value1 = sampleOne(genShape)
-    expect(value1.clone).toEqual({ x: 1, y: 2 })
-    value1.clone.x = 987;
-    expect(value1.clone).toEqual({ x: 987, y: 2 })
+    expect(value1.copy).toEqual({ x: 1, y: 2 })
+    value1.copy.x = 987;
+    expect(value1.copy).toEqual({ x: 987, y: 2 })
     expect(typeof value1.char).toBe('string');
     expect(typeof value1.gen.x).toBe('number');
     expect(typeof value1.gen.y).toBe('number');
 
     const value2 = sampleOne(genShape)
-    expect(value2.clone).toEqual({ x: 1, y: 2 })
+    expect(value2.copy).toEqual({ x: 1, y: 2 })
   })
 
-  it('generates clones', () => {
+  it('generates copies', () => {
     const value = { x: 1, y: 2 }
-    const genClone = gen.clone(value)
+    const genCopy = gen.returnDeepCopy(value)
 
-    const value1 = sampleOne(genClone)
+    const value1 = sampleOne(genCopy)
     expect(value1).not.toBe(value)
     expect(value1).toEqual({ x: 1, y: 2 })
     value1.x = 987;
     expect(value1).toEqual({ x: 987, y: 2 })
 
-    const value2 = sampleOne(genClone)
+    const value2 = sampleOne(genCopy)
     expect(value2).not.toBe(value1)
     expect(value2).toEqual({ x: 1, y: 2 })
   })
