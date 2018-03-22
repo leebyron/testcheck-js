@@ -464,17 +464,17 @@ export const gen: {
   /**
    * Generates JSON objects where each key is a JSON value.
    */
-  JSON: Generator<{[key: string]: any}>;
+  JSON: Generator<{[key: string]: JSONValue}>;
 
   /**
    * Generates JSON values: primitives, or (possibly nested) arrays or objects.
    */
-  JSONValue: Generator<any>;
+  JSONValue: Generator<JSONValue>;
 
   /**
    * Generates JSON primitives: strings, numbers, booleans and null.
    */
-  JSONPrimitive: Generator<any>;
+  JSONPrimitive: Generator<JSONPrimitive>;
 
 
   // Generator Creators
@@ -519,3 +519,7 @@ export const gen: {
   sized: <T>(sizedGenFn: (size: number) => Generator<T> | T) => Generator<T>;
 
 }
+
+type JSONPrimitive = string | number | boolean | null;
+interface JSONArray extends Array<JSONValue> { }
+type JSONValue = JSONPrimitive | JSONArray | {[key: string]: JSONValue};

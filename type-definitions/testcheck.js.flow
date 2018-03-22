@@ -273,7 +273,7 @@ declare export var gen: $ReadOnly<{|
    * Generates any primitive JS value:
    * strings, numbers, booleans, null, undefined, or NaN.
    */
-  primitive: Generator<any>;
+  primitive: Generator<string | number | boolean | null | void>;
 
   boolean: Generator<boolean>;
   null: Generator<null>;
@@ -479,17 +479,17 @@ declare export var gen: $ReadOnly<{|
   /**
    * Generates JSON objects where each key is a JSON value.
    */
-  JSON: Generator<{[key: string]: any}>;
+  JSON: Generator<{[key: string]: JSONValue}>;
 
   /**
    * Generates JSON values: primitives, or (possibly nested) arrays or objects.
    */
-  JSONValue: Generator<any>;
+  JSONValue: Generator<JSONValue>;
 
   /**
    * Generates JSON primitives: strings, numbers, booleans and null.
    */
-  JSONPrimitive: Generator<any>;
+  JSONPrimitive: Generator<JSONPrimitive>;
 
 
   // Generator Creators
@@ -534,3 +534,6 @@ declare export var gen: $ReadOnly<{|
   sized: <T>(sizedGenFn: (size: number) => Generator<T> | T) => Generator<T>;
 
 |}>;
+
+type JSONPrimitive = string | number | boolean | null;
+type JSONValue = JSONPrimitive | Array<JSONValue> | {[string]: JSONValue};
