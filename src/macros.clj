@@ -11,7 +11,9 @@
   ([n msg val]
     (let [parts (str/split (name n) #"\.")]
       `(js/Object.defineProperty
-        (aget js/exports ~@(butlast parts))
+        ~(if (= 1 (count parts))
+          `js/exports
+          `(aget js/exports ~@(butlast parts)))
         ~(last parts)
         ~(tags/->JSValue {
           :get `(fn []

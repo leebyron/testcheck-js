@@ -1,75 +1,75 @@
 /* @flow */
 
 export { gen } from 'testcheck'
-import type { Generator, CheckOptions } from 'testcheck'
+import type { ValueGenerator, CheckOptions } from 'testcheck'
 
 type Test<T> = (t: T) => void;
 
 declare export var check: {
   <T,A>(
-    genA: Generator<A>,
+    genA: ValueGenerator<A>,
     f: (t: T, a: A) => void
   ): Test<T>;
   <T,A,B>(
-    genA: Generator<A>,
-    genB: Generator<B>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
     f: (t: T, a: A, b: B) => void
   ): Test<T>;
   <T,A,B,C>(
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
     f: (t: T, a: A, b: B, c: C) => void
   ): Test<T>;
   <T,A,B,C,D>(
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
-    genD: Generator<D>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
+    genD: ValueGenerator<D>,
     f: (t: T, a: A, b: B, c: C, d: D) => void
   ): Test<T>;
   <T,A,B,C,D,E>(
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
-    genD: Generator<D>,
-    genE: Generator<E>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
+    genD: ValueGenerator<D>,
+    genE: ValueGenerator<E>,
     f: (t: T, a: A, b: B, c: C, d: D, e: E) => void
   ): Test<T>;
 
   <T,A>(
     options: CheckOptions,
-    genA: Generator<A>,
+    genA: ValueGenerator<A>,
     f: (t: T, a: A) => void
   ): Test<T>;
   <T,A,B>(
     options: CheckOptions,
-    genA: Generator<A>,
-    genB: Generator<B>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
     f: (t: T, a: A, b: B) => void
   ): Test<T>;
   <T,A,B,C>(
     options: CheckOptions,
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
     f: (t: T, a: A, b: B, c: C) => void
   ): Test<T>;
   <T,A,B,C,D>(
     options: CheckOptions,
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
-    genD: Generator<D>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
+    genD: ValueGenerator<D>,
     f: (t: T, a: A, b: B, c: C, d: D) => void
   ): Test<T>;
   <T,A,B,C,D,E>(
     options: CheckOptions,
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
-    genD: Generator<D>,
-    genE: Generator<E>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
+    genD: ValueGenerator<D>,
+    genE: ValueGenerator<E>,
     f: (t: T, a: A, b: B, c: C, d: D, e: E) => void
   ): Test<T>;
 };

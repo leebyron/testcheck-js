@@ -1,72 +1,72 @@
 /* @flow */
 
 export { gen } from 'testcheck'
-import { Generator, CheckOptions } from 'testcheck'
+import { ValueGenerator, CheckOptions } from 'testcheck'
 import { ContextualTest, TestContext } from 'ava'
 
 export function check<T,A>(
-  genA: Generator<A>,
+  genA: ValueGenerator<A>,
   f: (t: TestContext, a: A) => boolean | void
 ): ContextualTest;
 export function check<T,A,B>(
-  genA: Generator<A>,
-  genB: Generator<B>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
   f: (t: TestContext, a: A, b: B) => boolean | void
 ): ContextualTest;
 export function check<T,A,B,C>(
-  genA: Generator<A>,
-  genB: Generator<B>,
-  genC: Generator<C>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
+  genC: ValueGenerator<C>,
   f: (t: TestContext, a: A, b: B, c: C) => boolean | void
 ): ContextualTest;
 export function check<T,A,B,C,D>(
-  genA: Generator<A>,
-  genB: Generator<B>,
-  genC: Generator<C>,
-  genD: Generator<D>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
+  genC: ValueGenerator<C>,
+  genD: ValueGenerator<D>,
   f: (t: TestContext, a: A, b: B, c: C, d: D) => boolean | void
 ): ContextualTest;
 export function check<T,A,B,C,D,E>(
-  genA: Generator<A>,
-  genB: Generator<B>,
-  genC: Generator<C>,
-  genD: Generator<D>,
-  genE: Generator<E>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
+  genC: ValueGenerator<C>,
+  genD: ValueGenerator<D>,
+  genE: ValueGenerator<E>,
   f: (t: TestContext, a: A, b: B, c: C, d: D, e: E) => boolean | void
 ): ContextualTest;
 
 export function check<T,A>(
   options: CheckOptions,
-  genA: Generator<A>,
+  genA: ValueGenerator<A>,
   f: (t: TestContext, a: A) => boolean | void
 ): ContextualTest;
 export function check<T,A,B>(
   options: CheckOptions,
-  genA: Generator<A>,
-  genB: Generator<B>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
   f: (t: TestContext, a: A, b: B) => boolean | void
 ): ContextualTest;
 export function check<T,A,B,C>(
   options: CheckOptions,
-  genA: Generator<A>,
-  genB: Generator<B>,
-  genC: Generator<C>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
+  genC: ValueGenerator<C>,
   f: (t: TestContext, a: A, b: B, c: C) => boolean | void
 ): ContextualTest;
 export function check<T,A,B,C,D>(
   options: CheckOptions,
-  genA: Generator<A>,
-  genB: Generator<B>,
-  genC: Generator<C>,
-  genD: Generator<D>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
+  genC: ValueGenerator<C>,
+  genD: ValueGenerator<D>,
   f: (t: TestContext, a: A, b: B, c: C, d: D) => boolean | void
 ): ContextualTest;
 export function check<T,A,B,C,D,E>(
   options: CheckOptions,
-  genA: Generator<A>,
-  genB: Generator<B>,
-  genC: Generator<C>,
-  genD: Generator<D>,
-  genE: Generator<E>,
+  genA: ValueGenerator<A>,
+  genB: ValueGenerator<B>,
+  genC: ValueGenerator<C>,
+  genD: ValueGenerator<D>,
+  genE: ValueGenerator<E>,
   f: (t: TestContext, a: A, b: B, c: C, d: D, e: E) => boolean | void
 ): ContextualTest;

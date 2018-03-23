@@ -6,7 +6,7 @@
 /*:: declare function beforeEach(fn: () => void): void; */
 /*:: declare var jasmine: any; */
 
-const { gen, sample, sampleOne } = require('../')
+const { gen, sample, sampleOne, ValueGenerator } = require('../')
 
 describe('gen builders', () => {
 
@@ -62,6 +62,10 @@ describe('gen builders', () => {
       }
     }
     expect(values.length).toBeGreaterThan(0)
+  })
+
+  it('generators are instances', () => {
+    expect(gen.int instanceof ValueGenerator).toBe(true)
   })
 
   it('generates one of a collection of values', () => {

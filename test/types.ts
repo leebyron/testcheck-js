@@ -1,4 +1,4 @@
-import { check, property, gen, Generator } from '../'
+import { check, property, gen, ValueGenerator } from '../'
 
 // Test: single arg Error
 check(property(
@@ -158,6 +158,6 @@ gen.object<Parent>({
 });
 
 // $ExpectError string is not a number
-var test: Generator<{ name: number }> = gen.object({
+var test: ValueGenerator<{ name: number }> = gen.object({
   name: gen.string
 });

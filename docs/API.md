@@ -16,15 +16,15 @@ const {
   sample,
   sampleOne,
   gen,
-  Generator
+  ValueGenerator
 } = require('testcheck')
 ```
 
 * `check`: Runs a property test.
 * `property`: Defines a property test.
 * `sample` & `sampleOne`: Samples generator values for debugging.
-* `gen`: A collection of *Generator*s and functions that return *Generator*s.
-* `Generator`: The class which all *Generator*s are instances of.
+* `gen`: A collection of *ValueGenerator*s and functions that return *ValueGenerator*s.
+* `ValueGenerator`: The class which all *ValueGenerator*s are instances of.
 
 > Try it! Open the developer console to take the API for a test run.
 
@@ -124,7 +124,7 @@ console.log(test.shrunk.result)
 property(gen[, gen2[, ...genN]], propertyFn)
 ```
 
-* `gen`: Any *Generator* object. Values from which will be provided as arguments to `propertyFn`. Multiple *Generator*s may be provided, each of which will produce another function argument.
+* `gen`: Any *ValueGenerator* instance. Values from which will be provided as arguments to `propertyFn`. Multiple *ValueGenerator*s may be provided, each of which will produce another function argument.
 
 * `propertyFn`: *Function* representing a property that should always be true. Returns `true` when the property is upheld and `false` when the property fails.
 
@@ -135,9 +135,9 @@ A *Property* to be used by `check()`.
 
 ### sample()
 
-Handy tool for visualizing the output of a *Generator*.
+Handy tool for visualizing the output of a *ValueGenerator*.
 
-Given a *Generator*, it returns an *Array* of values resulting from the generator.
+Given a *ValueGenerator*, it returns an *Array* of values resulting from the generator.
 
 ```js
 sample(gen.int)
@@ -150,7 +150,7 @@ sample(gen.int)
 sample(generator[, numValues])
 ```
 
-* `generator`: Any *Generator* object.
+* `generator`: Any *ValueGenerator* object.
 
 * `numValues`: The number of values to produce. Default: `10`.
 
@@ -163,9 +163,9 @@ An *Array* of values from `generator`.
 
 ### sampleOne()
 
-Handy tool for visualizing the output of your *Generator*.
+Handy tool for visualizing the output of your *ValueGenerator*.
 
-Given a *Generator*, it returns a single value generated for a given `size`.
+Given a *ValueGenerator*, it returns a single value generated for a given `size`.
 
 ```js
 sampleOne(gen.int)
@@ -178,7 +178,7 @@ sampleOne(gen.int)
 sample(generator[, size])
 ```
 
-* `generator`: Any *Generator* object.
+* `generator`: Any *ValueGenerator* object.
 
 * `size`: The size of the value to produce. Default: `30`.
 
@@ -245,7 +245,7 @@ Generates only negative numbers (`0` though `-Infinity`), does not generate `NaN
 Generates a floating point number within the provided (inclusive) range.
 Does not generate `NaN` or `Infinity`.
 
-Note: The resulting *Generator* is not shrinkable.
+Note: The resulting *ValueGenerator* is not shrinkable.
 
 **Parameters**
 
@@ -260,7 +260,7 @@ gen.numberWithin(min, max)
 
 ### gen.int
 
-Generator integers (32-bit signed) including negative numbers and `0`.
+Generates integers (32-bit signed) including negative numbers and `0`.
 
 
 ### gen.posInt
@@ -287,7 +287,7 @@ Generates only strictly negative integers, not including 0.
 
 Generates an integer within the provided (inclusive) range.
 
-Note: The resulting *Generator* is not shrinkable.
+Note: The resulting *ValueGenerator* is not shrinkable.
 
 **Parameters**
 
@@ -428,7 +428,7 @@ Generates Arrays of values. There are a few forms `gen.array` can be used:
 gen.array(valueGen[, options])
 ```
 
-* `valueGen`: A *Generator* which will produce the values of the resulting Arrays.
+* `valueGen`: A *ValueGenerator* which will produce the values of the resulting Arrays.
 
 * `options`: An optional object of options describing the size of the resulting Arrays:
 
@@ -464,7 +464,7 @@ sampleOne(genUniquePoints)
 gen.array(valueGen[, uniqueFn][, options])
 ```
 
-* `valueGen`: A *Generator* which will produce the values of the resulting Arrays.
+* `valueGen`: A *ValueGenerator* which will produce the values of the resulting Arrays.
 
 * `uniqueFn`: A Function which accepts a value from `valueGen` and returns a value
               which can be compared with `===` to determine uniqueness.
@@ -515,9 +515,9 @@ Generates Objects of values. There are a few forms `gen.object` can be used:
 gen.object([keyGen, ]valueGen[, options])
 ```
 
-* `keyGen`: An optional *Generator* which will produce the keys of the resulting Objects.
+* `keyGen`: An optional *ValueGenerator* which will produce the keys of the resulting Objects.
 
-* `valueGen`: A *Generator* which will produce the values of the resulting Objects.
+* `valueGen`: A *ValueGenerator* which will produce the values of the resulting Objects.
 
 * `options`: An optional object of options describing the size of the resulting Objects:
 
@@ -545,13 +545,13 @@ Note: Objects will be produced with alpha-numeric keys.
 gen.arrayOrObject(valueGen)
 ```
 
-* `valueGen`: A *Generator* which will produce the values of the resulting Arrays or Objects.
+* `valueGen`: A *ValueGenerator* which will produce the values of the resulting Arrays or Objects.
 
 
 ### gen.nested()
 
-Given a function which takes a *Generator* and returns a *Generator* (such as
-`gen.array` or `gen.object`), and a *Generator* to use as values, creates
+Given a function which takes a *ValueGenerator* and returns a *ValueGenerator* (such as
+`gen.array` or `gen.object`), and a *ValueGenerator* to use as values, creates
 potentially nested values.
 
 ```js
@@ -569,9 +569,9 @@ Note: It may generate just values, not wrapped in a container.
 gen.nested(collectionGenFn, valueGen)
 ```
 
-* `collectionGenFn`: A Function which accepts a *Generator* (like `valueGen`) and returns a new *Generator* which presumably generates collections that contain the provided *Generator*.
+* `collectionGenFn`: A Function which accepts a *ValueGenerator* (like `valueGen`) and returns a new *ValueGenerator* which presumably generates collections that contain the provided *ValueGenerator*.
 
-* `valueGen`: A *Generator* which will produce the values within the resulting collections.
+* `valueGen`: A *ValueGenerator* which will produce the values within the resulting collections.
 
 
 
@@ -599,8 +599,8 @@ Generator Creators
 
 ### gen.oneOf()
 
-Creates a *Generator* which will generate one of the provided values or values
-from one of the provided *Generator*s.
+Creates a *ValueGenerator* which will generate one of the provided values or values
+from one of the provided *ValueGenerator*s.
 
 ```js
 const numOrBool = gen.oneOf([ gen.int, gen.boolean ])
@@ -609,7 +609,7 @@ sample(numOrBool)
 // [ false, true, 0, -3, -2, false, -3, false, 6, 8 ]
 ```
 
-In addition to *Generators*, you can also provide normal values to `gen.oneOf()`,
+In addition to *ValueGenerator*s, you can also provide normal values to `gen.oneOf()`,
 for example, picking one value from an Array of values:
 
 ```js
@@ -626,7 +626,7 @@ sample(genColors, 5)
 gen.oneOf(arrayOfGens)
 ```
 
-* `arrayOfGens`: An Array which contains either a *Generator* or value at each index.
+* `arrayOfGens`: An Array which contains either a *ValueGenerator* or value at each index.
 
 
 ### gen.oneOfWeighted()
@@ -653,16 +653,16 @@ gen.oneOfWeighted(arrayOfWeightsAndGens)
     * `weight`: A number to determine how frequent this selection is relative
       to other selections.
 
-    * `valueGen`: A *Generator* or value to use should this selection be chosen.
+    * `valueGen`: A *ValueGenerator* or value to use should this selection be chosen.
 
 
 ### gen.return()
 
-Creates a *Generator* which will always generate the provided value.
+Creates a *ValueGenerator* which will always generate the provided value.
 
-This is used very rarely since almost everywhere a *Generator* can be accepted,
+This is used very rarely since almost everywhere a *ValueGenerator* can be accepted,
 a regular value can be accepted as well, which implicitly is converted to a
-*Generator* using `gen.return()`. However you may wish to use `gen.return()`
+*ValueGenerator* using `gen.return()`. However you may wish to use `gen.return()`
 directly to either be explicit, or resolve an ambiguity.
 
 ```js
@@ -683,12 +683,12 @@ gen.return(value)
 
 ### gen.sized()
 
-Creates a *Generator* that relies on a `size`. Size allows for the "shrinking"
-of *Generators*. A larger "size" should result in a larger generated value.
+Creates a *ValueGenerator* that relies on a `size`. Size allows for the "shrinking"
+of *ValueGenerator*s. A larger "size" should result in a larger generated value.
 
 Typically `gen.sized()` is not used directly in a test, but may be used when
-building custom *Generator*s. Many of the *Generator*s in this library are built
-with `gen.sized()`.
+building custom *ValueGenerator*s. Many of the *ValueGenerator*s in this library
+are built with `gen.sized()`.
 
 For example, `gen.int` is shrinkable because it is implemented as:
 
@@ -702,17 +702,17 @@ gen.int = gen.sized(size => gen.intWithin(-size, size))
 gen.sized(genFn)
 ```
 
-* `genFn`: A Function which accepts a `size` and returns a *Generator*.
+* `genFn`: A Function which accepts a `size` and returns a *ValueGenerator*.
 
 
 
-*Generator*
------------
+*ValueGenerator*
+----------------
 
-A *Generator* object produces values of a particular kind. *Generator*s cannot
-be constructed directly, but instead are obtained by one of the `gen` values
+A *ValueGenerator* instance produces values of a particular kind. *ValueGenerator*s
+cannot be constructed directly, but instead are obtained by one of the `gen` values
 or functions described above, or as the result of calling one of the prototype
-methods of another *Generator* object.
+methods of another *ValueGenerator* object.
 
 ```js
 // A generator of integers
@@ -726,9 +726,9 @@ const genNonEmptyIntArray = gen.array(gen.int).notEmpty()
 ```
 
 
-### Generator#nullable()
+### ValueGenerator#nullable()
 
-Creates a new *Generator* which also sometimes generates `null` values.
+Creates a new *ValueGenerator* which also sometimes generates `null` values.
 
 ```js
 // A generator of integers or nulls.
@@ -740,12 +740,12 @@ sample(genNullableInt)
 
 **Returns**
 
-A new *Generator*.
+A new *ValueGenerator*.
 
 
-### Generator#notEmpty()
+### ValueGenerator#notEmpty()
 
-Creates a new *Generator* which generates non-empty values.
+Creates a new *ValueGenerator* which generates non-empty values.
 
 Examples of empty values are `0`, `""`, `null`, `[]`, and `{}`
 
@@ -758,15 +758,15 @@ sample(notEmptyStrings, 5)
 
 **Returns**
 
-A new *Generator*.
+A new *ValueGenerator*.
 
 
-### Generator#suchThat()
+### ValueGenerator#suchThat()
 
-Creates a new *Generator* which ensures that all values generated adhere to
+Creates a new *ValueGenerator* which ensures that all values generated adhere to
 the given predicate function.
 
-For example, to create a *Generator* of any number except multiples of 5:
+For example, to create a *ValueGenerator* of any number except multiples of 5:
 
 ```js
 var genAnythingBut5s = gen.int.suchThat(n => n % 5 !== 0);
@@ -784,19 +784,19 @@ pass. After ten attempts an exception will throw.
 g.suchThat(predicateFn)
 ```
 
-* `predicateFn` A function which accepts a `value` from the *Generator* and
+* `predicateFn` A function which accepts a `value` from the *ValueGenerator* and
   returns `true` if it is allowed, or `false` if not.
 
 **Returns**
 
-A new *Generator*.
+A new *ValueGenerator*.
 
 
-### Generator#then()
+### ValueGenerator#then()
 
-Creates a new *Generator* that depends on the values of this *Generator*.
+Creates a new *ValueGenerator* that depends on the values of this *ValueGenerator*.
 
-For example, to create a *Generator* of square numbers:
+For example, to create a *ValueGenerator* of square numbers:
 
 ```js
 var genSquares = gen.int.then(n => n * n);
@@ -805,7 +805,7 @@ sample(genSquares)
 // [ 0, 0, 4, 9, 1, 16, 0, 36, 25, 81 ]
 ```
 
-For example, to create a *Generator* which first generates an Array of
+For example, to create a *ValueGenerator* which first generates an Array of
 integers, and then returns both that Array and a sampled value from it:
 
 ```js
@@ -824,19 +824,19 @@ sample(genListAndItem, 3)
 g.then(mappingFn)
 ```
 
-* `mappingFn` A function which accepts a `value` from the *Generator* and
-  returns either a new value, or a new *Generator*.
+* `mappingFn` A function which accepts a `value` from the *ValueGenerator* and
+  returns either a new value, or a new *ValueGenerator*.
 
 **Returns**
 
-A new *Generator*.
+A new *ValueGenerator*.
 
 
-### Generator#scale()
+### ValueGenerator#scale()
 
-Creates a new Generator which grows at a different scale.
+Creates a new *ValueGenerator* which grows at a different scale.
 
-Generators start by producing very "small" values (closer to 0) at first,
+*ValueGenerator*s start by producing very "small" values (closer to 0) at first,
 and produce larger values in later iterations of a test as a result of a
 "size" value which grows with each generation. Typically "size" grows
 linearly, but .scale() can alter a size to grow at different rates.
@@ -852,7 +852,7 @@ sample(bigInts)
 
 Note: When shrinking a failing test, "size" gets smaller. If the scale
 function returns a value that's not dependent on it's input, then the
-resulting Generator will not shrink.
+resulting *ValueGenerator* will not shrink.
 
 
 **Parameters**
@@ -865,24 +865,24 @@ g.scale(sizingFn)
 
 **Returns**
 
-A new *Generator*.
+A new *ValueGenerator*.
 
 
-### Generator#neverShrink()
+### ValueGenerator#neverShrink()
 
-Creates a new Generator which will never shrink.
+Creates a new *ValueGenerator* which will never shrink.
 This is useful when shrinking is taking a long time or is not applicable.
 
 **Returns**
 
-A new *Generator*.
+A new *ValueGenerator*.
 
 
-### Generator#alwaysShrink()
+### ValueGenerator#alwaysShrink()
 
-Creates a new Generator which will always consider shrinking, even if the
+Creates a new *ValueGenerator* which will always consider shrinking, even if the
 property passes (up to one additional level).
 
 **Returns**
 
-A new *Generator*.
+A new *ValueGenerator*.
