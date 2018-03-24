@@ -48,9 +48,21 @@ describe('gen builders', () => {
   it('generates an exact value', () => {
     const vals = sample(gen.return('wow'), 100)
     expect(vals.length).toBe(100)
-    expect(vals).toAllPass(function (value) {
-      return value === 'wow'
-    })
+    expect(vals).toAllPass(value => value === 'wow')
+  })
+
+  it('sample converts complex values to generators', () => {
+    // $FlowFixMe - sample should accept complex nested generators.
+    const vals1 = sample([123], 100)
+    expect(vals1.length).toBe(100)
+    expect(vals1).toAllPass(value => value.length === 1 && value[0] === 123);
+
+    // $FlowFixMe - sample should accept complex nested generators.
+    const vals2 = sample([123, gen.posInt], 100)
+    expect(vals2.length).toBe(100)
+    expect(vals2).toAllPass(value =>
+      value.length === 2 && value[0] === 123 && value[1] >= 0
+    );
   })
 
   it('generators are iterable', () => {
