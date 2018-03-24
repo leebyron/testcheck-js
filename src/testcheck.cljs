@@ -275,8 +275,8 @@
 (def ValueGenerator (aget js/exports "ValueGenerator"))
 
 ; Deprecated. Use ValueGenerator to avoid confusion with JS generator functions.
-(defexport ValueGenerator
-  "Use ValueGenerator instead of ValueGenerator"
+(defexport Generator
+  "Use ValueGenerator instead of Generator"
   ValueGenerator)
 
 

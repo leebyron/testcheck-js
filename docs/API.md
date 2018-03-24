@@ -144,8 +144,8 @@ sample(gen.int)
 // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
 ```
 
-Note: Whenever a non-*Generator* is provided to a function which expects
-a *Generator*, like `sample()`, it is converted to a *Generator* with `gen()`.
+Note: Whenever a non-*ValueGenerator* is provided to a function which expects
+a *ValueGenerator*, like `sample()`, it is converted to a *ValueGenerator* with `gen()`.
 
 ```js
 sample([ gen.int, gen.alphaNumChar ], 3)
@@ -180,8 +180,8 @@ sampleOne(gen.int)
 // 24
 ```
 
-Note: Whenever a non-*Generator* is provided to a function which expects
-a *Generator*, like `sampleOne()`, it is converted to a *Generator* with `gen()`.
+Note: Whenever a non-*ValueGenerator* is provided to a function which expects
+a *ValueGenerator*, like `sampleOne()`, it is converted to a *ValueGenerator* with `gen()`.
 
 ```js
 sampleOne([ gen.int, gen.alphaNumChar ])
@@ -217,8 +217,8 @@ Generates a specific shape of values given an initial nested Array or Object whi
 contain *Generators*. Any values within the provided shape which don't contain
 generators will be *copied* (with `gen.returnDeepCopy()`).
 
-Note: Whenever a non-*Generator* is provided to a function which expects a *Generator*,
-it is converted to a *Generator* with `gen()`. That makes calling this function
+Note: Whenever a non-*ValueGenerator* is provided to a function which expects a *ValueGenerator*,
+it is converted to a *ValueGenerator* with `gen()`. That makes calling this function
 optional for most cases, unless trying to be explicit or when using TypeScript or Flow.
 
 There are a few forms `gen()` can be used:
@@ -262,7 +262,7 @@ gen(valueShape)
 ```
 
 * `valueShape`: A value, object, or array, which may nest other values, objects and
-  arrays, which at any point may contain a *Generator* used to produce final values.
+  arrays, which at any point may contain a *ValueGenerator* used to produce final values.
 
 
 Primitive Value Generators
@@ -648,6 +648,7 @@ gen.nested(collectionGenFn, valueGen)
 * `valueGen`: A *ValueGenerator* which will produce the values within the resulting collections.
 
 
+
 JSON Generators
 ---------------
 
@@ -731,9 +732,9 @@ gen.oneOfWeighted(arrayOfWeightsAndGens)
 
 ### gen.return()
 
-Creates a *Generator* which will always generate the provided value.
+Creates a *ValueGenerator* which will always generate the provided value.
 
-This is used rarely since almost everywhere a *Generator* can be accepted, a
+This is used rarely since almost everywhere a *ValueGenerator* can be accepted, a
 regular value can be accepted as well. However regular values provided in those
 cases with be *copied*. You may wish to use `gen.return()` if you explicitly want
 a reference to a value rather than a deep copy of that value.

@@ -54,6 +54,28 @@ check(property(
   }
 ))
 
+// Test: gen normal value
+check(property(
+  gen(42),
+  (anAnswer) => {
+    (anAnswer: number);
+    // $ExpectError number is not a string
+    (anAnswer: string);
+    return anAnswer === 42;
+  }
+))
+
+// Test: gen generator
+check(property(
+  gen(gen.posInt),
+  (anInt) => {
+    (anInt: number);
+    // $ExpectError number is not a string
+    (anInt: string);
+    return anInt > 0;
+  }
+))
+
 // Test: normal arg + tuple arg Error
 check(property(
   gen.number, gen([ gen.string, gen.int ]),

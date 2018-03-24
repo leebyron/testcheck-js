@@ -259,6 +259,13 @@ declare export function sampleOne<T>(gen: ValueGenerator<T>, size?: number): T;
 // ValueGenerator Builders
 // ------------------
 
+type $GenResult<T> = $Call<$GenResultFn, T>;
+
+type $GenResultFn =
+  & (<T: $ReadOnlyArray<any>>(T) => $TupleMap<T, $GenResultFn>)
+  & (<T: {[string]: any}>(T) => $ObjMap<T, $GenResultFn>)
+  & (<T>(ValueGenerator<T> | T) => T);
+
 declare export var gen: $ReadOnly<{|
 
   /**
@@ -305,8 +312,12 @@ declare export var gen: $ReadOnly<{|
    *   ```
    */
   // Note: this only models one layer deep shapes, not recursive shapes.
-  <T: Array<any>>(tupleGens: T): ValueGenerator<$TupleMap<T, <V>(ValueGenerator<V> | V) => V>>;
+  // Due to a bug in flow (as of v0.68) these first 3 lines must remain.
+  // Once solved, only the 4th line should describe this function.
+  <T>(ValueGenerator<T>): ValueGenerator<T>;
+  <T: $ReadOnlyArray<any>>(tupleGens: T): ValueGenerator<$TupleMap<T, <V>(ValueGenerator<V> | V) => V>>;
   <T: {[key: string]: any}>(recordGens: T): ValueGenerator<$ObjMap<T, <V>(ValueGenerator<V> | V) => V>>;
+  <T>(T): ValueGenerator<$GenResult<T>>;
 
 
   // JS Primitives
