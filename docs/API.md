@@ -445,28 +445,44 @@ Generates Arrays of unique values.
 
 Accepts the same size options as gen.array()
 
-Also optionally accepts a function to determine how to determine if a value
-is unique. For example, if generating [x, y] points as Arrays, JavaScript cannot
-determine if two Arrays are unique. By providing a function, the points can be
-converted to strings first so they can be compared.
+For example, to generate an array of unique integers:
+
+```js
+var genUniqueInts = gen.uniqueArray(gen.int)
+
+sampleOne(genUniqueInts)
+// [ 7, -9, 8, 14, 0, 19, 24, -31, 1, -13, 5 ]
+```
+
+Generated plain Objects and Arrays are deeply compared by value. For example,
+to generate an array of unique [x, y] points:
 
 ```js
 var genPoint = gen.array([ gen.int, gen.int ])
-var genUniquePoints = gen.uniqueArray(genPoint, point => point.join())
+var genUniquePoints = gen.uniqueArray(genPoint)
 
 sampleOne(genUniquePoints)
 // [ [ -9, -3 ], [ -1, -1 ], [ 2, -2 ], [ -11, -6 ], [ 9, -4 ] ]
 ```
 
+Also optionally accepts a function to determine how to determine if more complex
+values are unique by translating them to a simpler value.
+For example, when generating *Date*s:
+
+```js
+var genDate = gen.posInt.then(ms => new Date(ms))
+var genUniqueDates = gen.uniqueArray(genDate, date => date.toString())
+```
+
 **Parameters**
 
 ```
-gen.array(valueGen[, uniqueFn][, options])
+gen.uniqueArray(valueGen[, uniqueFn][, options])
 ```
 
 * `valueGen`: A *ValueGenerator* which will produce the values of the resulting Arrays.
 
-* `uniqueFn`: A Function which accepts a value from `valueGen` and returns a value
+* `uniqueFn`: A Function which accepts a value from `valueGen` and returns a scalar value
               which can be compared with `===` to determine uniqueness.
 
 * `options`: An optional object of options describing the size of the resulting Arrays:

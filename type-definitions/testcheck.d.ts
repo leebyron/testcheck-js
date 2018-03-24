@@ -398,16 +398,11 @@ export const gen: {
    *
    * Accepts the same size options as gen.array()
    *
-   * Optionally also accepts a function to determine how to determine if a value
-   * is unique. For example, if 2d points are the same:
-   *
-   *     var genPoint = gen.array([ gen.int, gen.int ])
-   *     var genUniquePoints = gen.uniqueArray(genPoint, point => point.join())
-   *
+   * Optionally also accepts a function to determine how a value is unique
    */
   uniqueArray: {
     <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<Array<T>>;
-    <T>(valueGen: ValueGenerator<T>, uniqueBy: (value: T) => any, options?: SizeOptions): ValueGenerator<Array<T>>;
+    <T>(valueGen: ValueGenerator<T>, uniqueBy: (value: T) => string | number, options?: SizeOptions): ValueGenerator<Array<T>>;
   };
 
   /**
