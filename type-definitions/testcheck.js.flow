@@ -21,43 +21,43 @@ type SizeOptions = {|
 |};
 
 /**
- * Generators of values.
+ * ValueGenerators of values.
  */
-declare export class Generator<+T> {
+declare export class ValueGenerator<+T> {
 
   /**
-   * Creates a new Generator which also sometimes generates null values.
+   * Creates a new ValueGenerator which also sometimes generates null values.
    */
-  nullable(): Generator<T | null>;
+  nullable(): ValueGenerator<T | null>;
 
   /**
-   * Creates a new Generator which generates non-empty values.
+   * Creates a new ValueGenerator which generates non-empty values.
    *
    * Examples of empty values are 0, "", null, [], and {}
    */
-  notEmpty(): Generator<T>;
+  notEmpty(): ValueGenerator<T>;
 
   /**
-   * Creates a new Generator which ensures that all values generated adhere to
+   * Creates a new ValueGenerator which ensures that all values generated adhere to
    * the given predicate function.
    *
-   * For example, to create a Generator of any number except multiples of 5:
+   * For example, to create a ValueGenerator of any number except multiples of 5:
    *
    *     var genAnythingBut5s = gen.int.suchThat(n => n % 5 !== 0);
    *
    * Note: Care is needed to ensure there is a high chance the predicate will
    * pass, after ten attempts, an exception will throw.
    */
-  suchThat(fn: (value: T) => boolean): Generator<T>;
+  suchThat(fn: (value: T) => boolean): ValueGenerator<T>;
 
   /**
-   * Creates a new Generator that depends on the values of this Generator.
+   * Creates a new ValueGenerator that depends on the values of this ValueGenerator.
    *
-   * For example, to create a Generator of square numbers:
+   * For example, to create a ValueGenerator of square numbers:
    *
    *     var genSquares = gen.int.then(n => n * n);
    *
-   * For example, to create a Generator which first generates an array of
+   * For example, to create a ValueGenerator which first generates an array of
    * integers, and then returns both that array and a sampled value from it:
    *
    *     var genList = gen.notEmpty(gen.array(gen.int))
@@ -66,12 +66,12 @@ declare export class Generator<+T> {
    *     );
    *
    */
-  then<U>(fn: (value: T) => Generator<U> | U): Generator<U>;
+  then<U>(fn: (value: T) => ValueGenerator<U> | U): ValueGenerator<U>;
 
   /**
-   * Creates a new Generator which grows at a different scale.
+   * Creates a new ValueGenerator which grows at a different scale.
    *
-   * Generators start by producing very "small" values (closer to 0) at first,
+   * ValueGenerators start by producing very "small" values (closer to 0) at first,
    * and produce larger values in later iterations of a test as a result of a
    * "size" value which grows with each generation. Typically "size" grows
    * linearly, but .scale() can alter a size to grow at different rates.
@@ -84,24 +84,24 @@ declare export class Generator<+T> {
    *
    * Note: When shrinking a failing test, "size" gets smaller. If the scale
    * function returns a value that's not dependent on it's input, then the
-   * resulting Generator will not shrink.
+   * resulting ValueGenerator will not shrink.
    */
-  scale(fn: (size: number) => number): Generator<T>;
+  scale(fn: (size: number) => number): ValueGenerator<T>;
 
   /**
-   * Creates a new Generator which will never shrink.
+   * Creates a new ValueGenerator which will never shrink.
    * This is useful when shrinking is taking a long time or is not applicable.
    */
-  neverShrink(): Generator<T>;
+  neverShrink(): ValueGenerator<T>;
 
   /**
-   * Creates a new Generator which will always consider shrinking, even if the
+   * Creates a new ValueGenerator which will always consider shrinking, even if the
    * property passes (up to one additional level).
    */
-  alwaysShrink(): Generator<T>;
+  alwaysShrink(): ValueGenerator<T>;
 
   /**
-   * Generators are iterable, but take caution as they generate an infinite
+   * ValueGenerators are iterable, but take caution as they generate an infinite
    * series of results.
    *
    * This can be useful as an alternative way to sample values:
@@ -199,33 +199,33 @@ declare export function check<TArgs>(prop: Property<TArgs>, options?: CheckOptio
  */
 declare export var property: $ReadOnly<{|
   <A>(
-    genA: Generator<A>,
+    genA: ValueGenerator<A>,
     f: (a: A) => boolean | void
   ): Property<[A]>;
   <A,B>(
-    genA: Generator<A>,
-    genB: Generator<B>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
     f: (a: A, b: B) => boolean | void
   ): Property<[A, B]>;
   <A,B,C>(
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
     f: (a: A, b: B, c: C) => boolean | void
   ): Property<[A, B, C]>;
   <A,B,C,D>(
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
-    genD: Generator<D>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
+    genD: ValueGenerator<D>,
     f: (a: A, b: B, c: C, d: D) => boolean | void
   ): Property<[A, B, C, D]>;
   <A,B,C,D,E>(
-    genA: Generator<A>,
-    genB: Generator<B>,
-    genC: Generator<C>,
-    genD: Generator<D>,
-    genE: Generator<E>,
+    genA: ValueGenerator<A>,
+    genB: ValueGenerator<B>,
+    genC: ValueGenerator<C>,
+    genD: ValueGenerator<D>,
+    genE: ValueGenerator<E>,
     f: (a: A, b: B, c: C, d: D, e: E) => boolean | void
   ): Property<[A, B, C, D, E]>;
 |}>;
@@ -240,23 +240,23 @@ declare export var property: $ReadOnly<{|
  * By default 10 samples are provided unless otherwise specified.
  *
  */
-declare export function sample<T>(gen: Generator<T>, numValues?: number): Array<T>;
+declare export function sample<T>(gen: ValueGenerator<T>, numValues?: number): Array<T>;
 
 /**
- * Handy tool for visualizing the output of your Generator.
+ * Handy tool for visualizing the output of your ValueGenerator.
  *
- * Given a Generator, it returns a single value generated for a given `size`.
+ * Given a ValueGenerator, it returns a single value generated for a given `size`.
  *
  *     sampleOne(gen.int)
  *     // 24
  *
  * By default, values of size 30 are produced.
  */
-declare export function sampleOne<T>(gen: Generator<T>, size?: number): T;
+declare export function sampleOne<T>(gen: ValueGenerator<T>, size?: number): T;
 
 
 
-// Generator Builders
+// ValueGenerator Builders
 // ------------------
 
 declare export var gen: $ReadOnly<{|
@@ -267,18 +267,18 @@ declare export var gen: $ReadOnly<{|
   /**
    * Generates any JS value, including Arrays and Objects (possibly nested).
    */
-  any: Generator<any>;
+  any: ValueGenerator<any>;
 
   /**
    * Generates any primitive JS value:
    * strings, numbers, booleans, null, undefined, or NaN.
    */
-  primitive: Generator<string | number | boolean | null | void>;
+  primitive: ValueGenerator<string | number | boolean | null | void>;
 
-  boolean: Generator<boolean>;
-  null: Generator<null>;
-  undefined: Generator<void>;
-  NaN: Generator<number>;
+  boolean: ValueGenerator<boolean>;
+  null: ValueGenerator<null>;
+  undefined: ValueGenerator<void>;
+  NaN: ValueGenerator<number>;
 
 
   // Numbers
@@ -287,54 +287,54 @@ declare export var gen: $ReadOnly<{|
   /**
    * Generates floating point numbers (including +Infinity, -Infinity, and NaN).
    */
-  number: Generator<number>;
+  number: ValueGenerator<number>;
 
   /**
    * Generates only positive numbers (0 though +Infinity), does not generate NaN.
    */
-  posNumber: Generator<number>;
+  posNumber: ValueGenerator<number>;
 
   /**
    * Generates only negative numbers (0 though -Infinity), does not generate NaN.
    */
-  negNumber: Generator<number>;
+  negNumber: ValueGenerator<number>;
 
   /**
    * Generates a floating point number within the provided (inclusive) range.
    * Does not generate NaN or +-Infinity.
    */
-  numberWithin: (min: number, max: number) => Generator<number>;
+  numberWithin: (min: number, max: number) => ValueGenerator<number>;
 
   /**
-   * Generator integers (32-bit signed) including negative numbers and 0.
+   * ValueGenerator integers (32-bit signed) including negative numbers and 0.
    */
-  int: Generator<number>;
+  int: ValueGenerator<number>;
 
   /**
    * Generates positive integers, including 0.
    */
-  posInt: Generator<number>;
+  posInt: ValueGenerator<number>;
 
   /**
    * Generates negative integers, including 0.
    */
-  negInt: Generator<number>;
+  negInt: ValueGenerator<number>;
 
   /**
    * Generates only strictly positive integers, not including 0.
    */
-  sPosInt: Generator<number>;
+  sPosInt: ValueGenerator<number>;
 
   /**
    * Generates only strictly negative integers, not including 0.
    */
-  sNegInt: Generator<number>;
+  sNegInt: ValueGenerator<number>;
 
   /**
    * Generates an integer within the provided (inclusive) range.
-   * The resulting Generator is not shrinkable.
+   * The resulting ValueGenerator is not shrinkable.
    */
-  intWithin: (min: number, max: number) => Generator<number>;
+  intWithin: (min: number, max: number) => ValueGenerator<number>;
 
 
   // Strings
@@ -346,37 +346,37 @@ declare export var gen: $ReadOnly<{|
    * Note: strings of arbitrary characters may result in higher-plane Unicode
    * characters and non-printable characters.
    */
-  string: Generator<string>;
+  string: ValueGenerator<string>;
 
   /**
    * Generates strings of printable ascii characters.
    */
-  asciiString: Generator<string>;
+  asciiString: ValueGenerator<string>;
 
   /**
    * Generates strings of only alpha-numeric characters: a-z, A-Z, 0-9.
    */
-  alphaNumString: Generator<string>;
+  alphaNumString: ValueGenerator<string>;
 
   /**
    * Generates substrings of an original string (including the empty string).
    */
-  substring: (original: string) => Generator<string>;
+  substring: (original: string) => ValueGenerator<string>;
 
   /**
    * Generates arbitrary 1-byte characters (code 0 through 255).
    */
-  char: Generator<string>;
+  char: ValueGenerator<string>;
 
   /**
    * Generates only printable ascii characters (code 32 through 126).
    */
-  asciiChar: Generator<string>;
+  asciiChar: ValueGenerator<string>;
 
   /**
    * Generates only alpha-numeric characters: a-z, A-Z, 0-9.
    */
-  alphaNumChar: Generator<string>;
+  alphaNumChar: ValueGenerator<string>;
 
 
   // Collections: Arrays and Objects
@@ -405,8 +405,8 @@ declare export var gen: $ReadOnly<{|
    *
    */
   array: $ReadOnly<{|
-    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
-    <T: Array<any>>(tupleGens: T): Generator<$TupleMap<T, <V>(Generator<V> | V) => V>>;
+    <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<Array<T>>;
+    <T: Array<any>>(tupleGens: T): ValueGenerator<$TupleMap<T, <V>(ValueGenerator<V> | V) => V>>;
   |}>;
 
   /**
@@ -422,8 +422,8 @@ declare export var gen: $ReadOnly<{|
    *
    */
   uniqueArray: $ReadOnly<{|
-    <T>(valueGen: Generator<T>, options?: SizeOptions): Generator<Array<T>>;
-    <T>(valueGen: Generator<T>, uniqueBy: (value: T) => any, options?: SizeOptions): Generator<Array<T>>;
+    <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<Array<T>>;
+    <T>(valueGen: ValueGenerator<T>, uniqueBy: (value: T) => any, options?: SizeOptions): ValueGenerator<Array<T>>;
   |}>;
 
   /**
@@ -445,9 +445,9 @@ declare export var gen: $ReadOnly<{|
    *
    */
   object: $ReadOnly<{|
-    <V>(valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: string]: V}>;
-    <K,V>(keyGen: Generator<K>, valueGen: Generator<V>, options?: SizeOptions): Generator<{[key: K]: V}>;
-    <T: {[key: string]: any}>(recordGens: T): Generator<$ObjMap<T, <V>(Generator<V> | V) => V>>;
+    <V>(valueGen: ValueGenerator<V>, options?: SizeOptions): ValueGenerator<{[key: string]: V}>;
+    <K,V>(keyGen: ValueGenerator<K>, valueGen: ValueGenerator<V>, options?: SizeOptions): ValueGenerator<{[key: K]: V}>;
+    <T: {[key: string]: any}>(recordGens: T): ValueGenerator<$ObjMap<T, <V>(ValueGenerator<V> | V) => V>>;
   |}>;
 
   /**
@@ -456,12 +456,12 @@ declare export var gen: $ReadOnly<{|
    * Note: Objects will be produced with alpha-numeric keys.
    */
   arrayOrObject: <T>(
-    valueGen: Generator<T>
-  ) => Generator<{[key: string]: T} | Array<T>>;
+    valueGen: ValueGenerator<T>
+  ) => ValueGenerator<{[key: string]: T} | Array<T>>;
 
   /**
    * Given a function which takes a generator and returns a generator (such as
-   * `gen.array` or `gen.object`), and a Generator to use as values, creates
+   * `gen.array` or `gen.object`), and a ValueGenerator to use as values, creates
    * potentially nested values.
    *
    *     gen.nested(gen.array, gen.int)
@@ -469,9 +469,9 @@ declare export var gen: $ReadOnly<{|
    *
    */
   nested: <C, T>(
-    collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
-    valueGen: Generator<T>
-  ) => Generator<C>;
+    collectionGenFn: (valueGen: ValueGenerator<T>) => ValueGenerator<C>,
+    valueGen: ValueGenerator<T>
+  ) => ValueGenerator<C>;
 
 
   // JSON
@@ -479,30 +479,30 @@ declare export var gen: $ReadOnly<{|
   /**
    * Generates JSON objects where each key is a JSON value.
    */
-  JSON: Generator<{[key: string]: JSONValue}>;
+  JSON: ValueGenerator<{[key: string]: JSONValue}>;
 
   /**
    * Generates JSON values: primitives, or (possibly nested) arrays or objects.
    */
-  JSONValue: Generator<JSONValue>;
+  JSONValue: ValueGenerator<JSONValue>;
 
   /**
    * Generates JSON primitives: strings, numbers, booleans and null.
    */
-  JSONPrimitive: Generator<JSONPrimitive>;
+  JSONPrimitive: ValueGenerator<JSONPrimitive>;
 
 
-  // Generator Creators
+  // ValueGenerator Creators
   // ------------------
 
   /**
-   * Creates a Generator which will generate values from one of the
+   * Creates a ValueGenerator which will generate values from one of the
    * provided generators.
    *
    *     var numOrBool = gen.oneOf([gen.int, gen.boolean])
    *
    */
-  oneOf: <T>(generators: Array<Generator<T> | T>) => Generator<T>;
+  oneOf: <T>(generators: Array<ValueGenerator<T> | T>) => ValueGenerator<T>;
 
   /**
    * Similar to `gen.oneOf()`, except provides probablistic "weights" to
@@ -511,27 +511,27 @@ declare export var gen: $ReadOnly<{|
    *     var numOrRarelyBool = gen.oneOfWeighted([[99, gen.int], [1, gen.boolean]])
    */
   oneOfWeighted: <T>(
-    generators: Array<[ number, Generator<T> | T ]>
-  ) => Generator<T>;
+    generators: Array<[ number, ValueGenerator<T> | T ]>
+  ) => ValueGenerator<T>;
 
   /**
-   * Creates a Generator which will always generate the provided value.
+   * Creates a ValueGenerator which will always generate the provided value.
    *
    *     var alwaysBlue = gen.return('blue');
    *
    */
-  return: <T>(value: T) => Generator<T>;
+  return: <T>(value: T) => ValueGenerator<T>;
 
   /**
-   * Creates a Generator that relies on a size. Size allows for the "shrinking"
-   * of Generators. Larger "size" should result in a larger generated value.
+   * Creates a ValueGenerator that relies on a size. Size allows for the "shrinking"
+   * of ValueGenerators. Larger "size" should result in a larger generated value.
    *
    * For example, `gen.int` is shrinkable because it is implemented as:
    *
    *     var gen.int = gen.sized(size => gen.intWithin(-size, size))
    *
    */
-  sized: <T>(sizedGenFn: (size: number) => Generator<T> | T) => Generator<T>;
+  sized: <T>(sizedGenFn: (size: number) => ValueGenerator<T> | T) => ValueGenerator<T>;
 
 |}>;
 
