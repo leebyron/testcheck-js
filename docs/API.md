@@ -215,7 +215,7 @@ ready-made generators to reference as well as functions that build new generator
 
 Generates a specific shape of values given an initial nested Array or Object which
 contain *Generators*. Any values within the provided shape which don't contain
-generators will be *copied* (with `gen.returnDeepCopy()`).
+generators will be *copied* (with `gen.deepCopyOf()`).
 
 Note: Whenever a non-*ValueGenerator* is provided to a function which expects a *ValueGenerator*,
 it is converted to a *ValueGenerator* with `gen()`. That makes calling this function
@@ -755,15 +755,15 @@ gen.return(value)
 * `value`: The value to always generate references of.
 
 
-### gen.returnDeepCopy()
+### gen.deepCopyOf()
 
 Creates a *ValueGenerator* which will always generate a *deep copy* of the
 provided value.
 
 This is used rarely since almost everywhere a *ValueGenerator* can be accepted,
 a regular value can be accepted as well, which implicitly is converted to a
-*ValueGenerator* using `gen()` which itself calls `gen.returnDeepCopy()` for
-non-generator values. However you may wish to use `gen.returnDeepCopy()`
+*ValueGenerator* using `gen()` which itself calls `gen.deepCopyOf()` for
+non-generator values. However you may wish to use `gen.deepCopyOf()`
 directly to either be explicit, resolve an ambiguity, or cause actual instances
 of *ValueGenerator* to appear in test cases rather than their values.
 
@@ -772,7 +772,7 @@ other types, such as `Date`, remain references. For different behavior, use:
 `gen.return(value).then(yourCustomCopyFn)`.
 
 ```js
-const threeThings = gen.returnDeepCopy([1,2,3]);
+const threeThings = gen.deepCopyOf([1,2,3]);
 
 const aValue = sampleOne(threeThings)
 [ 1, 2, 3 ]
@@ -786,7 +786,7 @@ const anotherValue = sampleOne(threeThings)
 **Parameters**
 
 ```
-gen.returnDeepCopy(value)
+gen.deepCopyOf(value)
 ```
 
 * `value`: The value to always generate deep copies of.

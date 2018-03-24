@@ -244,7 +244,7 @@ export const gen: {
   /**
    * Generates a specific shape of values given an initial nested Array or Object which
    * contain *Generators*. Any values within the provided shape which don't contain
-   * generators will be *copied* (with `gen.returnDeepCopy()`).
+   * generators will be *copied* (with `gen.deepCopy()`).
    *
    * Note: Whenever a non-*Generator* is provided to a function which expects a *Generator*,
    * it is converted to a *Generator* with `gen()`. That makes calling this function
@@ -538,10 +538,10 @@ export const gen: {
   /**
    * Creates a ValueGenerator which will always generate deep copies of the provided value.
    *
-   *     var threeThings = gen.returnDeepCopy([1,2,3]);
+   *     var threeThings = gen.deepCopyOf([1,2,3]);
    *
    */
-  returnDeepCopy: <T>(value: T) => ValueGenerator<T>;
+  deepCopyOf: <T>(value: T) => ValueGenerator<T>;
 
   /**
    * Creates a ValueGenerator that relies on a size. Size allows for the "shrinking"

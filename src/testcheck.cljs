@@ -140,7 +140,7 @@
 
 (def gen-json-value (gen/recursive-gen gen-array-or-object gen-json-primitive))
 
-(defn- gen-return-deep-copy
+(defn- gen-deep-copy-of
   [x]
   (gen/fmap deep-copy (gen/return x)))
 
@@ -172,7 +172,7 @@
               ; Wrap previous indices
               (loop [j 0]
                 (when (< j i)
-                  (aset gens j (gen-return-deep-copy (aget x j)))
+                  (aset gens j (gen-deep-copy-of (aget x j)))
                   (recur (inc j))))
 
               ; Set
@@ -183,7 +183,7 @@
                 (if (< j l)
                   (let [v2 (aget x j)
                         r2 (convert-gen v2)]
-                    (aset gens j (if (identical? v2 r2) (gen-return-deep-copy v2) r2))
+                    (aset gens j (if (identical? v2 r2) (gen-deep-copy-of v2) r2))
                     (recur (inc j)))))
 
               ; Return tuple generator
@@ -207,7 +207,7 @@
               ; Wrap previous indices
               (loop [j 0]
                 (when (< j i)
-                  (aset gens j (gen-return-deep-copy (aget x (aget ks j))))
+                  (aset gens j (gen-deep-copy-of (aget x (aget ks j))))
                   (recur (inc j))))
 
               ; Set
@@ -218,7 +218,7 @@
                 (if (< j l)
                   (let [v2 (aget x (aget ks j))
                         r2 (convert-gen v2)]
-                    (aset gens j (if (identical? v2 r2) (gen-return-deep-copy v2) r2))
+                    (aset gens j (if (identical? v2 r2) (gen-deep-copy-of v2) r2))
                     (recur (inc j)))))
 
               ; Return record generator
@@ -228,7 +228,7 @@
 
 ; Common point of the recursive production of ValueGenerators from values.
 ; If it's a collection, walk through the collection lazily converting to gens
-; until it finds one, then gen-return-deep-copy all previous entries. Otherwise
+; until it finds one, then gen-deep-copy-of all previous entries. Otherwise
 ; return the original value.
 (defn convert-gen
   [x]
@@ -249,7 +249,7 @@
     (do
       (assert (not ^boolean (gen/generator? x)))
       (let [r (convert-gen x)]
-        (if (identical? x r) (gen-return-deep-copy x) r)))))
+        (if (identical? x r) (gen-deep-copy-of x) r)))))
 
 ; Converts a function which accepts a ValueGenerator and returns a ValueGenerator
 ; into a function which accepts a gen/generator and returns a gen/generator
@@ -513,9 +513,9 @@
   [value]
   (ValueGenerator. (gen/return value))))
 
-(defexport gen.returnDeepCopy (fn
+(defexport gen.deepCopyOf (fn
   [value]
-  (ValueGenerator. (gen-return-deep-copy value))))
+  (ValueGenerator. (gen-deep-copy-of value))))
 
 (defexport gen.sized (fn
   [f]

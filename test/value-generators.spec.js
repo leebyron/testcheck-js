@@ -394,7 +394,7 @@ describe('value generator', () => {
 
   it('generates copies', () => {
     const value = { x: 1, y: 2 }
-    const genCopy = gen.returnDeepCopy(value)
+    const genCopy = gen.deepCopyOf(value)
 
     const value1 = sampleOne(genCopy)
     expect(value1).not.toBe(value)
