@@ -115,7 +115,9 @@ function checkIt(it) {
       // Run testcheck
       var checkResult = testcheck.check(property, options);
       if (checkResult.fail) {
-        var failingArgs = printArgs(checkResult.shrunk.smallest, checkResult.seed);
+        var shrunk = checkResult.shrunk;
+        var args = shrunk ? shrunk.smallest : checkResult.fail;
+        var failingArgs = printArgs(args, checkResult.seed);
         spec.description += failingArgs;
         if (spec.results) {
           spec.results().description += failingArgs;
@@ -153,9 +155,9 @@ function logException(e) {
 }
 
 function printArgs(args, seed) {
-  const inspect = require('util').inspect
-  let toStr = (x) => inspect(x, { depth: null, colors: true }).slice(1, -1)
-  return ' (' + toStr(args) + ') Seed:' + toStr([seed]);
+  const inspect = require('util').inspect;
+  return ' (' + inspect(args, { depth: null, colors: true }).slice(1, -1) +
+    ') Seed: ' + inspect(seed, { colors: true });
 }
 
 exports.install = install;

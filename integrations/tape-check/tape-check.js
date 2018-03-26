@@ -54,7 +54,7 @@ function check(/* [options,] ...args, propertyFn */) {
       var originalEmit = test.emit;
       test.emit = function (name, data) {
         if (name === 'result') {
-          data.name += printArgs(args);
+          data.name += printArgs(args, checkResult.seed);
         }
         originalEmit.call(test, name, data);
       }
@@ -86,6 +86,8 @@ function assertWrap(ok, opts) {
   this._ok = this._ok && ok;
 }
 
-function printArgs(args) {
-  return ' (' + require('util').inspect(args, { depth: null }).slice(1, -1) + ')'
+function printArgs(args, seed) {
+  const inspect = require('util').inspect;
+  return ' (' + inspect(args, { depth: null, colors: true }).slice(1, -1) +
+    ') Seed: ' + inspect(seed, { colors: true });
 }

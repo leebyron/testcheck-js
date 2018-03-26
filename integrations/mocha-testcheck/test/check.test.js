@@ -42,7 +42,7 @@ describe('check', function () {
       check.it('will fail with this assertion', gen.int, x => {
         expect(x).to.at.most(10)
       }).fn()
-    }).to.throw('( 11 ) => AssertionError: expected 11 to be at most 10')
+    }).to.throw('( \u001b[33m11\u001b[39m ) => AssertionError: expected 11 to be at most 10')
   })
 
   it('outputs well formed shrunk data when throwing normal error', () => {
@@ -52,7 +52,7 @@ describe('check', function () {
           throw new Error('Expected ' + x + ' to be at most 10');
         }
       }).fn()
-    }).to.throw('( 11 ) => Error: Expected 11 to be at most 10')
+    }).to.throw('( \u001b[33m11\u001b[39m ) => Error: Expected 11 to be at most 10')
   })
 
   it('outputs well formed shrunk data when returning boolean', () => {
@@ -60,7 +60,7 @@ describe('check', function () {
       check.it('will fail with this assertion', gen.int, x =>
         x <= 10
       ).fn()
-    }).to.throw('( 11 ) => false')
+    }).to.throw('( \u001b[33m11\u001b[39m ) => false')
   })
 
 });

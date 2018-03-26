@@ -65,7 +65,7 @@ function check(/* [options,] ...args, propertyFn */) {
       var args = shrunk ? shrunk.smallest : checkResult.fail;
       var result = shrunk ? shrunk.result : checkResult.result;
 
-      test.title += ' ' + printArgs(args)
+      test.title += ' ' + printArgs(args, checkResult.seed);
       if (result instanceof Error) {
         test.assertError = cleanStack(result);
       } else {
@@ -80,8 +80,10 @@ function check(/* [options,] ...args, propertyFn */) {
   }
 }
 
-function printArgs(args) {
-  return '(' + require('util').inspect(args, { depth: null, colors: true }).slice(1, -1) + ')'
+function printArgs(args, seed) {
+  const inspect = require('util').inspect;
+  return ' (' + inspect(args, { depth: null, colors: true }).slice(1, -1) +
+    ') Seed: ' + inspect(seed, { colors: true });
 }
 
 function cleanStack(error) {
