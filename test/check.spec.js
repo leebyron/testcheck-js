@@ -5,9 +5,15 @@
 /*:: declare function expect(val: any): any; */
 /*:: declare var jasmine: any; */
 
-const { check, property, gen } = require('../')
+const { check, checkAsync, property, gen } = require('../')
 
 describe('check', () => {
+
+  it('async', (done) => {
+    const promise = checkAsync(property(gen.int, (i) => Promise.resolve(i)))
+
+    promise.then((result) => console.log(result) || done())
+  })
 
   it('checks true properties', () => {
 
