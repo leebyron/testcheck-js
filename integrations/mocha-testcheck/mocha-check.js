@@ -84,7 +84,9 @@ function CheckFailure(checkResult) {
   var args = shrunk ? shrunk.smallest : checkResult.fail;
   var result = shrunk ? shrunk.result : checkResult.result;
   this.check = checkResult
-  this.message = printArgs(args) + ' => ' + String(result);
+  this.message =
+    printArgs(args) + ' => ' + String(result) +
+    printSeed(checkResult.seed);
 
   if (result instanceof Error) {
     // Edit stack
@@ -103,8 +105,12 @@ CheckFailure.prototype = Object.create(Error.prototype);
 CheckFailure.prototype.name = 'CheckFailure';
 CheckFailure.prototype.constructor = CheckFailure;
 
-function printArgs(args) {
-  return '(' + require('util').inspect(args).slice(1, -1) + ')'
+function printArgs(args, seed) {
+  return '(' + require('util').inspect(args, { depth: null, colors: true }).slice(1, -1) + ')';
+}
+
+function printSeed(seed) {
+  return ' (Seed: ' + require('util').inspect(seed, { colors: true }) + ')';
 }
 
 function stackFrames(error) {
