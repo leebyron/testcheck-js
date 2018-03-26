@@ -48,9 +48,21 @@ describe('gen builders', () => {
   it('generates an exact value', () => {
     const vals = sample(gen.return('wow'), 100)
     expect(vals.length).toBe(100)
-    expect(vals).toAllPass(function (value) {
-      return value === 'wow'
-    })
+    expect(vals).toAllPass(value => value === 'wow')
+  })
+
+  it('sample converts complex values to generators', () => {
+    // $FlowFixMe - sample should accept complex nested generators.
+    const vals1 = sample([123], 100)
+    expect(vals1.length).toBe(100)
+    expect(vals1).toAllPass(value => value.length === 1 && value[0] === 123);
+
+    // $FlowFixMe - sample should accept complex nested generators.
+    const vals2 = sample([123, gen.posInt], 100)
+    expect(vals2.length).toBe(100)
+    expect(vals2).toAllPass(value =>
+      value.length === 2 && value[0] === 123 && value[1] >= 0
+    );
   })
 
   it('generators are iterable', () => {
@@ -121,7 +133,20 @@ describe('gen builders', () => {
   it('.then() creates a new generator from an existing one', () => {
     const genNotEmptyList = gen.array(gen.int).notEmpty()
     const genListAndItem = genNotEmptyList.then(
-      list => gen.array([ list, gen.oneOf(list) ])
+      list => gen([ list, gen.oneOf(list) ])
+    )
+    const vals = sample(genListAndItem, 100)
+    expect(vals).toAllPass(function (pair) {
+      const list = pair[0]
+      const item = pair[1]
+      return Array.isArray(list) && typeof item === 'number' && list.indexOf(item) !== -1
+    })
+  })
+
+  it('.then() return value gets converted to a generator', () => {
+    const genNotEmptyList = gen.array(gen.int).notEmpty()
+    const genListAndItem = genNotEmptyList.then(
+      list => [ list, gen.oneOf(list) ]
     )
     const vals = sample(genListAndItem, 100)
     expect(vals).toAllPass(function (pair) {

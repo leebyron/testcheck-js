@@ -144,6 +144,14 @@ sample(gen.int)
 // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
 ```
 
+Note: Whenever a non-*ValueGenerator* is provided to a function which expects
+a *ValueGenerator*, like `sample()`, it is converted to a *ValueGenerator* with `gen()`.
+
+```js
+sample([ gen.int, gen.alphaNumChar ], 3)
+// [ [ 0, 'a' ], [ -1, 'M' ], [ 1, 'm' ] ]
+```
+
 **Parameters**
 
 ```
@@ -172,6 +180,14 @@ sampleOne(gen.int)
 // 24
 ```
 
+Note: Whenever a non-*ValueGenerator* is provided to a function which expects
+a *ValueGenerator*, like `sampleOne()`, it is converted to a *ValueGenerator* with `gen()`.
+
+```js
+sampleOne([ gen.int, gen.alphaNumChar ])
+// [ 8, 'j' ]
+```
+
 **Parameters**
 
 ```
@@ -186,6 +202,67 @@ sample(generator[, size])
 
 A single value from `generator`.
 
+
+Generator Builders
+------------------
+
+*Generators* are responsible for generating test values for use within property
+tests. *Generators* can produce simple values like numbers, booleans, or strings,
+as well as more complex values like Arrays and Objects. The API below list
+ready-made generators to reference as well as functions that build new generators.
+
+### gen()
+
+Generates a specific shape of values given an initial nested Array or Object which
+contain *Generators*. Any values within the provided shape which don't contain
+generators will be *copied* (with `gen.deepCopyOf()`).
+
+Note: Whenever a non-*ValueGenerator* is provided to a function which expects a *ValueGenerator*,
+it is converted to a *ValueGenerator* with `gen()`. That makes calling this function
+optional for most cases, unless trying to be explicit or when using TypeScript or Flow.
+
+There are a few forms `gen()` can be used:
+
+- Generate an Array shape with different values at each index (also known as "tuples")
+
+  For example, a tuples of [ "constant", *int*, *bool* ] like `['foo', 3, true]`:
+
+  ```js
+  gen([ 'foo', gen.int, gen.boolean ])
+  ```
+
+- Generate an Object shape with different values for each key (also known as "records")
+
+  For example, a record of { x: "constant", y: *int*, z: *bool* } like `{ x: 'foo', y: -4, z: false }`:
+
+  ```js
+  gen({ x: 'foo', y: gen.int, z: gen.boolean })
+  ```
+
+- Combinations of Array and Object shapes with generators at any point:
+
+  For example, a data shape for a complex "place" data shape might look like:
+
+  ```js
+  gen({
+    type: 'Place',
+    name: gen.string,
+    location: [ gen.number, gen.number ],
+    address: {
+      street: gen.string,
+      city: gen.string
+    }
+  })
+  ```
+
+**Parameters**
+
+```
+gen(valueShape)
+```
+
+* `valueShape`: A value, object, or array, which may nest other values, objects and
+  arrays, which at any point may contain a *ValueGenerator* used to produce final values.
 
 
 Primitive Value Generators
@@ -413,15 +490,6 @@ Generates Arrays of values. There are a few forms `gen.array` can be used:
   gen.array(gen.int, { minSize: 2, maxSize: 10 })
   ```
 
-- Generate Arrays of specific lengths with different kinds of values at
-  each index, also known as "tuples",
-
-  For example, a tuples of [ *int*, *bool* ] like `[3, true]`:
-
-  ```js
-  gen.array([ gen.int, gen.boolean ])
-  ```
-
 **Parameters**
 
 ```
@@ -458,8 +526,7 @@ Generated plain Objects and Arrays are deeply compared by value. For example,
 to generate an array of unique [x, y] points:
 
 ```js
-var genPoint = gen.array([ gen.int, gen.int ])
-var genUniquePoints = gen.uniqueArray(genPoint)
+var genUniquePoints = gen.uniqueArray([ gen.int, gen.int ])
 
 sampleOne(genUniquePoints)
 // [ [ -9, -3 ], [ -1, -1 ], [ 2, -2 ], [ -11, -6 ], [ 9, -4 ] ]
@@ -514,15 +581,6 @@ Generates Objects of values. There are a few forms `gen.object` can be used:
 
   ```js
   gen.object(gen.int, gen.int)
-  ```
-
-- Generate Objects with specific keys with different kinds of values at
-  each key, also known as "records".
-
-  For example, a 2D point like `{ x: 3, y: 5 }`:
-
-  ```js
-  gen.object({ x: gen.posInt, y: gen.posInt })
   ```
 
 **Parameters**
@@ -676,10 +734,10 @@ gen.oneOfWeighted(arrayOfWeightsAndGens)
 
 Creates a *ValueGenerator* which will always generate the provided value.
 
-This is used very rarely since almost everywhere a *ValueGenerator* can be accepted,
-a regular value can be accepted as well, which implicitly is converted to a
-*ValueGenerator* using `gen.return()`. However you may wish to use `gen.return()`
-directly to either be explicit, or resolve an ambiguity.
+This is used rarely since almost everywhere a *ValueGenerator* can be accepted, a
+regular value can be accepted as well. However regular values provided in those
+cases will be *copied*. You may wish to use `gen.return()` if you explicitly want
+a reference to a value rather than a deep copy of that value.
 
 ```js
 const alwaysBlue = gen.return('blue');
@@ -694,7 +752,44 @@ sample(alwaysBlue)
 gen.return(value)
 ```
 
-* `value`: The value to always generate.
+* `value`: The value to always generate references of.
+
+
+### gen.deepCopyOf()
+
+Creates a *ValueGenerator* which will always generate a *deep copy* of the
+provided value.
+
+This is used rarely since almost everywhere a *ValueGenerator* can be accepted,
+a regular value can be accepted as well, which implicitly is converted to a
+*ValueGenerator* using `gen()` which itself calls `gen.deepCopyOf()` for
+non-generator values. However you may wish to use `gen.deepCopyOf()`
+directly to either be explicit, resolve an ambiguity, or cause actual instances
+of *ValueGenerator* to appear in test cases rather than their values.
+
+Note that deep copy only copies plain Objects and Arrays, where instances of
+other types, such as `Date`, remain references. For different behavior, use:
+`gen.return(value).then(yourCustomCopyFn)`.
+
+```js
+const threeThings = gen.deepCopyOf([1,2,3]);
+
+const aValue = sampleOne(threeThings)
+[ 1, 2, 3 ]
+aValue.push(4);
+[ 1, 2, 3, 4 ]
+
+const anotherValue = sampleOne(threeThings)
+[ 1, 2, 3 ]
+```
+
+**Parameters**
+
+```
+gen.deepCopyOf(value)
+```
+
+* `value`: The value to always generate deep copies of.
 
 
 ### gen.sized()
@@ -827,7 +922,7 @@ integers, and then returns both that Array and a sampled value from it:
 ```js
 var genList = gen.array(gen.int).notEmpty();
 var genListAndItem = genList.then(
-  list => gen.array([ list, gen.oneOf(list) ])
+  list => [ list, gen.oneOf(list) ]
 );
 
 sample(genListAndItem, 3)

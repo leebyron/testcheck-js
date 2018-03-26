@@ -322,7 +322,7 @@ We could change the test to be aware of this relationship such that the
 ```js
 check(property(
   gen.asciiString.notEmpty().then(str =>
-    gen.array([ str, gen.substring(str).notEmpty() ])),
+    [ str, gen.substring(str).notEmpty() ]),
   ([ str, separator ]) => str.split(separator).length === 1
 ))
 ```

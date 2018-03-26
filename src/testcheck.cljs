@@ -53,6 +53,24 @@
 
     :else x))
 
+(defn- map-obj [obj f]
+  (let [new-obj (js-obj)
+        ks (js-keys obj)
+        l (.-length ks)]
+    (loop [i 0]
+      (when (< i l)
+        (let [k (aget ks i)]
+          (aset new-obj k (f (aget obj k)))
+          (recur (inc i)))))
+    new-obj))
+
+(defn- deep-copy
+  [x]
+  (cond
+    ^boolean (js/Array.isArray x) (.map x deep-copy)
+    (identical? (.-constructor x) js/Object) (map-obj x deep-copy)
+    :else x))
+
 ; For properties that only use assertions, forgetting to "return true" results
 ; in failing tests, if a function results in the value "undefined", then
 ; consider it a passing result.
@@ -122,18 +140,116 @@
 
 (def gen-json-value (gen/recursive-gen gen-array-or-object gen-json-primitive))
 
+(defn- gen-deep-copy-of
+  [x]
+  (gen/fmap deep-copy (gen/return x)))
+
 
 ;; Converting between ValueGenerator and gen/generator
 
 (declare ValueGenerator)
 
-; Converts a ValueGenerator into a gen/generator
-(defn- ->gen
+(defn ^boolean ValueGenerator?
   [x]
-  (assert (not ^boolean (gen/generator? x)))
-  (if (and ^boolean x (exists? (aget x "__clj_gen")))
-    (aget x "__clj_gen")
-    (gen/return x)))
+  (and ^boolean x (exists? (aget x "__clj_gen"))))
+
+(declare convert-gen)
+
+; Iterates through a provided Array. If any value is a ValueGenerator or
+; contains a ValueGenerator, then a gen/tuple is returned.
+(defn convert-array-gen
+  [x]
+  (let [l (.-length x)]
+    (loop [i 0]
+      (if (identical? i l)
+        x
+        (let [v (aget x i)
+              r (convert-gen v)]
+          (if (identical? v r)
+            (recur (inc i))
+            (let [gens (make-array l)]
+
+              ; Wrap previous indices
+              (loop [j 0]
+                (when (< j i)
+                  (aset gens j (gen-deep-copy-of (aget x j)))
+                  (recur (inc j))))
+
+              ; Set
+              (aset gens i r)
+
+              ; Convert remainder
+              (loop [j (inc i)]
+                (if (< j l)
+                  (let [v2 (aget x j)
+                        r2 (convert-gen v2)]
+                    (aset gens j (if (identical? v2 r2) (gen-deep-copy-of v2) r2))
+                    (recur (inc j)))))
+
+              ; Return tuple generator
+              (gen/fmap to-array (apply gen/tuple gens)))))))))
+
+; Iterates through a provided Object. If any value is a ValueGenerator or
+; contains a ValueGenerator, then a record generator is returned.
+(defn convert-object-gen
+  [x]
+  (let [ks (js-keys x)
+        l (.-length ks)]
+    (loop [i 0]
+      (if (identical? i l)
+        x
+        (let [v (aget x (aget ks i))
+              r (convert-gen v)]
+          (if (identical? v r)
+            (recur (inc i))
+            (let [gens (make-array l)]
+
+              ; Wrap previous indices
+              (loop [j 0]
+                (when (< j i)
+                  (aset gens j (gen-deep-copy-of (aget x (aget ks j))))
+                  (recur (inc j))))
+
+              ; Set
+              (aset gens i r)
+
+              ; Convert remainder
+              (loop [j (inc i)]
+                (if (< j l)
+                  (let [v2 (aget x (aget ks j))
+                        r2 (convert-gen v2)]
+                    (aset gens j (if (identical? v2 r2) (gen-deep-copy-of v2) r2))
+                    (recur (inc j)))))
+
+              ; Return record generator
+              (gen/fmap
+                (comp to-object (partial zipmap ks))
+                (apply gen/tuple gens)))))))))
+
+; Common point of the recursive production of ValueGenerators from values.
+; If it's a collection, walk through the collection lazily converting to gens
+; until it finds one, then gen-deep-copy-of all previous entries. Otherwise
+; return the original value.
+(defn convert-gen
+  [x]
+  (cond
+    (ValueGenerator? x) (aget x "__clj_gen")
+    (array? x) (convert-array-gen x)
+    (object? x) (convert-object-gen x)
+    :else x
+  ))
+
+; If provided a JS ValueGenerator, converts it to a Clojure gen/generator.
+; If provided a primitive, Array, or Object, deeply converts it to a
+; Clojure gen/generator.
+(defn ->gen
+  [x]
+  (if (ValueGenerator? x)
+    (aget x "__clj_gen") ; Short-circuit common case
+    (do
+      (assert (not ^boolean (gen/generator? x)))
+      (let [r (convert-gen x)]
+        (if (identical? x r) (gen-deep-copy-of x) r)))))
 
 ; Converts a function which accepts a ValueGenerator and returns a ValueGenerator
 ; into a function which accepts a gen/generator and returns a gen/generator
@@ -212,7 +328,9 @@
 ;; Value Generators
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defexport gen (js-obj))
+(defexport gen (fn
+  [x]
+  (ValueGenerator. (->gen x))))
 
 
 ;; Primitives
@@ -275,17 +393,20 @@
 
 (defexport gen.array (fn
   [a b c]
-  (invariant (<= 1 (.-length (js-arguments))) "gen.array: must provide a value generator or array of generators")
+  (invariant (<= 1 (.-length (js-arguments))) "gen.array: must provide a value generator")
   (cond
     (number? c)
     (deprecated! "Use gen.array(vals, { minSize: num, maxSize: num })")
 
     (number? b)
-    (deprecated! "Use gen.array(vals, { size: num })"))
+    (deprecated! "Use gen.array(vals, { size: num })")
+
+    (and (identical? 1 (.-length (js-arguments))) ^boolean (js/Array.isArray a))
+    (deprecated! "Just provide the array of generators directly without gen.array(), or use gen()."))
   (ValueGenerator. (gen/fmap to-array
     (cond
       ; gen.array([ gen.int, gen.string ])
-      ^boolean (js/Array.isArray a)
+      (and (identical? 1 (.-length (js-arguments))) ^boolean (js/Array.isArray a))
       (apply gen/tuple (map ->gen a))
 
       ; gen.array(gen.int, { opts })
@@ -339,11 +460,13 @@
 
 (defexport gen.object (fn
   [a b c]
-  (invariant (<= 1 (.-length (js-arguments))) "gen.object: must provide a value generator or object of generators")
+  (invariant (<= 1 (.-length (js-arguments))) "gen.object: must provide a value generator")
+  (if (and (identical? 1 (.-length (js-arguments))) (object? a))
+    (deprecated! "Just provide the object with generator values directly without gen.object(), or use gen()."))
   (ValueGenerator. (gen/fmap to-object
     (cond
       ; gen.object({ record: gen.int })
-      (object? a)
+      (and (identical? 1 (.-length (js-arguments))) (object? a))
       (gen-record a)
 
       ; gen.object(valGen, { opts })
@@ -389,6 +512,10 @@
 (defexport gen.return (fn
   [value]
   (ValueGenerator. (gen/return value))))
+
+(defexport gen.deepCopyOf (fn
+  [value]
+  (ValueGenerator. (gen-deep-copy-of value))))
 
 (defexport gen.sized (fn
   [f]

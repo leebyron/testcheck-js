@@ -34,7 +34,7 @@ check(property(
 
 // Test: tuples Error
 check(property(
-  gen.array([ gen.string, gen.int ]),
+  gen([ gen.string, gen.int ]),
   ([ aString, anInt ]) => {
     // $ExpectError cannot multiply a number and string
     return aString * anInt === 123
@@ -43,7 +43,7 @@ check(property(
 
 // Test: tuples Ok
 check(property(
-  gen.array([ gen.number, gen.int ]),
+  gen([ gen.number, gen.int ]),
   ([ aNumber, anInt ]) => {
     // Numbers can be multiplied
     return aNumber * anInt === 123
@@ -52,7 +52,7 @@ check(property(
 
 // Test: normal arg + tuple arg Error
 check(property(
-  gen.number, gen.array([ gen.string, gen.int ]),
+  gen.number, gen([ gen.string, gen.int ]),
   (aNumber, [aString, anInt]) =>
     // $ExpectError cannot multiply a number and string
     aNumber * aString === 123
@@ -60,7 +60,7 @@ check(property(
 
 // Test: normal arg + tuple arg OK
 check(property(
-  gen.number, gen.array([ gen.string, gen.int ]),
+  gen.number, gen([ gen.string, gen.int ]),
   (number, array) =>
     // However numbers can be multiplied
     number * array[1] === 123
@@ -68,7 +68,7 @@ check(property(
 
 // Test: normal arg + tuple arg OK
 check(property(
-  gen.string, gen.array([ gen.string, gen.int ]),
+  gen.string, gen([ gen.string, gen.int ]),
   (string, array) =>
     // Strings can be uppercased and added
     string.toUpperCase() + array[0].toUpperCase() === 'ABCABC'
@@ -76,7 +76,7 @@ check(property(
 
 // Test: Object records Error
 check(property(
-  gen.object({ aString: gen.string, aNumber: gen.number }),
+  gen({ aString: gen.string, aNumber: gen.number }),
   ({ aString, aNumber }) =>
     // $ExpectError cannot multiply a number and string
     aString * aNumber === 123
@@ -84,7 +84,7 @@ check(property(
 
 // Test: Object records Ok
 check(property(
-  gen.object({ anInt: gen.int, aNumber: gen.number }),
+  gen({ anInt: gen.int, aNumber: gen.number }),
   ({ anInt, aNumber }) =>
     // However numbers can be multiplied
     anInt * aNumber === 123
@@ -112,7 +112,7 @@ check(
 
 // Test: Object with some types ok
 check(property(
-  gen.object({ anInt: gen.int, anArrayOfInts: gen.array(gen.int) }),
+  gen({ anInt: gen.int, anArrayOfInts: gen.array(gen.int) }),
   ({ anInt, anArrayOfInts }) =>
     // can do something typed with these arguments
     anArrayOfInts.concat([anInt]) === [1,2,3]
@@ -124,18 +124,18 @@ type Person = {
 }
 
 // Test: Everything OK
-const personGen = gen.object<Person>({
+const personGen = gen<Person>({
   name: gen.string,
   age: gen.number
 });
 
 // $ExpectError missing 'age' key in generator
-gen.object<Person>({
+gen<Person>({
   name: gen.string
 });
 
 // $ExpectError 'likesDancing' is not part of a person
-gen.object<Person>({
+gen<Person>({
   name: gen.string,
   age: gen.number,
   likesDancing: gen.boolean
@@ -146,18 +146,18 @@ type Parent = {
 };
 
 // Test: Works with composite generators
-gen.object<Parent>({
+gen<Parent>({
   child: personGen
 });
 
 // $ExpectError child generator is not a Person
-gen.object<Parent>({
-  child: gen.object({
+gen<Parent>({
+  child: gen({
     name: gen.string
   })
 });
 
 // $ExpectError string is not a number
-var test: ValueGenerator<{ name: number }> = gen.object({
+var test: ValueGenerator<{ name: number }> = gen({
   name: gen.string
 });

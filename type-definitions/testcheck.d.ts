@@ -60,7 +60,7 @@ export class ValueGenerator<T> {
    *
    *     var genList = gen.notEmpty(gen.array(gen.int))
    *     var genListAndItem = genList.then(
-   *       list => gen.array([ list, gen.oneOf(list) ])
+   *       list => [ list, gen.oneOf(list) ]
    *     );
    *
    */
@@ -241,6 +241,58 @@ export function sampleOne<T>(gen: ValueGenerator<T>, size?: number): T;
 
 export const gen: {
 
+  /**
+   * Generates a specific shape of values given an initial nested Array or Object which
+   * contain *Generators*. Any values within the provided shape which don't contain
+   * generators will be *copied* (with `gen.deepCopy()`).
+   *
+   * Note: Whenever a non-*Generator* is provided to a function which expects a *Generator*,
+   * it is converted to a *Generator* with `gen()`. That makes calling this function
+   * optional for most cases, unless trying to be explicit.
+   *
+   * There are a few forms `gen()` can be used:
+   *
+   * - Generate an Array shape with different values at each index (also known as "tuples")
+   *
+   *   For example, a tuples of [ "constant", *int*, *bool* ] like `['foo', 3, true]`:
+   *
+   *   ```js
+   *   gen([ 'foo', gen.int, gen.boolean ])
+   *   ```
+   *
+   * - Generate an Object shape with different values for each key (also known as "records")
+   *
+   *   For example, a record of { x: "constant", y: *int*, z: *bool* } like `{ x: 'foo', y: -4, z: false }`:
+   *
+   *   ```js
+   *   gen({ x: 'foo', y: gen.int, z: gen.boolean })
+   *   ```
+   *
+   * - Combinations of Array and Object shapes with generators at any point:
+   *
+   *   For example, a data shape for a complex "place" data shape might look like:
+   *
+   *   ```js
+   *   gen({
+   *     type: 'Place',
+   *     name: gen.string,
+   *     location: [ gen.number, gen.number ],
+   *     address: {
+   *       street: gen.string,
+   *       city: gen.string
+   *     }
+   *   })
+   *   ```
+   */
+  // Note: this only models one layer deep shapes, not recursive shapes, and does not model records.
+  <T1, T2, T3, T4, T5>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>, T5 | ValueGenerator<T5>]): ValueGenerator<[T1, T2, T3, T4, T5]>;
+  <T1, T2, T3, T4>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>]): ValueGenerator<[T1, T2, T3, T4]>;
+  <T1, T2, T3>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>]): ValueGenerator<[T1, T2, T3]>;
+  <T1, T2>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>]): ValueGenerator<[T1, T2]>;
+  <T1>(tupleGens: [T1 | ValueGenerator<T1>]): ValueGenerator<[T1]>;
+  <T>(genMap: {[Key in keyof T]: ValueGenerator<T[Key]>}): ValueGenerator<T>;
+
+
   // JS Primitives
   // -------------
 
@@ -377,21 +429,8 @@ export const gen: {
    *
    *     gen.array(gen.int, { minSize: 2, maxSize: 10 })
    *
-   *  - Generate Arrays of specific lengths with different kinds of values at
-   *    each index (e.g. tuples). (ex. tuples of [int, bool] like `[3, true]`)
-   *
-   *     gen.array([ gen.int, gen.boolean ])
-   *
    */
-  array: {
-    <T>(valueGen: ValueGenerator<T>): ValueGenerator<Array<T>>;
-    <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<Array<T>>;
-    <T1, T2, T3, T4, T5>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>, T5 | ValueGenerator<T5>]): ValueGenerator<[T1, T2, T3, T4, T5]>;
-    <T1, T2, T3, T4>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>, T4 | ValueGenerator<T4>]): ValueGenerator<[T1, T2, T3, T4]>;
-    <T1, T2, T3>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>, T3 | ValueGenerator<T3>]): ValueGenerator<[T1, T2, T3]>;
-    <T1, T2>(tupleGens: [T1 | ValueGenerator<T1>, T2 | ValueGenerator<T2>]): ValueGenerator<[T1, T2]>;
-    <T1>(tupleGens: [T1 | ValueGenerator<T1>]): ValueGenerator<[T1]>;
-  };
+  array: <T>(valueGen: ValueGenerator<T>, options?: SizeOptions) => ValueGenerator<Array<T>>;
 
   /**
    * Generates Arrays of unique values.
@@ -417,16 +456,10 @@ export const gen: {
    *
    *     gen.object(gen.int, gen.int)
    *
-   *  - Generate Objects with specific keys with different kinds of values at
-   *    each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
-   *
-   *     gen.object({ x: gen.posInt, y: gen.posInt })
-   *
    */
   object: {
     <T>(valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<{[key: string]: T}>;
     <T>(keyGen: ValueGenerator<string>, valueGen: ValueGenerator<T>, options?: SizeOptions): ValueGenerator<{[key: string]: T}>;
-    <T>(genMap: {[Key in keyof T]: ValueGenerator<T[Key]>}): ValueGenerator<T>;
   };
 
   /**
@@ -495,12 +528,20 @@ export const gen: {
   ) => ValueGenerator<T>;
 
   /**
-   * Creates a ValueGenerator which will always generate the provided value.
+   * Creates a ValueGenerator which will always generate references of the provided value.
    *
    *     var alwaysBlue = gen.return('blue');
    *
    */
   return: <T>(value: T) => ValueGenerator<T>;
+
+  /**
+   * Creates a ValueGenerator which will always generate deep copies of the provided value.
+   *
+   *     var threeThings = gen.deepCopyOf([1,2,3]);
+   *
+   */
+  deepCopyOf: <T>(value: T) => ValueGenerator<T>;
 
   /**
    * Creates a ValueGenerator that relies on a size. Size allows for the "shrinking"

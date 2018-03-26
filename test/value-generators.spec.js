@@ -6,7 +6,7 @@
 /*:: declare function beforeEach(fn: () => void): void; */
 /*:: declare var jasmine: any; */
 
-const { gen, sample } = require('../')
+const { gen, sample, sampleOne } = require('../')
 
 describe('value generator', () => {
 
@@ -205,14 +205,26 @@ describe('value generator', () => {
     })
   })
 
-  it('generates arrays from a specific definition', () => {
-    const vals = sample(gen.array([gen.return(true), gen.return(false)]), 100)
+  it('generates arrays shapes from a specific definition', () => {
+    const vals = sample(gen([true, gen.return(false)]), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       return Array.isArray(value) &&
         value.length === 2 && value[0] === true && value[1] === false
     })
   })
+
+  it('generates larger tuples', () => {
+    const vals = sample(gen([gen.int, gen.char, gen.boolean]), 100)
+    expect(vals.length).toBe(100)
+    expect(vals).toAllPass(function (value) {
+      return Array.isArray(value) &&
+        value.length === 3 &&
+        typeof value[0] === 'number' &&
+        typeof value[1] === 'string' &&
+        typeof value[2] === 'boolean'
+    })
+  });
 
   it('generates unique arrays', () => {
     const vals = sample(gen.uniqueArray(gen.int), 100)
@@ -235,7 +247,7 @@ describe('value generator', () => {
 
   it('generates unique arrays with custom unique function', () => {
     const uniqueFn = point => point.join()
-    const genPoint = gen.array([ gen.int, gen.int ])
+    const genPoint = gen([ gen.int, gen.int ])
     const genUniquePoints = gen.uniqueArray(genPoint, uniqueFn)
 
     const vals = sample(genUniquePoints, 100)
@@ -314,8 +326,8 @@ describe('value generator', () => {
     })
   })
 
-  it('generates objects from a specific definition', () => {
-    const vals = sample(gen.object({t: gen.return(true), f: gen.return(false)}), 100)
+  it('generates object shapes from a specific definition', () => {
+    const vals = sample(gen({t: true, f: gen.return(false)}), 100)
     expect(vals.length).toBe(100)
     expect(vals).toAllPass(function (value) {
       const keys = Object.keys(value)
@@ -359,6 +371,51 @@ describe('value generator', () => {
       const jsonStr = JSON.stringify(value)
       return JSON.stringify(JSON.parse(jsonStr)) === jsonStr
     })
+  })
+
+  it('generates shapes', () => {
+    const genShape = gen({
+      copy: { x: 1, y: 2 },
+      gen: { x: gen.int, y: gen.int },
+      char: gen.alphaNumChar
+    })
+
+    const value1 = sampleOne(genShape)
+    expect(value1.copy).toEqual({ x: 1, y: 2 })
+    value1.copy.x = 987;
+    expect(value1.copy).toEqual({ x: 987, y: 2 })
+    expect(typeof value1.char).toBe('string');
+    expect(typeof value1.gen.x).toBe('number');
+    expect(typeof value1.gen.y).toBe('number');
+
+    const value2 = sampleOne(genShape)
+    expect(value2.copy).toEqual({ x: 1, y: 2 })
+  })
+
+  it('generates copies', () => {
+    const value = { x: 1, y: 2 }
+    const genCopy = gen.deepCopyOf(value)
+
+    const value1 = sampleOne(genCopy)
+    expect(value1).not.toBe(value)
+    expect(value1).toEqual({ x: 1, y: 2 })
+    value1.x = 987;
+    expect(value1).toEqual({ x: 987, y: 2 })
+
+    const value2 = sampleOne(genCopy)
+    expect(value2).not.toBe(value1)
+    expect(value2).toEqual({ x: 1, y: 2 })
+  })
+
+  it('generates references', () => {
+    const value = { x: 1, y: 2 }
+    const genRef = gen.return(value)
+
+    const value1 = sampleOne(genRef)
+    expect(value1).toBe(value)
+
+    const value2 = sampleOne(genRef)
+    expect(value2).toBe(value1)
   })
 
 })
