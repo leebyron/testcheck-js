@@ -38,29 +38,51 @@ describe('check', function () {
   })
 
   it('outputs well formed shrunk data', () => {
-    expect(() => {
+    let caughtError;
+    try {
       check.it('will fail with this assertion', gen.int, x => {
         expect(x).to.at.most(10)
       }).fn()
-    }).to.throw('( \u001b[33m11\u001b[39m ) => AssertionError: expected 11 to be at most 10')
+    } catch (error) {
+      caughtError = error;
+    }
+    expect(noColor(caughtError.message)).to.contain(
+      '( 11 ) => AssertionError: expected 11 to be at most 10'
+    );
   })
 
   it('outputs well formed shrunk data when throwing normal error', () => {
-    expect(() => {
+    let caughtError;
+    try {
       check.it('will fail with this assertion', gen.int, x => {
         if (x > 10) {
           throw new Error('Expected ' + x + ' to be at most 10');
         }
       }).fn()
-    }).to.throw('( \u001b[33m11\u001b[39m ) => Error: Expected 11 to be at most 10')
+    } catch (error) {
+      caughtError = error;
+    }
+    expect(noColor(caughtError.message)).to.contain(
+      '( 11 ) => Error: Expected 11 to be at most 10'
+    );
   })
 
   it('outputs well formed shrunk data when returning boolean', () => {
-    expect(() => {
+    let caughtError;
+    try {
       check.it('will fail with this assertion', gen.int, x =>
         x <= 10
       ).fn()
-    }).to.throw('( \u001b[33m11\u001b[39m ) => false')
+    } catch (error) {
+      caughtError = error;
+    }
+    expect(noColor(caughtError.message)).to.contain(
+      '( 11 ) => false'
+    );
   })
 
 });
+
+function noColor(str) {
+  return str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+}
