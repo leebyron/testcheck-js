@@ -736,7 +736,7 @@ Creates a *ValueGenerator* which will always generate the provided value.
 
 This is used rarely since almost everywhere a *ValueGenerator* can be accepted, a
 regular value can be accepted as well. However regular values provided in those
-cases with be *copied*. You may wish to use `gen.return()` if you explicitly want
+cases will be *copied*. You may wish to use `gen.return()` if you explicitly want
 a reference to a value rather than a deep copy of that value.
 
 ```js
