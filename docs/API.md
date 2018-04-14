@@ -922,7 +922,7 @@ integers, and then returns both that Array and a sampled value from it:
 ```js
 var genList = gen.array(gen.int).notEmpty();
 var genListAndItem = genList.then(
-  list => [ list, gen.oneOf(list) ]
+  list => [ list, sampleOne(gen.oneOf(list)) ]
 );
 
 sample(genListAndItem, 3)
