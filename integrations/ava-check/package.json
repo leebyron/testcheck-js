@@ -18,10 +18,10 @@
   "main": "ava-check.js",
   "typings": "ava-check.d.ts",
   "dependencies": {
-    "testcheck": "^1.0.0-rc"
+    "testcheck": "^1.0.0-rc.2"
   },
   "devDependencies": {
-    "ava": "^0.20.0",
+    "ava": "^0.25.0",
     "flow-bin": "0.68.0",
     "typescript": "2.7.2"
   },
