@@ -65,29 +65,20 @@ function checkIt(it) {
       // Intercept match results
       var matchFailed = false;
       var matchResults = [];
-      var failingMatchResults;
-
-      var addResult = spec.addMatcherResult ?
-        spec.addMatcherResult.bind(spec) :
-        spec.addExpectationResult.bind(spec, false);
+      var expectationResults = [];
 
       var existingSpecFail = spec.fail;
       var existingAddExpectationResult = spec.addExpectationResult;
       var existingAddMatcherResult = spec.addMatcherResult;
 
-      var checkAddExpectationResult = function(passed, data) {
-        if (passed) {
-          return;
-        }
-        matchFailed = true;
-        matchResults.push(data);
+      var checkAddExpectationResult = function(passed, data, isException) {
+        matchFailed = matchFailed || !passed;
+        expectationResults.push([passed, data, isException]);
       };
 
       var checkAddMatcherResult = function(result) {
+        matchFailed = matchFailed || !result.passed();
         matchResults.push(result);
-        if (!result.passed()) {
-          matchFailed = true;
-        }
       };
 
       // Build property
@@ -96,15 +87,10 @@ function checkIt(it) {
         spec.fail = logException;
         spec.addExpectationResult = checkAddExpectationResult;
         spec.addMatcherResult = checkAddMatcherResult;
-        matchFailed = false;
-        matchResults = [];
         try {
           propertyFn.apply(thisArg, arguments);
         } catch (error) {
           spec.fail(error);
-        }
-        if (matchFailed) {
-          failingMatchResults = matchResults;
         }
         spec.fail = existingSpecFail;
         spec.addExpectationResult = existingAddExpectationResult;
@@ -129,8 +115,11 @@ function checkIt(it) {
       }
 
       // Report results
-      (failingMatchResults || matchResults).forEach(function (matchResult) {
-        addResult(matchResult);
+      matchResults.forEach(function (matchResult) {
+        spec.addMatcherResult(matchResult);
+      });
+      expectationResults.forEach(function(data) {
+        spec.addExpectationResult(data[0], data[1], data[2]);
       });
     }
   }
@@ -150,7 +139,7 @@ function logException(e) {
       expected: "",
       actual: "",
       error: e
-    });
+    }, true);
   }
 }
 
