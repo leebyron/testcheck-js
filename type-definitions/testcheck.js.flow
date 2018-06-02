@@ -252,7 +252,7 @@ declare export function sample<T>(gen: ValueGenerator<T>, numValues?: number): A
  *
  * By default, values of size 30 are produced.
  */
-declare export function sampleOne<T>(gen: ValueGenerator<T>, size?: number): T;
+declare export function sampleOne<T>(gen: ValueGenerator<T>, size?: number, seed?: number): T;
 
 
 

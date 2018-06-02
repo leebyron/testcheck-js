@@ -232,7 +232,7 @@ export function sample<T>(gen: ValueGenerator<T>, numValues?: number): Array<T>;
  *
  * By default, values of size 30 are produced.
  */
-export function sampleOne<T>(gen: ValueGenerator<T>, size?: number): T;
+export function sampleOne<T>(gen: ValueGenerator<T>, size?: number, seed?: number): T;
 
 
 

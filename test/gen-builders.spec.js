@@ -45,6 +45,12 @@ describe('gen builders', () => {
     expect(val).toBe(55)
   })
 
+  it('samples one with a given seed', () => {
+    const a = sampleOne(gen.int, 1, 1);
+    const b = sampleOne(gen.int, 1, 1);
+    expect(a).toBe(b)
+  })
+
   it('generates an exact value', () => {
     const vals = sample(gen.return('wow'), 100)
     expect(vals.length).toBe(100)

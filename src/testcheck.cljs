@@ -319,8 +319,12 @@
   (to-array (gen/sample (->gen generator) (or num-samples 10)))))
 
 (defexport sampleOne (fn
-  [generator size]
-  (gen/generate (->gen generator) (or size 30))))
+  ([generator]
+  (gen/generate (->gen generator) 30))
+  ([generator size]
+  (gen/generate (->gen generator) size))
+  ([generator size seed]
+  (gen/generate (->gen generator) (or size 30) seed))))
 
 
 
