@@ -191,12 +191,15 @@ sampleOne([ gen.int, gen.alphaNumChar ])
 **Parameters**
 
 ```
-sample(generator[, size])
+sample(generator[, size [, seed]])
 ```
 
 * `generator`: Any *ValueGenerator* object.
 
 * `size`: The size of the value to produce. Default: `30`.
+
+* `seed`: The seed to use for the random number generator. Default: *<Random>*
+
 
 **Returns**
 
