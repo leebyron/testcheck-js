@@ -27,6 +27,7 @@
   },
   "files": [
     "jasmine-check.js",
+    "type-definitions/jasmine-check.d.ts",
     "README.md",
     "LICENSE"
   ],
